@@ -5,9 +5,11 @@ verified module docs so every later agent has docs to read before changing code.
 
 > **Status (2026-06-30):** the pass is **done for the built areas** — `architecture.md` (big
 > picture + 6 mermaid diagrams + cross-cutting) and verified module docs for `rslib`, the
-> `proto`/RPC boundary, `pylib`, `qt`, and `rsdroid` (see `INDEX.md`). It was done in a **single
-> pass directly on disk** rather than via the parallel-subagent + worktree + PR flow below, because
-> the outer repo is not yet git-initialized and the forks are vendored as sibling folders. The
+> `proto`/RPC boundary, `pylib`, `qt`, and `rsdroid` (see `INDEX.md`). This initial pass was a
+> **single bootstrap pass** (committed directly while standing the repo up), not the
+> parallel-subagent + worktree + PR flow below. The repo is now git-initialized with `anki` /
+> `Anki-Android` as submodules and pushed to `f15cubing/speedrun`, so **from the first real code
+> change onward, follow `shipping-changes` (worktree + branch + PR + different-agent review).** The
 > remaining areas (mastery query, scoring models, sync conflict, AI) are **not built yet** and are
 > listed as *planned* in `INDEX.md`; each gets its module doc in the PR that first builds it.
 

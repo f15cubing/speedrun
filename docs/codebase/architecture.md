@@ -4,10 +4,11 @@
 > `docs/codebase/INDEX.md`. Every path here was verified against the vendored source at the SHAs in
 > the footer. See `docs/PRD.md` for *why* (product) and `docs/execution-plan.md` for *when*.
 
-**Repo layout note.** The outer `speedrun/` folder is not yet a git repo; the two upstream forks are
-vendored as sibling folders (`anki/`, `Anki-Android/`) and are slated to become submodules. Our
-codebase docs live **centrally here**, not co-located inside the forks, so they don't pollute
-upstream code or complicate the eventual merge/submodule wiring.
+**Repo layout note.** The outer `speedrun/` folder is a git repo (`f15cubing/speedrun`); the two
+upstream forks are wired as **git submodules** (`anki/`, `Anki-Android/`) pinned to the SHAs in the
+footer. Our codebase docs live **centrally here**, not co-located inside the forks, so they don't
+pollute upstream code or complicate submodule updates. (`rsdroid` / `Anki-Android-Backend` is a
+planned third submodule — see `README.md`.)
 
 ---
 
