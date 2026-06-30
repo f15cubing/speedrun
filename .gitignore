@@ -1,0 +1,40 @@
+# --- OS / editor junk ---
+.DS_Store
+**/.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# --- Local toolchain downloads & scratch (machine-specific, large) ---
+.dl/
+*.log
+
+# --- Machine-specific environment (paths differ per developer) ---
+# See README "Local setup"; copy to .androidenv and edit paths locally.
+.androidenv
+
+# --- Python sidecars / scoring models (added later) ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# --- Node (any root-level tooling; the forks manage their own) ---
+node_modules/
+
+# --- Secrets / access-controlled material (NEVER commit) ---
+# AI gold-set, eval item bank, and any ETS-derived material must stay out of
+# this repo (see docs/PRD.md §9/§12 — leakage isolation). Keep them in an
+# access-controlled store.
+secrets/
+gold-set/
+eval-bank/
+*.key
+*.pem
+
+# NOTE: anki/ and Anki-Android/ are git submodules — their build outputs
+# (out/, node_modules, .gradle, etc.) are governed by their own repos, not here.

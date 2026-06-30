@@ -1,0 +1,108 @@
+<!-- Raw sub-agent response. Captured: 2026-06-29. Round 1. -->
+<!-- Prompt: prompts/03-performance-readiness-scoring.md | Critique: critiques/03-performance-readiness-scoring.md -->
+<!-- Do not edit; this is the source record. -->
+
+# From Memory Signals to "Performance" and "Readiness": A Defensibility and Validity-Testing Report
+
+**Scope note:** This report addresses Sections A–E only. It does not cover GRE content-list construction, FSRS internals, or UI. All ETS-specific raw-to-scaled conversion claims are explicitly marked UNVERIFIED where they are not public.
+
+## TL;DR
+
+- **Performance** (P(correct on an unseen item)) is honestly buildable in one week as a *calibrated probability* via logistic regression with Platt/isotonic post-hoc calibration, evaluated by Brier score and reliability curves — but a single student (n=1 examinee) cannot support trustworthy IRT item calibration or a defensible standalone classifier; the only sound n=1 framing is a hierarchical/Bayesian model that borrows strength and reports wide credible intervals.
+- **Readiness** on the 200–990 scale cannot be anchored to a true GRE score without proprietary ETS edition-level equating; ETS publishes scaled-score→percentile tables for Subject Tests but **no** public number-correct→scaled conversion, so any 200–990 number is an approximation that must be presented as a wide interval with heavy caveats.
+- **Ship a RANGE + evidence panel, not a single number.** Honest uncertainty intervals will be wide, and per an honesty-focused spec that wide interval is the correct, grade-rewarded output.
+
+## Key Findings
+
+1. IRT calibration is infeasible from one student. Rule-of-thumb per-item calibration samples are roughly 100–200 examinees for Rasch/1PL, 250–500 for 2PL, and 1000+ for 3PL (with ~2000 for accuracy). With n=1 examinee, item parameters are unidentified.
+2. A calibrated supervised classifier is the most defensible Performance engine, but with n=1 the "examinees" dimension collapses; the usable unit of replication is *items answered*, and even then held-out evaluation is noisy.
+3. The paraphrase test is the single most important validity experiment: it directly tests whether Performance adds anything beyond memory. McNemar's test on paired binary outcomes, with a pre-registered equivalence/superiority decision rule, is the right tool.
+4. Leakage detection needs a layered pipeline (exact → normalized → n-gram/Jaccard → embedding cosine) because paraphrase defeats string matching — the exact failure mode the project's own paraphrase items exploit.
+5. Readiness has no public anchor for raw→scaled; the honest fallback is a percentile-anchored approximation with conformal or Bayesian intervals plus an explicit "no track record yet" disclosure.
+
+## Details
+
+### SECTION A — Performance model options
+
+The target is P(correct on a new, unseen exam-style item) given per-topic mastery (from the memory model), item difficulty, response timing, and topic coverage.
+
+| Method | Core assumptions | Min data to be trustworthy | Failure modes at n=1 examinee | Verdict (single student) |
+|---|---|---|---|---|
+| **IRT 1PL/Rasch** (Lord 1980; Embretson & Reise 2000) | Unidimensional latent ability θ; local independence; equal item discrimination; logistic ICC | ~100–200 examinees per item for stable item difficulty; sufficient items per person | With one examinee, item difficulties and θ are jointly unidentified; the total-score "sufficient statistic" property gives a score but no calibrated item parameters; estimates below the sample-size floor are not valid | **Not defensible standalone.** Only usable if item difficulties are *imported* from an external calibrated bank, never estimated in-house from this student. |
+| **IRT 2PL / 3PL** (Lord 1980) | Adds discrimination (2PL) and guessing/lower asymptote (3PL) | ~250–500 examinees/item (2PL); ~1000+ (3PL), with ~2000 for accuracy | Severe overparameterization; guessing parameter inestimable; near-certain non-convergence | **Not defensible** in this setting at all. |
+| **Calibrated supervised classifier** — logistic regression or GBM with post-hoc calibration (Platt 1999; Zadrozny & Elkan 2001/2002) | Features predictive of correctness; calibration set exchangeable with deployment; monotone score→probability map (isotonic) | Held-out calibration set; Platt scaling works on small sets, isotonic regression needs more data (hundreds) to avoid overfitting the calibration map | n=1 means the only replication unit is *items*; class imbalance and tiny calibration folds make Brier/ECE estimates unstable; isotonic regression overfits small calibration sets | **Most defensible Performance engine,** provided probabilities are calibrated and evaluated by Brier score + reliability curve on a clean held-out item split. Prefer logistic + Platt for small data. |
+| **Hierarchical / Bayesian (partial pooling, hierarchical IRT)** (Gelman et al., *Bayesian Data Analysis*) | Exchangeability across topics/items; priors/hyperpriors; partial pooling toward group means | Works with sparse data by borrowing strength; needs a sensible population/prior (e.g., topic-level or item-bank priors) | Credible-interval width is sensitive to prior choice; may under- or over-cover; a "narrow HDI" can be an artifact of strong priors, not evidence | **The only principled n=1 framing.** Use it to produce *wide, honest* credible intervals and to regularize per-topic mastery. |
+
+**Minimum data to trust each, and the double-dipping warning.** The classifier needs a held-out item set never used for fitting *or* for estimating item difficulty. A critical, common self-deception: if item difficulty is itself estimated from the same small sample used to validate the model, the evaluation is contaminated (this is leakage where a feature/target is computed on the full data before splitting; Kapoor & Narayanan 2023). Difficulty must come from a pre-existing calibrated bank or be estimated on a disjoint fold. **Brier score** — a strictly proper scoring rule decomposable (Murphy 1973) into reliability + resolution + uncertainty — plus a **reliability diagram** and **Expected Calibration Error** are the evaluation triad; always report ECE with its binning scheme, since ECE is not itself a proper scoring rule and must be paired with one.
+
+### SECTION B — Paraphrase test design (rigorous protocol)
+
+**Design.** 30 cards × 2 reworded exam-style questions = 60 paired observations. For each card, record (a) **original-card recall** = the memory model's graded review outcome (correct/incorrect) on the original card near the test time, and (b) **reworded-question accuracy** = correct/incorrect on each of the 2 transfer items. Aggregate to a per-pair binary table or model the 2 reworded items as repeated trials within card.
+
+**Statistic.** This is paired binary data (same card, two conditions), so unpaired comparisons are wrong. Use **McNemar's test** (McNemar, Q., 1947, "Note on the sampling error of the difference between correlated proportions or percentages," *Psychometrika* 12(2):153–157) on the 2×2 table of discordant pairs (b = original-correct/reworded-wrong; c = original-wrong/reworded-correct); concordant cells are ignored. For the small n here, use the **mid-p** or **exact-conditional** McNemar variant rather than the asymptotic χ² with continuity correction, which performs poorly at small n (Fagerland, Lydersen & Laake 2013, *BMC Med Res Methodol* 13:91, who conclude "the exact conditional test and the asymptotic test with continuity correction did not perform well" and recommend the mid-p test). Accompany the p-value with a **confidence interval on the paired difference in proportions** (a paired bootstrap CI over cards, resampling cards as the unit of analysis) and an **effect size for paired proportions** (the difference (b−c)/n, or the odds ratio b/c).
+
+**The crucial decision rule (copy-vs-bridge).** Pre-register two competing hypotheses:
+- *"Performance merely copies memory"*: reworded accuracy ≈ original recall; the gap is statistically indistinguishable from zero. Operationalize with a **TOST equivalence test** around a pre-set margin (e.g., ±10 percentage points). If the paired difference CI falls within the margin AND the Performance model's predicted P(correct) tracks memory recall with no incremental signal, conclude **no transfer / no real bridge**.
+- *"A real bridge exists"*: the Performance model predicts reworded-question accuracy **better than the raw memory recall does**. The right comparison is not original-vs-reworded accuracy alone, but whether Performance's calibrated probabilities beat a memory-only baseline at predicting reworded outcomes (lower Brier, better reliability). A real bridge is demonstrated when Performance retains predictive calibration on reworded items precisely where raw memory recall degrades.
+
+**Confounds.**
+- *Difficulty drift*: reworded items may be systematically harder/easier than originals. Mitigate by having reworded items independently difficulty-rated/blind-reviewed and by reporting drift; if drift is large, the McNemar gap is confounded with difficulty, not transfer.
+- *Small-n*: 30–60 pairs gives low power; report the CI width and treat a null result as inconclusive, not as proof of equivalence unless TOST passes.
+- *Ceiling/floor*: if original recall is ~100% or ~0%, the discordant cells vanish and McNemar is uninformative; pre-screen cards to mid-difficulty.
+
+### SECTION C — Leakage detection design with concrete thresholds
+
+Held-out trust requires proving test items (and near-duplicates) did not leak into anything the model saw. Layered pipeline:
+
+1. **Exact match** — hash normalized full strings; any collision is leakage.
+2. **Normalized-text match** — lowercase, strip punctuation, collapse whitespace, Unicode-normalize, then hash. Catches trivial reformatting.
+3. **n-gram overlap / Jaccard** — character or token n-grams. LLM-eval precedent: GPT-3 (Brown et al. 2020) flagged 13-gram collisions; GPT-4 used a 50-character overlap rule; Llama-2 (Touvron et al. 2023) used ≥10-token n-grams; Llama-3 used 8-token. **Recommended: flag any shared 13-gram for review, and compute Jaccard similarity over token 5-grams; Jaccard > 0.7–0.8 → flag for human review.** Use MinHash + LSH (Broder 1997; Indyk & Motwani 1998) for scalable candidate generation, then exact Jaccard verification on candidates — the standard two-stage dedup architecture used in the C4, RefinedWeb, and RedPajama corpus pipelines.
+4. **Semantic near-duplicate** — sentence embeddings + cosine similarity; **flag cosine > 0.85–0.9** for review. This catches paraphrases that defeat all n-gram filters — the documented failure mode in Yang et al. 2023 ("Rethinking Benchmark and Contamination for Language Models with Rephrased Samples," arXiv:2311.04850; LMSYS, Nov 14 2023), where a 13B model trained on a *rephrased* test set "can reach 85.9 accuracy on MMLU while being undetectable by n-gram overlap." That same study found 8–18% of the HumanEval benchmark overlapping in RedPajama-Data-1T/StarCoder-Data, and 21 paraphrased HumanEval items (12.8%) inside CodeAlpaca-20K — i.e., paraphrase contamination is large and routine, which is exactly why the project's own paraphrase items make this layer non-optional.
+
+**Human review step.** All flagged pairs go to manual adjudication, sorted by similarity around the decision threshold (the 0.75–0.90 band is where review is most informative); a reviewer labels each as duplicate / near-duplicate / coincidental, and confirmed leaks are removed from training and the split re-drawn.
+
+**Reporting leakage rate.** Report: number of test items, number flagged at each layer, number confirmed leaked after review, and the resulting **leakage rate = confirmed leaks / total test items**, with the thresholds used. A grader trusts a held-out split only when this audit is shown with its thresholds and the residual rate stated (ideally 0% confirmed exact/near, with the semantic-flag count disclosed). Cite Kapoor & Narayanan, "Leakage and the reproducibility crisis in machine-learning-based science," *Patterns* 4(9):100804 (Sept 8, 2023): a survey of 22 reviews found "17 fields where leakage has been found, collectively affecting 294 papers and, in some cases, leading to wildly overoptimistic conclusions." (The earlier 2022 arXiv preprint, 2207.07048, reported 329 papers.)
+
+### SECTION D — Readiness conversion to the 200–990 scale with honest uncertainty
+
+**Scale-versioning (must state explicitly).** The **modern GRE General Test uses 130–170 per section** (since August 1, 2011; further shortened September 22, 2023). The **200–990 scale is the current GRE *Subject* Test total-score scale** (10-point increments) — and also the pre-2011 *old* General Test (which was 200–800). If the product targets 200–990, it is implicitly targeting Subject-Test-style scaling, not the modern General Test. This versioning must be surfaced to users, because a "990" means nothing on the modern General Test.
+
+**Does a public raw→scaled table exist? No.** ETS converts number-correct to the 200–990 scale through **edition-specific equating** and does **not** publish a number-correct→scaled lookup. ETS states (Understanding Your GRE Subject Test Scores): "The number of questions you answered correctly... is converted to the total scaled score... so that... equal scaled scores on a particular Subject Test indicate essentially equal levels of performance regardless of the test edition." The equating algorithm is proprietary and unpublished. **Therefore there is NO defensible way to anchor to a true 200–990 score without proprietary ETS norms. (Any specific raw→scaled mapping is UNVERIFIED and must not be fabricated.)** This is the report's strongest, best-sourced conclusion — and it is a negative one.
+
+**The honest approximation.** ETS *does* publish scaled-score→**percentile** tables in "GRE Subject Test Interpretative Data," Table 2B (ets.org/pdfs/gre/gre-guide-table-2.pdf, © 2025 ETS). Example anchors: **Mathematics** 800→71st percentile, 820→75th, 840→79th, 900→91st, 700→53rd, 600→34th; **Physics** 800→62nd, 900→79th, 600→27th; **Psychology** 800→98th, 760→93rd, 700→80th, 600→49th. (Summary stats, Table 2A: Mathematics N=5,180, mean 680, SD 161; Physics N=4,759, mean 724, SD 167; Psychology N=2,352, mean 589, SD 116.) The honest pipeline, grounded in equating/scaling theory (Kolen & Brennan 2014, *Test Equating, Scaling, and Linking*): (1) predict the student's distribution of raw-correct on a representative item set; (2) map predicted proportion-correct → an estimated percentile via the student's standing relative to a reference distribution; (3) map percentile → scaled score using the published percentile anchors; (4) propagate uncertainty through all three steps. Every step's assumptions (representativeness of the item pool; that the practice population resembles the ETS norm group) must be caveated; the norm-group mismatch alone can bias the estimate substantially. Note also a verbatim internal inconsistency in ETS's own PDF: Table 2B's header reads "all individuals who tested between July 1, 2019, and June 30, 2023" while the surrounding text cites "July 1, 2021, and June 30, 2024" — and percentiles are updated annually.
+
+**Uncertainty propagation — three sources, three tools.**
+- *Model uncertainty* (is P(correct) right?), *sampling uncertainty* (finite items answered), and *topic-coverage uncertainty* (untested topics) all compound.
+- **Bayesian posterior predictive intervals**: natural if using the hierarchical model; coherent propagation, but interval width depends on priors and can mis-cover in small samples.
+- **Bootstrap**: resample answered items to get a sampling distribution of predicted raw-correct/percentile; simple, but cannot manufacture information about *untested* topics.
+- **Conformal prediction** (Vovk, Gammerman & Shafer 2005, *Algorithmic Learning in a Random World*; Angelopoulos & Bates 2021): gives finite-sample, distribution-free **marginal** coverage of 1−α under exchangeability — the most defensible *guarantee* for a readiness interval, with the caveats that exchangeability between practice and real-exam items is itself an assumption, that *conditional* coverage cannot be guaranteed distribution-free, and that small calibration sets make realized coverage fluctuate. **Recommended: a conformal interval as the headline, cross-checked against a Bayesian posterior predictive interval.**
+
+**The give-up rule (non-arbitrary).** Do not display a readiness number until evidence thresholds are met. A reasonable concrete gate: **≥200 graded reviews AND ≥50% topic coverage**. Crucially, set the gate non-arbitrarily by tying it to **interval width / standard error of measurement**: only show readiness when the credible/conformal interval width falls below a pre-declared usefulness threshold (e.g., narrower than ~±1 scaled "band," or below a target SEM). The review-count and coverage minima are the operational proxies; the interval-width criterion is the principled target. Below threshold, show "insufficient evidence."
+
+**Reporting absence of a track record.** With one student over one week there is essentially **no longitudinal validation**: you cannot yet report how accurate past predictions were because no predictions have resolved against real outcomes. The honest communication is an explicit "**No track record yet**" panel stating that predictive validity is unestablished, that the intervals reflect *model-internal* uncertainty only (not validated calibration against real GRE outcomes), and committing to a prospective calibration log (predicted vs. realized) that will populate a reliability diagram over time. Do not imply validation that does not exist.
+
+### SECTION E — Blunt one-week, single-student verdict
+
+In one week with one student's data you can **honestly build and ship**: (1) a *calibrated* Performance probability (logistic + Platt), evaluated by Brier score and a reliability curve on a leakage-audited held-out item split; (2) the paraphrase transfer experiment with a pre-registered McNemar mid-p test and equivalence margin; (3) the full leakage-detection audit with reported rates; and (4) a Readiness *range* with conformal/Bayesian intervals and an explicit "no track record" disclosure.
+
+You **cannot honestly claim**: any IRT-based ability/score (sample sizes are 2–3 orders of magnitude short of the 100–1000+ examinees-per-item floors); a precise 200–990 number (no public raw→scaled mapping; proprietary equating); or any validated predictive accuracy (zero resolved predictions). Teams fool themselves in three predictable ways here: **training on test items**, writing **paraphrase items so close to originals that they test memory not transfer**, and **treating IRT estimates as valid below their sample-size floors**. The honest-spec twist: **a readiness interval so wide it looks "useless" is the correct, grade-rewarded output** — narrowness here would be a red flag for hidden leakage or overconfident priors, not a sign of quality.
+
+## Recommendations
+
+1. **Build the Performance model as a calibrated logistic classifier** with imported (not in-house-estimated) item difficulty; evaluate with Brier + reliability curve + ECE on a leakage-audited split. Threshold to advance: ECE below a pre-set target and a reliability curve near the diagonal.
+2. **Run the paraphrase experiment first** as the go/no-go on whether "Performance" is real. Pre-register the McNemar mid-p test, the TOST margin (±10pp), and the memory-only baseline comparison. If equivalence to memory holds, do **not** market Performance as transfer.
+3. **Implement the four-layer leakage pipeline** with the stated thresholds (shared 13-gram and Jaccard > 0.7–0.8; embedding cosine > 0.85–0.9), human-adjudicate the 0.75–0.90 band, and publish the leakage rate.
+4. **For Readiness, ship a range + evidence panel only**, gated by interval-width/SEM and the ≥200-review/≥50%-coverage minima, with the scale-versioning and "no track record" disclosures front and center.
+5. **Start a prospective calibration log immediately** so a real track record can accrue; revisit the give-up threshold once enough predictions have resolved to estimate empirical coverage.
+
+## Caveats
+
+- All thresholds (Jaccard, cosine, review counts, ±10pp margin) are defaults from literature/practice, not derived from this student's data; tune on a labeled slice.
+- The percentile-anchor approximation assumes the practice population resembles ETS's norm group — a strong, likely-violated assumption that biases any 200–990 estimate.
+- Conformal coverage holds only under exchangeability between practice and real-exam items, and only marginally (not conditionally); this is unverified and probably imperfect.
+- ETS's published Subject Test interpretive PDF contains an internal date inconsistency (one header cites 2019–2023 vs. the 2021–2024 window elsewhere); percentile anchors update annually.
+- Any specific raw-correct→scaled-score number is UNVERIFIED and must never be fabricated.
+
+**Self-confidence summary:** High confidence on Sections A, B, C and the Section D scale/equating facts (peer-reviewed psychometrics — Lord 1980, Embretson & Reise 2000, Kolen & Brennan 2014; ETS primary documents; established ML calibration/leakage/conformal literature). Moderate confidence on the exact give-up thresholds (reasoned defaults, not empirically derived). The strongest, best-sourced conclusion is the negative one: no public raw→scaled GRE mapping exists.
+
+**One-sentence recommendation:** Ship a readiness **RANGE plus an evidence panel**, never a single readiness number.

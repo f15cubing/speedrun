@@ -1,0 +1,11 @@
+# Android build environment — copy to `.androidenv` and edit paths, then `source .androidenv`.
+# `.androidenv` itself is git-ignored because these paths are machine-specific.
+
+# Path to your JDK 21 (AnkiDroid/Gradle require JDK 21).
+export JAVA_HOME="$HOME/Library/Java/jdk-21.0.11+10/Contents/Home"
+
+# Android SDK location (Android Studio default shown).
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
