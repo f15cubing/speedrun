@@ -35,6 +35,9 @@ gold-set/
 eval-bank/
 *.key
 *.pem
+*.token
+.gh_token
+.githubtoken
 
 # NOTE: anki/ and Anki-Android/ are git submodules — their build outputs
 # (out/, node_modules, .gradle, etc.) are governed by their own repos, not here.
