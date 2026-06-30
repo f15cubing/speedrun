@@ -31,6 +31,8 @@ If no doc exists for an area you must change, **create a stub from `module-doc-t
 
 Any change to behavior, public interface, or file layout updates the corresponding doc(s) **in the same PR**, and bumps the `Last verified against:` SHA.
 
+Bumping a submodule pin counts as a change to **every** doc verified against that submodule — bump their `Last verified against:` SHA in the same change (see `working-with-submodules`).
+
 This is enforced: "relevant docs updated" is a base-gate item the reviewer checks in the `shipping-changes` skill. A PR that changes behavior without touching docs gets blocked.
 
 ## Templates

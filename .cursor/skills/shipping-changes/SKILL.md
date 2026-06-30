@@ -14,11 +14,11 @@ This skill has two roles: **builder** (makes the change) and **reviewer** (verif
 ## Builder role
 
 1. `git fetch`; create a new branch off the latest `main` **in a new git worktree** named `agent/<area>-<task>`. **REQUIRED:** use `using-git-worktrees`.
-2. In the new worktree, run `git submodule update --init --recursive`.
+2. In the new worktree, run `git submodule update --init --recursive`. **REQUIRED:** use `working-with-submodules`.
 3. **Before editing**, invoke `codebase-docs` and read the docs relevant to the files you'll touch.
 4. Make the change, scoped to one task. Use TDD where it applies.
 5. Update the relevant docs in the same change (bump `Last verified against:` SHA).
-6. Verify locally: build + run the tests for the touched area. **REQUIRED:** use `verification-before-completion` before claiming green.
+6. Verify locally: build + run the tests for the touched area. **REQUIRED:** use `building-and-testing` for the exact commands, then `verification-before-completion` before claiming green.
 7. Commit (conventional message) → push → open a PR with `gh pr create`, filling the body template in `pr-checklist.md`.
 8. Hand off to a reviewer subagent. **Never self-merge.**
 
@@ -35,6 +35,8 @@ This skill has two roles: **builder** (makes the change) and **reviewer** (verif
 
 Reach for these (reference by name; don't duplicate them):
 
+- `building-and-testing` — exact build/run/test commands per surface (desktop, Android, Rust).
+- `working-with-submodules` — submodule init / pinning / footguns.
 - `using-git-worktrees` — isolated working dir + branch per agent.
 - `dispatching-parallel-agents` — when fanning out independent changes.
 - `requesting-code-review` / `receiving-code-review` — the review exchange.
@@ -42,6 +44,9 @@ Reach for these (reference by name; don't duplicate them):
 - `finishing-a-development-branch` — merge + cleanup.
 - `babysit` — keep a PR merge-ready (triage comments, resolve conflicts, fix CI).
 - `ci-investigator` — diagnose a failing CI check.
+
+For an engine/RPC change, also read the insertion-point sections in `docs/codebase/proto-rpc.md`,
+`rslib.md`, and `pylib.md` (via `codebase-docs`) before editing.
 
 ## Red flags — STOP
 
