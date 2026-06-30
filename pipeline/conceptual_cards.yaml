@@ -1,0 +1,73 @@
+# Hand-authored conceptual GRE-Math cards for the leaves that do not templatize
+# into computational drills. These are fully original, mathematically correct,
+# and GRE-Math-Subject-Test appropriate. No AI/model calls were used.
+#
+# Each card carries EXACTLY ONE valid leaf tag of the form topic::<bucket>::<leaf>
+# from pipeline/taxonomy.py. Keep the prose correct; this file is the source of
+# truth for these leaves (the built .apkg is a regenerated artifact).
+cards:
+  # --- algebra::abstract --------------------------------------------------
+  - leaf_tag: "topic::algebra::abstract"
+    front: "State Lagrange's theorem for finite groups, and give one immediate corollary about element orders."
+    back: "If G is a finite group and H is a subgroup of G, then |H| divides |G|. Corollary: the order of every element g divides |G| (since g generates a cyclic subgroup of that order)."
+  - leaf_tag: "topic::algebra::abstract"
+    front: "What is the order of the symmetric group S_3, and what is the order of a 3-cycle such as (1 2 3) in it?"
+    back: "|S_3| = 3! = 6. A 3-cycle has order 3: applying (1 2 3) three times returns every element to its start."
+  - leaf_tag: "topic::algebra::abstract"
+    front: "Define a field, and name the field with the fewest elements."
+    back: "A field is a commutative ring with multiplicative identity 1 != 0 in which every nonzero element has a multiplicative inverse. The smallest field is GF(2) = {0, 1}, i.e. the integers modulo 2."
+
+  # --- additional::real_analysis -----------------------------------------
+  - leaf_tag: "topic::additional::real_analysis"
+    front: "Define a Cauchy sequence, and state why the concept is central to the real numbers."
+    back: "A sequence (a_n) is Cauchy if for every epsilon > 0 there is an N such that |a_m - a_n| < epsilon whenever m, n >= N. R is complete: every Cauchy sequence of reals converges to a real limit."
+  - leaf_tag: "topic::additional::real_analysis"
+    front: "Does the harmonic series sum_{n>=1} 1/n converge or diverge? Justify briefly."
+    back: "It diverges. Either compare with the integral of 1/x (which is ln x -> infinity), or group terms (1/3 + 1/4 > 1/2, 1/5+...+1/8 > 1/2, ...) to add more than 1/2 infinitely often."
+  - leaf_tag: "topic::additional::real_analysis"
+    front: "Give the epsilon-delta definition of continuity of a function f at a point c."
+    back: "f is continuous at c if for every epsilon > 0 there exists delta > 0 such that |x - c| < delta implies |f(x) - f(c)| < epsilon."
+
+  # --- additional::topology ----------------------------------------------
+  - leaf_tag: "topic::additional::topology"
+    front: "Define a topology on a set X."
+    back: "A topology is a collection tau of subsets of X (the open sets) such that the empty set and X are in tau, tau is closed under arbitrary unions, and tau is closed under finite intersections."
+  - leaf_tag: "topic::additional::topology"
+    front: "Is the closed interval [0, 1] compact in the standard topology on R? State the theorem you use."
+    back: "Yes. By the Heine-Borel theorem, a subset of R^n is compact if and only if it is closed and bounded; [0, 1] is both, hence compact."
+  - leaf_tag: "topic::additional::topology"
+    front: "What does it mean for a topological space to be Hausdorff (T2)?"
+    back: "Any two distinct points have disjoint open neighborhoods: for x != y there exist open sets U containing x and V containing y with U intersect V empty."
+
+  # --- additional::geometry ----------------------------------------------
+  - leaf_tag: "topic::additional::geometry"
+    front: "For a circle of radius r, give its area and circumference."
+    back: "Area = pi * r^2; circumference = 2 * pi * r."
+  - leaf_tag: "topic::additional::geometry"
+    front: "State Thales' theorem about an angle inscribed in a semicircle."
+    back: "An angle inscribed in a semicircle is a right angle: if a triangle's vertices lie on a circle and one side is a diameter, the angle opposite that diameter is 90 degrees."
+  - leaf_tag: "topic::additional::geometry"
+    front: "Give the distance between points (x1, y1) and (x2, y2) in the Euclidean plane."
+    back: "distance = sqrt((x2 - x1)^2 + (y2 - y1)^2)."
+
+  # --- additional::complex -----------------------------------------------
+  - leaf_tag: "topic::additional::complex"
+    front: "State Euler's formula and use it to evaluate e^(i*pi)."
+    back: "Euler's formula: e^(i*theta) = cos(theta) + i*sin(theta). Therefore e^(i*pi) = cos(pi) + i*sin(pi) = -1."
+  - leaf_tag: "topic::additional::complex"
+    front: "Find the modulus and a principal argument of z = 1 + i."
+    back: "|z| = sqrt(1^2 + 1^2) = sqrt(2); arg(z) = pi/4 (z lies on the line y = x in the first quadrant)."
+  - leaf_tag: "topic::additional::complex"
+    front: "State the Cauchy-Riemann equations for f = u + i*v to be holomorphic."
+    back: "With u, v having continuous first partials, the Cauchy-Riemann equations are u_x = v_y and u_y = -v_x."
+
+  # --- additional::discrete ----------------------------------------------
+  - leaf_tag: "topic::additional::discrete"
+    front: "How many subsets does a set with n elements have, and why?"
+    back: "2^n subsets: each element is independently either in or out of a subset, giving 2 choices for each of the n elements."
+  - leaf_tag: "topic::additional::discrete"
+    front: "State the Pigeonhole Principle (general form)."
+    back: "If n objects are placed into m boxes, then at least one box contains at least ceil(n/m) objects. In particular, if n > m some box holds at least two."
+  - leaf_tag: "topic::additional::discrete"
+    front: "State the Handshaking Lemma for a finite graph."
+    back: "The sum of all vertex degrees equals twice the number of edges. Consequently the number of vertices of odd degree is even."

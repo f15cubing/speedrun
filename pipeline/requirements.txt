@@ -1,0 +1,7 @@
+# Pinned exact versions for a re-runnable, deterministic build.
+# Resolved 2026-06-30 by installing the latest releases on Python 3.9, then
+# pinning. Regenerate the deck with: python pipeline/build_deck.py --seed 42
+genanki==0.13.1
+sympy==1.14.0
+PyYAML==6.0.3
+pytest==8.4.2
