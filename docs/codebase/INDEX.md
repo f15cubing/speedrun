@@ -25,6 +25,8 @@ the PR that first builds each of these.
 |---|---|---|
 | Our app additions — Mastery Query Rust change | `anki/proto/anki/stats.proto`, `anki/rslib/src/stats/service.rs`, `anki/rslib/src/storage/card/` | PRD §5; `rslib.md` + `proto-rpc.md` insertion-point sections |
 | Our app additions — 3-score dashboard + coverage map + interleaving toggle | `anki/ts/routes/`, `anki/qt/aqt/` | PRD §7/§8; `qt.md` "dashboard attachment" section |
+| Our app additions — MCQ study surface (Performance) | new note type + card template (collection data model); review templates in `anki/ts/`, `anki/qt/aqt/` | PRD §8a/§12 — content/data-model change, **not** a second engine change; reviews via the same FSRS loop |
+| Our app additions — timed practice mode (exam-pressure simulator, mastery-gated) | `anki/ts/routes/`, `anki/qt/aqt/` | PRD §8/§8a — sequenced last, after interleaving + ordering algorithm |
 | Scoring models — memory / performance / readiness | Python sidecar (desktop-authoritative), location TBD | PRD §7, §9 (Step 1–3) |
 | Sync conflict rules (revlog union + scheduling LWW + device-UUID tie-break) | builds on `anki/rslib/src/sync/` | PRD §10 / D3; `architecture.md` Diagram 6 |
 | AI card pipeline (RAG + provenance schema + CAS/SymPy verify) | desktop, AI-off-able, location TBD | PRD §9 |
