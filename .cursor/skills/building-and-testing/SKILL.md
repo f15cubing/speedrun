@@ -67,6 +67,21 @@ checks. Run the integrated Rust + Python checks via `./ninja check` (uses the pi
 a focused crate during dev, `cargo test -p anki` works but isn't the integrated path. Invariants
 (e.g. read paths must not return `OpChanges`) are in `docs/codebase/rslib.md`.
 
+## Don't recompile the engine from zero (cache + trust-green)
+
+Anki's Rust build is slow, and a reviewer's *fresh worktree* otherwise recompiles from scratch. Two
+cheap moves cut the repeated cost:
+
+1. **Shared compile cache.** Install `sccache` (`cargo install sccache` or `brew install sccache`)
+   and export `RUSTC_WRAPPER=sccache` (e.g. in your shell profile), so every worktree reuses cached
+   artifacts. Alternative: point all worktrees at one `CARGO_TARGET_DIR`. First build still pays full
+   cost; subsequent builds (incl. each reviewer's) hit the cache. Verify with `sccache --show-stats`.
+2. **Trust posted green, spot-check the ceilings.** When the builder **posts green** (pasted
+   `./ninja check` output or a green CI run), the engine-lane reviewer trusts it and spot-checks the
+   ceiling items only (undo, no-corruption, read-only-invariant test) instead of a blind full rebuild.
+   No green posted → the reviewer rebuilds. This is the policy `shipping-changes`' reviewer role
+   points at; it does **not** relax the extra gate, only the redundant recompile.
+
 ## Common mistakes
 
 - Calling `gradlew` without `source .androidenv` → wrong/missing JDK. Source it first.
