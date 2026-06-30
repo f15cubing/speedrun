@@ -18,12 +18,17 @@ _Last updated: 2026-06-30 (Tue)._
 - **PR #1** (merged) — seeded GRE study-deck generator + `topic::*` tagging + coverage gate
   (`pipeline/`).
 - **PR #2** (merged) — MIT OCW gold-set store + canary + validator, data gitignored (`eval/goldset/`).
+- **PR #3** (merged) — workflow change-risk tiers + fast lane, compile-cache + trust-green, live
+  `STATUS.md`, process-freeze guardrail (`.cursor/skills/`, `AGENTS.md`).
+- **PR #4** (merged) — content-generation + timed-UI design spec, tuesday-data-foundation spec, and
+  the content-generation pipeline plan, with matching PRD/INDEX/architecture/execution-plan updates
+  (§8 interleaving algorithm, §8a flashcards→MCQ→timed, §12a two-lane generation, Appendix A
+  tag/verification conventions).
 
 ## In flight
 
-- **`agent/workflow-risk-tiers`** — workflow tuning: change-risk tiers + fast lane, compile-cache +
-  trust-green, this `STATUS.md`, process-freeze guardrail (fast-lane PR, self-reviewed).
-- Uncommitted in-progress doc edits exist in the working tree (not owned by this branch).
+- **Wednesday Mastery Query spec** — drafting the read-only Mastery Query (Rust engine change,
+  PRD §5) design spec via `brainstorming`, as the first decomposed Wednesday sub-spec.
 
 ## Next (per execution-plan)
 

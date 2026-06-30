@@ -147,7 +147,7 @@ Every decision above maps to a grade lever. We optimize in weight order, but the
    Eval/tests: leakage pipeline · authored item bank (4 partitions) · paraphrase · crash · make bench
 ```
 
-**Key principle:** the engine is shared and unmodified except for the additive, read-only mastery query. Everything score/AI-related lives *above* the engine so it can be switched off (AI-off requirement) without affecting the review loop.
+**Key principle:** the engine is shared and unmodified except for the additive, read-only mastery query. Everything score/AI-related lives *above* the engine so it can be switched off (AI-off requirement) without affecting the review loop. New study surfaces — **MCQ cards** and the **timed mode** (§8a) — are likewise content/UX layers (note types, card templates, ordering, timers) *above* the engine and add **no** second Rust change.
 
 ---
 
@@ -198,7 +198,7 @@ The taxonomy is the **architectural keystone**: one `topic::*` tag tree feeds th
 FSRS-6 / FSRS-rs retrievability `R`. Presented as **aggregate-calibrated** (population defaults). Calibration proof (Day 5) only *when* enough reviews exist: TimeSeriesSplit → reliability diagram with binomial CIs → ECE (≥2 binning schemes, prefer quantile) → Brier + log-loss as bin-free anchors. Declare "calibrated" only if diagram points sit within CI of the diagonal. **Do not surface card-level `R` as an exam-pass probability.** (`responses/02`.)
 
 ### 7b. Performance
-Calibrated **logistic regression + Platt scaling**. Features: per-topic mastery (from D1), **imported** item difficulty (firewalled — never estimated on the same data used to validate), response timing, topic coverage. Evaluated by **Brier score + reliability curve + ECE** on a **leakage-audited held-out split**. Hierarchical/Bayesian wrapper for honest (wide) intervals at n≈1. **Paraphrase test (§11) is the go/no-go** on whether Performance is real vs. just copying Memory. (`responses/03` §A–B.)
+Calibrated **logistic regression + Platt scaling**. Features: per-topic mastery (from D1), **imported** item difficulty (firewalled — never estimated on the same data used to validate), response timing, topic coverage. Evaluated by **Brier score + reliability curve + ECE** on a **leakage-audited held-out split**. Hierarchical/Bayesian wrapper for honest (wide) intervals at n≈1. **Paraphrase test (§11) is the go/no-go** on whether Performance is real vs. just copying Memory. (`responses/03` §A–B.) Performance is scored on the in-app **MCQ surface** (§8a) — a note type that shares the flashcard review loop, so we measure real in-app answers rather than a bolt-on quiz.
 
 ### 7c. Readiness + Coverage Map
 Pipeline: predict raw-correct distribution on a representative item set → map to percentile via **published ETS percentile anchors** → percentile → 200–990 scaled score → **propagate uncertainty** through all three steps. **Conformal interval as headline, Bayesian posterior as cross-check.** Ship a **RANGE + evidence panel + "no track record yet"** panel (predictive validity is unestablished at n≈1; intervals reflect model-internal uncertainty only). Start a **prospective calibration log** (predicted vs. realized) immediately. Coverage map lists every leaf topic, marks covered, shows %, and **gates the score** per the give-up rule. (`responses/03` §D, `responses/01` §C–E.)
@@ -216,10 +216,25 @@ Next best study: real analysis → sequences & series.   Updated: 2026-07-05 14:
 ## 8. Learning-Science Feature (15%) — Interleaving + Ablation
 
 - **Implementation:** interleaving is a **card-ordering rule** over the already-gathered due queue — mix confusable problem types (by `topic::` tag) within a session rather than blocking by topic. Default home: Python/presentation layer (safe, FSRS-invariant). Stretch: implement the ordering as the flag-gated in-memory re-sort in `QueueBuilder` (ties into D1 stretch). A simple toggle switches interleaved ↔ blocked for the ablation.
+- **Algorithm (FSRS-cooperative — a constrained re-sort, never a competing scheduler):** input is FSRS's due queue **in FSRS priority order**; greedily emit the **highest-priority** card whose **confusable cluster** (taxonomy-defined, e.g. `{differential_single, integral_single}`) differs from the last *K* shown, subject to a **displacement bound W** so no card drifts more than a window from its FSRS position — urgent cards never starve. Falls back to plain FSRS order on a small/homogeneous queue. **FSRS scheduling fields stay byte-unchanged** (tested invariant: shown multiset == due set). Provable quality via two reported metrics: **adjacency dispersion** (% consecutive pairs from different clusters) and **FSRS displacement** (mean/max shift). Full design in `docs/superpowers/specs/2026-06-30-content-generation-and-timed-ui-design.md` §6.
 - **Three builds:** (1) full app, interleaving ON; (2) full app, interleaving OFF (blocked) — the ablation; (3) plain unmodified Anki — the baseline.
 - **Pre-registration:** see **Appendix B** (locked 2026-06-30). Primary endpoint is a **delayed (≥1 wk) test of novel mixed-topic items**; analysis is TOST + 90% CIs with the honest-null template. Expect an honest inconclusive result and report it as a win.
-- **Complement (un-ablated):** exam-pressure simulator (timed full-length: 66 items / 2h50m / on-screen countdown / no pauses) justified on **format-matched transfer + speededness**, plus reappraisal microcopy. Surface the anxiety bundle only when the app detects a **Memory-high / timed-Performance-low gap**.
+- **Complement (un-ablated):** exam-pressure simulator (timed full-length: 66 items / 2h50m / on-screen countdown / no pauses) justified on **format-matched transfer + speededness**, plus reappraisal microcopy. Surface the anxiety bundle only when the app detects a **Memory-high / timed-Performance-low gap**. **Timed mode is sequenced last and mastery-gated — see §8a.**
 - **Olympiad:** optional, ≤10% dose, off by default, gated to already-strong students (~80th pct+) with ≥6 weeks, topic-targeted to GRE-scored overlap, MC-formatted with a ~2.5-min timer. Positioned as *content to interleave*, not a separate pedagogy.
+
+### 8a. Study-surface progression (flashcards → MCQ → timed) — sequencing, not new scope
+
+The three study surfaces roll out in a deliberate order, each feeding **one** of the three scores (never blended, §7):
+
+1. **Basic-concept flashcards** — the Wednesday foundation; drives **Memory** (FSRS recall).
+2. **Multiple-choice questions (MCQ)** — exam-format items that drive **Performance** (the GRE is entirely five-option MC). MCQ is a **content/data-model "structural" change only** — a new note type + card template that captures the selected option and grades into the same Again/Hard/Good/Easy path. To the engine it **behaves exactly like a flashcard**: same due queue, same FSRS scheduling, same review loop, same `topic::*` tagging — so it needs **no second Rust change** and keeps the locked "exactly one engine change" ceiling (D1, §5) intact.
+   - **Note type "GRE MCQ":** fields `Question`, `OptionA–E`, `CorrectOption` (A–E), `Explanation`, `LeafTag`. The template renders 5 single-select options, reveals the correct option + explanation on answer, and grades into Again/Hard/Good/Easy.
+   - **Distractors** (4 per item): **auto-generated** for the computational lane via SymPy **common-error transforms** (sign flip, dropped `+C`, off-by-power, missing chain factor, swapped operation) — deterministic and provably ≠ the key; **human-authored** for the conceptual lane in the verified YAML. See the content/timed-UI design spec §4.
+3. **Timed practice mode** (the exam-pressure simulator above) — sequenced **last** and **mastery-gated**. It unlocks only after (a) interleaving + the card/question **ordering algorithm** are in place (§8, D1 stretch) **and** (b) the student clears a per-topic **mastery threshold** (reusing the Mastery Query RPC, §5). This matches the deficit-model rule — timed pressure helps already-prepared students and wastes under-prepared ones (`research/brainlift.md` §3e) — and the "surface only on a Memory-high / timed-Performance-low gap" trigger above.
+   - **UI fidelity (desktop-first):** mirror the official computer-delivered exam — persistent whole-session **countdown** (no separately timed sections), **item counter**, **Mark**, a **Review screen** (answered/unanswered/marked, jump to any item), free **Back/Next**, **rights-only** scoring, **no on-screen calculator**, **no pause**, **auto-submit at 0:00**. Goal: reduce test-day surprise by matching structure exactly.
+   - **Pace-preserving short sections:** the full-length form (66 items / 2h50m) is canonical, but it's hard to find 3 hours daily — so shorter **still-high-stakes** presets keep the **exact official pace (~2.58 min/item)** with fewer items: **Half** (33 / ~1h25m), **Third** (22 / ~57m), **Mini** (11 / ~28m). Each stays blueprint-matched (≈50/25/25) from the **authored eval bank** (firewalled, §12) with the full official UI. The construct preserved is **speededness**, not raw duration.
+
+**Why this is not scope creep:** the progression reuses the existing engine (one read-only Mastery Query), the three-score separation (§7), interleaving (§8), and the exam-pressure simulator (§8). It adds one note type + a timed-session UI, both *above* the engine.
 
 ---
 
@@ -227,6 +242,7 @@ Next best study: real analysis → sequences & series.   Updated: 2026-07-05 14:
 
 - **Generation:** RAG with **source binding** — every card carries a **verbatim source quote + page/line anchor as a non-nullable schema field**. Abstention enforced by **pipeline logic, not the prompt**; any card lacking an entailed source span is auto-zeroed before evaluation.
 - **Verification by card type:** *computational* cards → **CAS/SymPy re-derivation** (symbolic + numerical equality) as the gate (decisive, deterministic, independent of the generator); *conceptual/definitional* cards → NLI entailment against source (RAGAS faithfulness) + **mandatory human adjudication**. Self-consistency / model critics only as pre-filters that reduce CAS workload — **never the final gate**.
+- **Shared verification gate:** AI-drafted conceptual cards enter the **same status-gated pipeline** as human-authored conceptual cards (§12a) — they land `status: draft` + `gen::ai`, and the build emits only human-promoted `status: verified` cards. The "mandatory human adjudication" above **is** that gate; no separate machinery.
 - **Pre-registered asymmetric gate (lodged before scoring):** **fact-precision ≥ 0.98 (≤ 1 wrong-fact card / 50) AND useful-yield ≥ 0.60** among non-abstained cards. Expect **low yield — that is the correct safe tradeoff.** Wrong facts are worse than no card.
 - **Gold set:** 50 independently-verified Q&A pairs (textbook keys, second-solver checked), each with a source anchor, in an **access-controlled store** with canary strings. Identify the source for these **today** (Tuesday checklist).
 - **Beat a baseline:** vs. template/cloze extraction + non-RAG prompting, McNemar's exact test + paired bootstrap CI on useful-yield, fact-precision ceiling intact.
@@ -256,8 +272,15 @@ Next best study: real analysis → sequences & series.   Updated: 2026-07-05 14:
 
 Two **separate** corpora — do not conflate (this protects the held-out test):
 
-1. **Study deck** (for review): textbook-derived + AI-generated (gated) cards, every card leaf-tagged. Must cover **≥ 50% of taxonomy leaf nodes** before Wednesday's build. Target ≥ 50% calculus weight.
+1. **Study deck** (for review): textbook-derived + AI-generated (gated) cards, every card leaf-tagged. Must cover **≥ 50% of taxonomy leaf nodes** before Wednesday's build. Target ≥ 50% calculus weight. Two card formats roll out in order (§8a): **basic-concept flashcards** first (the Memory surface), then **MCQ-format cards** — a new note type + card template (a content/data-model change, **not** an engine change) that reviews through the same FSRS loop and feeds **Performance**.
 2. **Authored eval item bank** (for performance/readiness/paraphrase/ablation): **original, blueprint-matched items only.** All ~431 official ETS items are public PDFs → **treat the entire ETS corpus as contaminated; never reuse it.** ~60–100 items across **4 disjoint, version-locked partitions**: P0 frozen held-out / P1 ablation-practice / P2 delayed post-test / P3 paraphrase pairs. Difficulty is **expert-rated, provisional, noisy (r≈0.6)** → widens the readiness interval; flag every difficulty as provisional; every number reported with Wilson CIs.
+
+### 12a. Content generation — two lanes (no AI before Friday)
+
+Both corpora are populated by the same two-lane pipeline (full design: `docs/superpowers/specs/2026-06-30-content-generation-and-timed-ui-design.md`):
+
+- **Lane A — templated computational:** parametrized templates where **SymPy computes the answer *and* the four MCQ distractors** (correct-by-construction; distractors via named common-error transforms, deterministic and provably ≠ key). **"Infinite" = the seed × parameter space:** a fixed `--seed` yields a byte-stable set; raising `count`/changing the seed mines more of an effectively unbounded space. **Build-time only** — no runtime generation, no model calls — so every deck is re-runnable (§11).
+- **Lane B — conceptual (human-verified):** authored records carry a **verification block** (`status: draft|verified`, `verified_by`, `verified_on`, `source`). The build/validator **emits only `verified` cards and hard-fails (non-zero exit)** on any `draft` or unattributed card — the mechanically-enforced "**a human must verify before production**" gate. The **same gate** governs Friday's AI drafts (§9): AI lands `status: draft` + `gen::ai`, and human adjudication is the **only** path to `verified`.
 
 ---
 
@@ -365,7 +388,9 @@ Bucket weights are ETS-official (50/25/25). **No intra-bucket sub-percentages** 
 | Probability & statistics | `topic::additional::probability_stats` |
 | Numerical analysis | `topic::additional::numerical` |
 
-**Non-topic tag conventions:** `src::<source>` (provenance), `gen::ai` / `gen::human` (generation), `eval::p0|p1|p2|p3` (held-out partitions), `diff::<1-5>` (provisional difficulty), `olympiad` (enrichment, off by default).
+**Non-topic tag conventions:** `src::<source>` (provenance), `gen::ai` / `gen::human` (generation), `fmt::flashcard` / `fmt::mcq` (study surface, §8a), `eval::p0|p1|p2|p3` (held-out partitions), `diff::<1-5>` (provisional difficulty), `olympiad` (enrichment, off by default).
+
+**Verification metadata** (conceptual cards, §12a) lives as **record fields / YAML keys, not tags**: `status: draft|verified`, `verified_by`, `verified_on`, `source`. The build emits only `status: verified` records and hard-fails on any `draft`/unattributed card.
 
 ---
 

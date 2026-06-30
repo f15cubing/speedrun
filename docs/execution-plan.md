@@ -72,6 +72,7 @@ Goal: every irreversible decision locked in writing, environments building, deck
 
 - [ ] **Performance model (Step 2):** calibrated logistic regression + Platt; features = per-topic mastery (from mastery query), imported/firewalled difficulty, timing, coverage. Evaluate by Brier + reliability + ECE on a leakage-audited split.
 - [ ] **Readiness model (Step 3):** raw-correct → ETS percentile anchors → 200–990, conformal interval headline + Bayesian cross-check; build the evidence panel + "no track record yet"; start the prospective calibration log.
+- [ ] **MCQ study surface (PRD §8a):** new MCQ note type + card template (captures the selected option, grades into the same Again/Hard/Good/Easy path). Behaves like a flashcard on the same FSRS review loop — a content/data-model change, **not** a second engine change — and is what the Performance model scores.
 - [ ] **Author 60 eval items** (30 cards × 2 rewordings) for the paraphrase test — original, blueprint-matched; partition into P0/P1/P2/P3.
 - [ ] **Leakage pipeline** (the one shared pipeline): exact→normalized→n-gram/Jaccard→embedding; run it; publish the residual rate.
 - [ ] **Ablation instrumentation:** wire the interleaved↔blocked toggle + plain-Anki arm; confirm the pre-registration (Appendix B) is committed/timestamped before any run.
@@ -89,7 +90,7 @@ Goal: every irreversible decision locked in writing, environments building, deck
 - [ ] **Gold-set gate (cutoff lodged BEFORE scoring):** generate 50 cards from the source; score correct/wrong/bad-pedagogy; require **fact-precision ≥0.98 & useful-yield ≥0.60** (or document the honest failure). ≥2 raters, κ + percent agreement.
 - [ ] **Beat the baseline:** vs. template/cloze + non-RAG; McNemar exact test.
 - [ ] **Phone shows all three scores** with ranges + give-up rule.
-- [ ] **Exam-pressure simulator:** timed full-length (66 items / 2h50m / on-screen countdown / no pauses), justified on speededness.
+- [ ] **Exam-pressure simulator (timed mode):** timed full-length (66 items / 2h50m / on-screen countdown / no pauses), justified on speededness. **Sequenced last and mastery-gated** — unlocks only after interleaving + the ordering algorithm ship and the student clears a per-topic mastery threshold (PRD §8a).
 - [ ] **AI-off degradation:** pull network → AI off cleanly; both apps keep working and still score.
 - [ ] **Crash test (7g):** kill each app mid-review ×20 → zero corrupted collections.
 
@@ -132,6 +133,7 @@ Goal: every irreversible decision locked in writing, environments building, deck
 - **Readiness is always a range** with the evidence panel + give-up rule. A made-up number is an automatic fail.
 - **Pin everything** (Anki release tag, dependency versions, seeded deck) so every test is re-runnable with one documented command.
 - **If iOS tempts you mid-week: don't.** Android-only is the decision.
+- **Study-surface order (PRD §8a):** basic-concept flashcards → MCQ cards → timed mode. MCQ is a note-type/template change (**not** a second engine change) that behaves like a flashcard; timed mode ships **last**, mastery-gated, only after interleaving + the ordering algorithm.
 
 ---
 

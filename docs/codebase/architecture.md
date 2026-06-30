@@ -84,6 +84,7 @@ server.*
 | Qt desktop UI | `anki/qt/` (`aqt/`), `anki/ts/` | `docs/codebase/qt.md` | `anki@25.09.4` (`d52ca66`) |
 | Android (rsdroid) | `Anki-Android/libanki/`, `Anki-Android/AnkiDroid/`, external `rsdroid` AAR | `docs/codebase/rsdroid.md` | `Anki-Android@v2.24.0` (`ebcf8e0`); backend `0.1.64-anki25.09.2` |
 | Our app additions (mastery query, dashboard, interleaving) | *(not built yet)* | planned — see PRD §5/§7/§8 | n/a |
+| Our app additions (MCQ note type, timed practice mode) | *(not built yet — content/UX above the engine)* | planned — see PRD §8a | n/a |
 | Scoring models (memory / performance / readiness) | *(not built yet — Python sidecar)* | planned — see PRD §7 | n/a |
 | Sync conflict rules | builds on `anki/rslib/src/sync/` | planned — see PRD §10 / D3 | n/a |
 | AI card pipeline | *(not built yet)* | planned — see PRD §9 | n/a |
