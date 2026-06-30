@@ -41,3 +41,9 @@ eval-bank/
 
 # NOTE: anki/ and Anki-Android/ are git submodules — their build outputs
 # (out/, node_modules, .gradle, etc.) are governed by their own repos, not here.
+
+# --- Study-deck pipeline build artifacts ---
+# The built .apkg is a regenerated artifact; the source of truth is the generator
+# + pipeline/conceptual_cards.yaml. Regenerate: python pipeline/build_deck.py --seed 42
+# (.venv/ is already ignored above under the Python sidecars section.)
+pipeline/dist/
