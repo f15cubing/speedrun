@@ -33,6 +33,9 @@ node_modules/
 secrets/
 gold-set/
 eval-bank/
+# AI gold-set held-out Q&A keys + their source PDFs (see eval/goldset/README.md).
+# Only the schema/README/canary-manifest/validator/module-doc are committed.
+eval/goldset/data/
 *.key
 *.pem
 *.token
