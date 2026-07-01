@@ -41,16 +41,23 @@ _Last updated: 2026-07-01 (Wed)._
   three separated score slots (Readiness = honest give-up state, Performance = Thursday placeholder);
   Python view-model + vendored taxonomy + standalone SvelteKit route; TDD task breakdown (docs only;
   the Qt/TS implementation is a separate fast-lane PR).
+- **PR #9** (merged) — **W2 desktop dashboard build** (fast lane, in the fork): read-only Memory score
+  as a range (Wilson CI + ETS 50/25/25 rollup, n=0 renorm) + 17-leaf coverage map (per-leaf recall
+  estimate + 95% range) consuming the W1 RPC; three separated slots (Readiness give-up state w/
+  next-best topic + reasons, Performance Thursday placeholder); pure-Python view-model + vendored
+  taxonomy (drift-guarded) + standalone SvelteKit route + read-only `greDashboardData` endpoint +
+  Tools-menu QDialog. Playtested end-to-end; fixed a stale-bundle rebuild gotcha + the webview
+  API-access allowlist (`GRE_DASHBOARD` kind). anki fork → `f15cubing/anki@ea3acae`.
 
 ## In flight
 
-- **W2 — Desktop dashboard** (memory score as a range + 17-leaf coverage map): playtested (fixed stale route bundle + webview API access); **PR #9** open on `feat/gre-dashboard` (`f15cubing/anki@ea3acae`).
+- _(nothing mid-merge)_
 
 ## Next (per execution-plan)
 
 - **Wednesday — Milestone 1 (decomposed):**
   - **W1 — Mastery Query (Rust engine change):** ✅ **shipped (PR #7).** Read RPC, never `OpChanges`.
-  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC). Spec +
-    plan shipped (PR #8); **build is next** (fast lane, in the fork).
+  - **W2 — Desktop dashboard:** ✅ **shipped (PR #9).** Memory score as a range + coverage map
+    (consumes the RPC); read-only, three separated slots. Spec + plan were PR #8.
   - **W3 — Android review:** rebuild rsdroid with our change; review the shared deck on the same engine.
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
