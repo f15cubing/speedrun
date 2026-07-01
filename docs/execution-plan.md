@@ -59,7 +59,7 @@ Goal: every irreversible decision locked in writing, environments building, deck
 - [ ] Desktop installer runs on a clean machine (record it).
 
 **Android:**
-- [~] Loads the exam deck; runs a real review session on the shared engine. (Two-way sync NOT required today — same-deck review is.) — **W3 in review:** APK built on our local backend, `librsdroid.so` loads + DeckPicker launches on an arm64 emulator; the real review-session evidence (study cards + Check Database no-corruption smoke) is the remaining manual gate the reviewing agent signs off.
+- [x] Loads the exam deck; runs a real review session on the shared engine. (Two-way sync NOT required today — same-deck review is.) — **W3 done (PR #12 + on-device gate):** APK built on our local backend, `librsdroid.so` loads; a real FSRS review session runs on the seeded GRE deck (FSRS intervals + `topic::*` leaf tags), the session persists across a force-stop/reopen, and Check Database reports "Database rebuilt and optimized" (no corruption). Evidence: `docs/evidence/w3-android/`.
 
 **Sync foundation:**
 - [ ] Conflict rule documented (PRD D3). Stand up `anki-sync-server` (pinned tag). Manual sync smoke test.
