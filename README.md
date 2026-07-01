@@ -42,24 +42,105 @@ speedrun/
 
 ## Getting started
 
+Clone with submodules (or run the second line in an existing clone):
+
 ```bash
-# Clone with submodules (or run the second line in an existing clone):
 git clone --recurse-submodules https://github.com/f15cubing/speedrun.git
-git submodule update --init --recursive
+cd speedrun
+git submodule update --init --recursive   # populates anki/, Anki-Android/, Anki-Android-Backend/ + nested anki/
 ```
 
-Build instructions live with each app: desktop in `anki/README.md` / `anki/docs/`, Android in
-`Anki-Android/docs/`. Start with `docs/execution-plan.md` for the day-by-day build order (the Day-1
-priority is getting both builds green before any features).
+> The `--recursive` flag matters: `Anki-Android-Backend/` (rsdroid) vendors its own `anki/`, and the
+> Android build needs it.
 
-### Local setup (machine-specific)
+## Run the desktop app (Anki / Qt)
 
-Android tooling paths are kept out of git. Copy the example and edit it for your machine:
+The desktop app builds and runs in place from the `anki/` submodule.
+
+**One-time setup (macOS):**
 
 ```bash
-cp .androidenv.example .androidenv   # then edit JAVA_HOME / ANDROID_HOME
-source .androidenv
+# Rust toolchain (auto-pinned by anki/rust-toolchain.toml on first build)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Build tools + audio codecs; also open Xcode once for Command Line Tools
+brew install ninja mpv lame
+cd anki && ./tools/install-n2 && cd ..
 ```
+
+**Build + run:**
+
+```bash
+cd anki
+./run          # first run is slow: it downloads + builds all deps, then launches the app
+```
+
+Useful variants (all from `anki/`): `./tools/runopt` (optimized build), `./ninja check` (all
+tests/checks), `./ninja format` (auto-format). Note: the checkout path must not contain spaces.
+
+## Run the mobile app (AnkiDroid, in an emulator)
+
+The Android app runs the **same** Rust engine through the locally-built `rsdroid` backend, so you
+build the backend first, then the APK, then install it on a running emulator.
+
+**One-time setup:**
+
+1. Install **JDK 21** and the **Android SDK** (Android Studio is the easy path; it also provides the
+   emulator + an NDK). Then copy the env template and point it at your machine, and `source` it in
+   every shell you build from:
+
+   ```bash
+   cp .androidenv.example .androidenv   # then edit JAVA_HOME / ANDROID_HOME
+   source .androidenv
+   ```
+
+2. Add the Rust Android target and set the NDK path (the backend build needs both):
+
+   ```bash
+   rustup target add aarch64-linux-android
+   export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/29.0.14206865"   # match your installed NDK version
+   ```
+
+3. Tell AnkiDroid to use the locally-built backend — add this line to
+   `Anki-Android/local.properties` (gitignored; create the file if absent):
+
+   ```properties
+   local_backend=true
+   ```
+
+**Start an emulator** (arm64 image; create one in Android Studio's Device Manager if you have none):
+
+```bash
+emulator -list-avds                 # find your AVD name
+emulator -avd <your_avd_name> &     # boot it (leave running)
+adb devices                         # confirm it shows up before installing
+```
+
+**Build the backend + APK, then install (run from the repo root, with `.androidenv` sourced):**
+
+```bash
+# 1) Build rsdroid bundling our engine (arm64-v8a emulator ABI + host .jar)
+cd Anki-Android-Backend && ./build.sh && cd ..     # logs "Anki commit: ea3acae…"
+
+# 2) Build + install the AnkiDroid debug APK onto the running emulator
+cd Anki-Android && ./gradlew installFullDebug && cd ..
+```
+
+Then open **AnkiDroid** in the emulator. (`./gradlew assembleFullDebug` just builds the APK at
+`Anki-Android/AnkiDroid/build/outputs/apk/full/debug/AnkiDroid-full-arm64-v8a-debug.apk` without
+installing.) Full backend/build details: `docs/codebase/rsdroid.md`.
+
+## Sync between desktop and mobile (optional)
+
+To sync the two apps against a self-hosted server on our engine:
+
+```bash
+make sync-server     # foreground; Ctrl-C to stop. Point both apps at http://<host>:8080/
+```
+
+More per-app build/test commands live in the `building-and-testing` skill
+(`.cursor/skills/building-and-testing/SKILL.md`). Start with `docs/execution-plan.md` for the
+day-by-day build order.
 
 ## Where to read next
 
@@ -74,14 +155,9 @@ source .androidenv
 ## The rsdroid backend (Android)
 
 The Android backend (`rsdroid` / `Anki-Android-Backend`) is wired as a recursive submodule of our fork
-and **built locally** so its bundled `rslib` carries our engine change (W3). It vendors `anki` itself,
-so always init recursively:
+and **built locally** (step 1 of "Run the mobile app" above) so its bundled `rslib` carries our engine
+change. AnkiDroid consumes that local build via `local_backend=true` in
+`Anki-Android/local.properties` (gitignored). Full recipe + design notes: `docs/codebase/rsdroid.md`.
 
-```bash
-git submodule update --init --recursive   # populates Anki-Android-Backend/ + its nested anki/
-```
-
-Build + run recipe: `docs/codebase/rsdroid.md` (§ Building rsdroid from source). AnkiDroid consumes the
-local build via `local_backend=true` in `Anki-Android/local.properties` (gitignored).
-
-> Status: **Day 1 (setup)** — work in progress toward the Sunday deadline. AGPL-3.0-or-later.
+> Status: **Milestone 1 (W1–W4) complete** — see `docs/STATUS.md` for the live progress snapshot.
+> AGPL-3.0-or-later.
