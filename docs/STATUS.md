@@ -30,14 +30,20 @@ _Last updated: 2026-06-30 (Tue)._
 
 ## In flight
 
-- _(nothing mid-merge)_
+- **W1 — Mastery Query (Rust engine change):** implemented on outer branch
+  `agent/rslib-mastery-query` (anki fork `f15cubing/anki@engine/mastery-query`, `3f5b2b2`); **PR open,
+  awaiting the different-agent extra gate** (engine lane — never self-merge). Read-only
+  `StatsService.MasteryQuery` RPC (per-topic FSRS mastery aggregate) + pylib `Collection.mastery_query`
+  + 3 Rust unit tests (empty/zero · aggregation+hierarchy · read-only-invariant) + Python integration
+  test + `#[ignore]`d 50k perf bench (p50 ~19 ms, < 50 ms target) + rsdroid **codegen** reachability
+  (RPC in proto descriptor + generated `backend.rs`/`_backend_generated.py`/`backend.ts`; live AAR
+  rebuild deferred to W3). On merge, the reviewer moves this to **Done** with the PR number.
 
 ## Next (per execution-plan)
 
 - **Wednesday — Milestone 1 (decomposed):**
-  - **W1 — Mastery Query (Rust engine change):** specced + planned; **engine-lane implementation is the
-    immediate next step** — branch `agent/rslib-mastery-query`, subagent-driven, different-agent extra
-    gate. Read RPC, never `OpChanges`.
+  - **W1 — Mastery Query (Rust engine change):** **implemented; in review** (see "In flight"). Read
+    RPC, never `OpChanges`.
   - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC).
   - **W3 — Android review:** rebuild rsdroid with our change; review the shared deck on the same engine.
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.

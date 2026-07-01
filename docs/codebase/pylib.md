@@ -63,6 +63,11 @@ collection.py  Collection.remove_cards_and_orphaned_notes(ids)
 
 ## Adding a binding (e.g. Mastery Query)
 
+> **Status:** `Collection.mastery_query(topics: Sequence[str])` is **implemented** in
+> `anki/pylib/anki/collection.py` (W1). Note the codegen **unwraps the single-field
+> `MasteryResponse`**, so the binding returns `Sequence[stats_pb2.TopicMastery]` directly (not a
+> `MasteryResponse` with a `.topics` field). Tests: `anki/pylib/tests/test_mastery.py`.
+
 After the proto + Rust impl exist (`proto-rpc.md`, `rslib.md`):
 
 1. Rebuild so `_backend_generated.py` gains `mastery_query()` / `mastery_query_raw()`.
@@ -104,4 +109,4 @@ After the proto + Rust impl exist (`proto-rpc.md`, `rslib.md`):
   the mastery call in between.
 
 ---
-Last verified against: `anki@25.09.4` (`d52ca66`)
+Last verified against: `f15cubing/anki@3f5b2b2` (25.09.4 `d52ca66` + Mastery Query)
