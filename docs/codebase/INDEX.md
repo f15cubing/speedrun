@@ -13,6 +13,7 @@
 | Python bindings / FFI | `docs/codebase/pylib.md` | `anki/pylib/` (`rsbridge/`, `anki/_backend.py`, `anki/collection.py`) | `anki@25.09.4` (`d52ca66`) |
 | Qt desktop UI | `docs/codebase/qt.md` | `anki/qt/` (`aqt/`), `anki/ts/` | `anki@25.09.4` (`d52ca66`) |
 | Android (rsdroid) | `docs/codebase/rsdroid.md` | `Anki-Android/libanki/`, `Anki-Android/AnkiDroid/`, external `rsdroid` AAR | `Anki-Android@v2.24.0` (`ebcf8e0`); backend `0.1.64-anki25.09.2` |
+| Our app additions — Mastery Query (read-only RPC, W1) | `docs/codebase/rslib.md` (§ Mastery Query) | `anki/proto/anki/stats.proto`, `anki/rslib/src/stats/mastery.rs`, `anki/rslib/src/storage/card/mod.rs`, `anki/rslib/src/stats/service.rs`, `anki/pylib/anki/collection.py` | `f15cubing/anki@352135e` |
 | AI gold-set (eval) | `eval/goldset/goldset.md` | `eval/goldset/` | `6941192` |
 | Study-deck + tagging pipeline | `pipeline/pipeline.md` | `pipeline/` | `6941192` |
 
@@ -23,7 +24,6 @@ the PR that first builds each of these.
 
 | Area | Will live in | Design reference |
 |---|---|---|
-| Our app additions — Mastery Query Rust change | `anki/proto/anki/stats.proto`, `anki/rslib/src/stats/service.rs`, `anki/rslib/src/storage/card/` | PRD §5; `rslib.md` + `proto-rpc.md` insertion-point sections |
 | Our app additions — 3-score dashboard + coverage map + interleaving toggle | `anki/ts/routes/`, `anki/qt/aqt/` | PRD §7/§8; `qt.md` "dashboard attachment" section |
 | Our app additions — MCQ study surface (Performance) | new note type + card template (collection data model); review templates in `anki/ts/`, `anki/qt/aqt/` | PRD §8a/§12 — content/data-model change, **not** a second engine change; reviews via the same FSRS loop |
 | Our app additions — timed practice mode (exam-pressure simulator, mastery-gated) | `anki/ts/routes/`, `anki/qt/aqt/` | PRD §8/§8a — sequenced last, after interleaving + ordering algorithm |
@@ -33,4 +33,4 @@ the PR that first builds each of these.
 
 ---
 
-Last verified against: `anki@25.09.4` (`d52ca66`), `Anki-Android@v2.24.0` (`ebcf8e0`)
+Last verified against: `f15cubing/anki@352135e` (25.09.4 `d52ca66` + Mastery Query), `Anki-Android@v2.24.0` (`ebcf8e0`)

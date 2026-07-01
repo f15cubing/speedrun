@@ -30,6 +30,12 @@ _Last updated: 2026-06-30 (Tue)._
 - **PR #6** (merged) — Round-4 testing-UI research thread (SQ15: authentic exam-shell UI
   design/ablation/decision) added to `research/` + folded into SYNTHESIS/frame/sources. Verdict:
   COMPLEMENT (opt-in "Exam Mode" gating Readiness only); does not consume interleaving's ablation slot.
+- **PR #7** (merged) — **W1 Mastery Query engine change** (the real Rust engine change, D1):
+  read-only `StatsService.MasteryQuery` RPC + pylib `Collection.mastery_query` + 3 Rust unit tests
+  (empty/zero · aggregation+hierarchy · read-only invariant asserting undo step + study-queue counts +
+  `quick_check_corrupt`) + Python integration test + `#[ignore]`d 50k perf bench (p50 ~19 ms) +
+  rsdroid codegen reachability. anki fork bumped to `f15cubing/anki@352135e`; `.gitmodules` repointed
+  to the fork. Engine extra gate passed (different-agent review). Live Android AAR rebuild + review is W3.
 
 ## In flight
 
@@ -38,10 +44,7 @@ _Last updated: 2026-06-30 (Tue)._
 ## Next (per execution-plan)
 
 - **Wednesday — Milestone 1 (decomposed):**
-  - **W1 — Mastery Query (Rust engine change):** specced + planned; **engine-lane implementation is the
-    immediate next step** — branch `agent/rslib-mastery-query`, subagent-driven, different-agent extra
-    gate. Read RPC, never `OpChanges`.
-  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC).
+  - **W1 — Mastery Query (Rust engine change):** ✅ **shipped (PR #7).** Read RPC, never `OpChanges`.
+  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC) — **next.**
   - **W3 — Android review:** rebuild rsdroid with our change; review the shared deck on the same engine.
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
-  - **This is the critical path — front-load W1.**

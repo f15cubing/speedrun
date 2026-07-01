@@ -1,10 +1,11 @@
 # Anki forks are tracked as git submodules pinned to a tagged release commit.
 # See docs/codebase/architecture.md and README.md.
 #
-# NOW: these point at UPSTREAM (read-only) pinned at the release we verified
-# against. When we begin the engine change (PRD §5, mastery query) we will fork
-# ankitects/anki under f15cubing and repoint `anki` at that fork so our Rust
-# change is pushable. AnkiDroid is forked similarly when we modify it.
+# `anki` points at our fork (f15cubing/anki) so the engine change (PRD §5,
+# mastery query) is pushable; it stays pinned at the upstream release commit we
+# verified against (25.09.x, d52ca66) and only advances by intentional bumps.
+# `Anki-Android` still points at UPSTREAM (read-only); fork it the same way when
+# we begin modifying it.
 #
 # LATER (rsdroid): add ankidroid/Anki-Android-Backend the same way:
 #   git submodule add https://github.com/ankidroid/Anki-Android-Backend.git Anki-Android-Backend
@@ -12,7 +13,7 @@
 
 [submodule "anki"]
 	path = anki
-	url = https://github.com/ankitects/anki.git
+	url = https://github.com/f15cubing/anki.git
 	ignore = dirty
 
 [submodule "Anki-Android"]

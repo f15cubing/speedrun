@@ -74,6 +74,11 @@ always go through the generated client wrappers.
 
 ## Adding an RPC (e.g. the Mastery Query)
 
+> **Status:** `rpc MasteryQuery(MasteryRequest) returns (MasteryResponse)` is **implemented** on
+> `StatsService` (W1). `BackendStatsService {}` stays empty, so it auto-delegates to `Collection`
+> (generated dispatch in `OUT_DIR/backend.rs`; also generated into `_backend_generated.py` and
+> `backend.ts`, and present in the proto descriptor). The steps below are the general recipe.
+
 1. Edit `anki/proto/anki/stats.proto`: add `MasteryRequest`/`MasteryResponse`/`TopicMastery`
    messages and `rpc MasteryQuery(MasteryRequest) returns (MasteryResponse);` to `StatsService`
    (leave `BackendStatsService {}` empty → auto-delegates).
@@ -112,4 +117,4 @@ always go through the generated client wrappers.
   (`anki/pylib/tests/`, see `pylib.md`); there is no separate "proto" test suite.
 
 ---
-Last verified against: `anki@25.09.4` (`d52ca66`)
+Last verified against: `f15cubing/anki@352135e` (25.09.4 `d52ca66` + Mastery Query)
