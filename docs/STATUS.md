@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-01 (Wed)._
+_Last updated: 2026-07-01 (Wed) — W4 sync foundation._
 
 ## Done
 
@@ -68,10 +68,20 @@ _Last updated: 2026-07-01 (Wed)._
   review session on the `anki_test` emulator (our `librsdroid.so` + seeded GRE deck; FSRS intervals +
   `topic::*` leaf tags visible), session persists across a force-stop/reopen, and **Check Database →
   "Database rebuilt and optimized"** (no corruption). Screenshots in `docs/evidence/w3-android/`.
+- **W4 — Sync foundation** (fast lane) — self-hosted `anki-sync-server` on our engine
+  (`f15cubing/anki@ea3acae`) via a one-command launcher (`make sync-server`) + headless round-trip
+  regression (`make sync-smoke`: a reviewed `topic::*` note + revlog + scheduling cross A→server→B,
+  `quick_check=ok`) + a **live cross-device round-trip** — real AnkiDroid emulator ↔ our server ↔ a
+  headless desktop peer (same engine): full upload → full download (structural-divergence forced
+  full sync, D3) → FSRS review on the phone → normal sync back; desktop pull confirmed `revlog` 1→2
+  with `quick_check=ok`, and AnkiDroid **Check database → "Database rebuilt and optimized."** Conflict
+  rule (revlog union · scheduling LWW · device-UUID tie-break deferred · structural divergence →
+  forced full sync) documented in `docs/codebase/sync.md`; evidence in `docs/evidence/w4-sync/`. No
+  engine/submodule changes. 7b (10+10 no-loss + same-card conflict) and 7g (crash/offline) are Thursday.
 
 ## In flight
 
-- _Nothing in flight — Milestone 1 (W1–W3) complete; next is W4 (sync foundation)._
+- _Nothing in flight — Milestone 1 (W1–W4) complete; next is Thursday (7b full two-way proof + 7g crash/offline)._
 
 ## Next (per execution-plan)
 
@@ -83,4 +93,6 @@ _Last updated: 2026-07-01 (Wed)._
     change + APK on the local backend + `masteryQuery` binding proven (host-JVM test) +
     `librsdroid.so`-loads smoke; the hands-on-device FSRS review-session + Check-Database no-corruption
     evidence is now captured (`docs/evidence/w3-android/`).
-  - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
+  - **W4 — Sync foundation:** ✅ **shipped.** Self-hosted `anki-sync-server` on our engine +
+    `make sync-server`/`make sync-smoke` + live AnkiDroid↔desktop-peer round-trip (Check-DB clean);
+    conflict rule documented (`docs/codebase/sync.md`). 7b/7g deferred to Thursday.
