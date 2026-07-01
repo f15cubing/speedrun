@@ -106,4 +106,4 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@b15a71e` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard)
+Last verified against: `f15cubing/anki@d8408db` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard)

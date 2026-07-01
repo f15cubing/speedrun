@@ -44,7 +44,7 @@ _Last updated: 2026-07-01 (Wed)._
 
 ## In flight
 
-- **W2 — Desktop dashboard** (memory score as a range + 17-leaf coverage map): build complete on `feat/gre-dashboard` (`f15cubing/anki@b4d81a6`), PR pending.
+- **W2 — Desktop dashboard** (memory score as a range + 17-leaf coverage map): build complete on `feat/gre-dashboard` (`f15cubing/anki@d8408db`), PR pending.
 
 ## Next (per execution-plan)
 
