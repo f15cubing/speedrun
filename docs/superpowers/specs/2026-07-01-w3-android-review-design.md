@@ -37,14 +37,17 @@
   `ankidroid/Anki-Android` → `f15cubing/Anki-Android`; add both as outer git submodules; repoint
   rsdroid's **nested** `anki` submodule to `f15cubing/anki@ea3acae`. `git clone --recursive` then
   reproduces the whole graph. (Mirrors how we forked `anki` for W1.)
-- **Emulator ABI only this round.** Cross-compiling `rslib` is the slow part and each ABI multiplies
-  build time. Build the single ABI the emulator uses (`arm64-v8a` on Apple Silicon; `x86_64` on Intel)
-  to clear Wednesday's gate. The all-ABI signed release APK (physical phones) is **deferred to Sunday
-  packaging** (Day 6).
-- **Add a read-only Kotlin `Collection.masteryQuery(...)` binding + prove reachability on-device.** The
-  W1 spec explicitly hands the Kotlin wrapper + review session to W3. Reachability is proven against the
-  **emulator AAR** (real JNI), preferring an instrumented (`androidTest`) test and falling back to a
-  documented manual on-emulator smoke if the instrumented harness is too heavy for the day (see §4).
+- **Current-platform build only (this is rsdroid's default).** rsdroid's `./build.sh` compiles `rslib`
+  for the **current platform only** — the emulator ABI (`arm64-v8a` on Apple Silicon; `x86_64` on Intel)
+  plus a **host `.jar` for Robolectric** — so we need no ABI configuration; we just run the default
+  build. All-ABI cross-compiles happen only in rsdroid's CI release workflow; the all-ABI signed release
+  APK (physical phones) is **deferred to Sunday packaging** (Day 6).
+- **Add a read-only Kotlin `Collection.masteryQuery(...)` binding + prove reachability (two layers).** The
+  W1 spec explicitly hands the Kotlin wrapper + review session to W3. Proof is two complementary layers
+  (see §4): a fast **Robolectric JVM test** against the host `.jar` `build.sh` produces (proves the
+  binding + our compiled `rslib` logic), **plus** a light **on-emulator smoke** calling `masteryQuery` on
+  the running emulator (the definitive "crosses JNI on Android" proof). An instrumented `androidTest` is
+  an optional automated upgrade of that on-emulator smoke.
 - **Do not re-test the engine per platform.** Undo / no-corruption / read-only invariants were proven in
   W1 against this exact `rslib`; Android runs the identical compiled engine. W3 adds only a light
   **on-device no-corruption smoke** (review → close → reopen → `quick_check` ok), not a second full
@@ -106,7 +109,7 @@ Three isolated concerns: **backend build** (rsdroid AAR), **binding** (`libanki`
 | Android fork | `f15cubing/Anki-Android` *(new fork)* | repoint outer `Anki-Android` submodule url from upstream → our fork; pin |
 | Backend wiring | `Anki-Android/local.properties` | `local_backend=true` → file-deps to the locally built rsdroid AAR (overrides the published `0.1.64-anki25.09.2`) |
 | Kotlin binding | `Anki-Android/libanki/.../Collection.kt` (+ a small `stats/` extension) | `Collection.masteryQuery(topics): List<TopicMastery>`, following `stats/BackendStats.kt` (`backend.graphsRaw`/`cardStatsRaw`); read-only |
-| Reachability test | `Anki-Android/AnkiDroid/src/androidTest/.../` *(preferred)* **or** documented manual smoke | instrumented test on the emulator: open collection, tag cards, assert `masteryQuery` rows sane (§4) |
+| Reachability test | `Anki-Android/libanki/src/test/.../stats/MasteryQueryTest.kt` *(new)* + on-emulator smoke | Robolectric JVM test (host `.jar`) asserting `col.masteryQuery` rows/rollup; plus a light on-emulator `masteryQuery` smoke (§4) |
 | Docs | `docs/codebase/rsdroid.md`, `INDEX.md`, `architecture.md`, `README.md` (pinned versions), `STATUS.md`, `execution-plan.md` | record the rebuilt-backend + fork SHAs; move Android row to Built; check Wednesday's Android box |
 
 **No changes to `anki/` (rslib/pylib/qt) in W3** — the engine is done. W3 is Android-side wiring + a
@@ -122,11 +125,16 @@ backend rebuild only.
 2. **Fork rsdroid** → `f15cubing/Anki-Android-Backend`; pick the base commit whose vendored `anki` is
    closest to `25.09.x`; recursively init; **repoint its nested `anki`** to `f15cubing/anki@ea3acae`;
    rebuild.
-3. **Build the AAR, emulator ABI only** (`cargo-ndk` + the rsdroid gradle assemble task) →
-   `rsdroid-*.aar` bundling **our** `librsdroid.so`.
+3. **Build via rsdroid's `./build.sh`** (default = current platform → emulator `.aar` + host `.jar`); it
+   installs `cargo-ndk` and drives `./gradlew assembleRelease`. Repoint the nested `anki` to our fork
+   using rsdroid's own "test a specific anki version" recipe (`cd anki && git fetch <ours> && git
+   checkout ea3acae --recurse-submodules`, then `./build.sh`, then `cargo check` to refresh `Cargo.lock`;
+   confirm `rust-toolchain.toml` matches our anki). Bump `gradle.properties` `VERSION_NAME`
+   (→ `<backend>-anki25.09.4`), bundling **our** `librsdroid.so`.
 4. **Fork AnkiDroid** → `f15cubing/Anki-Android`; repoint the outer `Anki-Android` submodule url to it;
-   set `local_backend=true` in `local.properties` so AnkiDroid links our AAR (resolving the
-   `25.09.2`→`25.09.4` skew).
+   set `local_backend=true` in `local.properties`; make `build.gradle`'s `ext.ankidroid_backend_version`
+   equal rsdroid's `VERSION_NAME` (rsdroid **requires** the two match) so AnkiDroid links our local
+   backend (resolving the `25.09.2`→`25.09.4` skew).
 5. `source .androidenv` → `./gradlew assembleFullDebug` → install on the running emulator.
 
 All commands are captured in `docs/codebase/rsdroid.md` (build recipe) as they're verified, per the
@@ -139,21 +147,23 @@ modeled on `stats/BackendStats.kt` (the doc-blessed template for a new read RPC 
 typed generated `backend.masteryQuery(...)` (name mirrors the desktop RPC) and marshals the `anki.*`
 protobuf response. **Read-only:** no `undoableOp { }`; reached via `CollectionManager.withCol { }`.
 
-**Reachability proof (the honest-form nuance).** A pure **JVM/Robolectric** test loads a *host* rsdroid
-native lib via `RustBackendLoader` — which we are **not** building this round (emulator ABI only). Such a
-test would run against the stock host engine and could not see `masteryQuery`, so it would **not** prove
-our change reached Android. Therefore the proof runs against the **emulator AAR** (real JNI, our
-`librsdroid.so`), in this preference order:
+**Reachability proof (two complementary layers).** `./build.sh` produces **both** the emulator `.aar`
+*and* a host `.jar` (for Robolectric) from our fork, so we prove reachability at two levels:
 
-1. **Preferred — instrumented `androidTest`:** on the emulator, open a collection, ensure a few
-   `topic::*`-tagged reviewed cards exist, call `masteryQuery`, assert the rows are well-formed
-   (`reviewed_count`/`mastered_count` within bounds, hierarchical topic returns rolled-up counts).
-2. **Fallback — documented manual on-emulator smoke:** invoke `masteryQuery` once from a debug entry
-   point (or the review flow), log/screenshot a sane result. Used only if the instrumented harness setup
-   exceeds the day's budget; recorded as the proof with the exact steps.
+1. **Automated — Robolectric JVM test (host `.jar`).** In `libanki/src/test`, extend `InMemoryAnkiTest`
+   (which loads the host lib via `RustBackendLoader`), add a couple of `topic::*`-tagged cards, call
+   `col.masteryQuery(...)`, and assert the rows are well-formed (`totalCards` counts matching cards; a
+   hierarchical parent tag returns rolled-up counts ≥ its leaf). Because the host `.jar` is built from
+   our fork, this exercises **our** `rslib` + the generated `backend.masteryQuery` + the Kotlin wrapper —
+   fast, deterministic, and the natural AnkiDroid test pattern. Its one limit: it runs on the desktop JVM,
+   not on Android.
+2. **On-device — emulator smoke (the `.aar`, real JNI).** On the running emulator, invoke `masteryQuery`
+   once (debug entry point or logged during the review flow) and record a sane result. This is the
+   definitive proof our change **crosses JNI on Android**. An instrumented `androidTest` asserting the
+   same is an optional automated upgrade if the harness cooperates within budget.
 
-Either way the assertion is: *the mastery RPC executes across JNI on Android and returns our engine's
-numbers.*
+Together: layer 1 proves the logic + binding against our compiled engine; layer 2 proves it actually
+executes on Android. The assertion in both: *`masteryQuery` returns our engine's numbers.*
 
 ## 5. Review-session gate + engine-safety
 
@@ -191,8 +201,12 @@ runtime. Consequences per `shipping-changes`:
 - **Version skew (`25.09.2` vs `25.09.4`).** *Mitigation:* repoint rsdroid's nested `anki` to our fork +
   choose the rsdroid base commit closest to `25.09.x`; if the rsdroid build scripts assume a different
   anki layout, pin to the rsdroid tag matching our anki minor.
-- **Emulator ABI vs host tests.** The emulator-only AAR can't back a host JVM test (§4) — resolved by
-  proving reachability with an instrumented/manual on-emulator check instead.
+- **Two proof layers, one build.** `./build.sh` emits both the emulator `.aar` and the host `.jar`, so
+  the Robolectric test (host) and the on-emulator smoke (Android) both come from a single default build —
+  no extra ABI cross-compiles needed (§4).
+- **`BACKEND_VERSION` mismatch.** rsdroid requires `gradle.properties` `VERSION_NAME` to equal AnkiDroid
+  `build.gradle` `ext.ankidroid_backend_version`; a mismatch fails the local-backend wiring. Set both to
+  the same `<backend>-anki25.09.4` value in the same change.
 - **Two-level submodule friction.** rsdroid vendors `anki` as its own submodule; always
   `git submodule update --init --recursive`. Documented in `working-with-submodules`.
 - **Emulator image.** arm64 system image on Apple Silicon; confirm the emulator boots our
@@ -200,9 +214,11 @@ runtime. Consequences per `shipping-changes`:
 
 ## 8. Tests (spec-required)
 
-- **Reachability (on-device, real AAR):** instrumented `androidTest` asserting `masteryQuery` returns
-  sane rows across JNI — or the documented manual on-emulator smoke (§4). Must run against our rebuilt
-  AAR, never the published backend.
+- **Reachability — Robolectric (host `.jar`):** a `libanki` JVM test asserting `col.masteryQuery(...)`
+  returns well-formed rows (leaf `totalCards` + hierarchical rollup) against our compiled `rslib` (§4).
+- **Reachability — on-emulator smoke (`.aar`, real JNI):** call `masteryQuery` once on the emulator and
+  record a sane result (optional instrumented `androidTest` upgrade). Both must run against our rebuilt
+  backend, never the published one.
 - **Read-only assertion (Kotlin):** a unit/instrumented check (or code-review confirmation in the PR) that
   the wrapper does not go through `undoableOp { }` and the response carries no `OpChanges`.
 - **On-device no-corruption smoke:** review session → close/reopen → `quick_check` OK.
@@ -215,8 +231,9 @@ runtime. Consequences per `shipping-changes`:
   `local_backend=true` (not the published `0.1.64-anki25.09.2`).
 - AnkiDroid **runs a real FSRS review session on the shared GRE deck on the emulator**; collection reopens
   cleanly + `quick_check` OK.
-- `Collection.masteryQuery(...)` exists in `libanki` (read-only) and is **proven reachable on-device**
-  against the rebuilt AAR (instrumented test or documented manual smoke).
+- `Collection.masteryQuery(...)` exists in `libanki` (read-only) and is **proven reachable**: a green
+  Robolectric test against our host `.jar` **and** an on-emulator `masteryQuery` smoke against the rebuilt
+  `.aar` (never the published backend).
 - Both new forks pushed; `Anki-Android-Backend` added as a recursive submodule and `Anki-Android`
   repointed to our fork; all pins recorded.
 - `rsdroid.md` / `INDEX.md` / `architecture.md` / `README.md` (pinned versions) / `STATUS.md` /
