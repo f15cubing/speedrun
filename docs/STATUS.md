@@ -36,6 +36,11 @@ _Last updated: 2026-06-30 (Tue)._
   `quick_check_corrupt`) + Python integration test + `#[ignore]`d 50k perf bench (p50 ~19 ms) +
   rsdroid codegen reachability. anki fork bumped to `f15cubing/anki@352135e`; `.gitmodules` repointed
   to the fork. Engine extra gate passed (different-agent review). Live Android AAR rebuild + review is W3.
+- **PR #8** (merged) — **W2 desktop dashboard** design spec + implementation plan: read-only Memory
+  score as a range (Wilson CI + ETS 50/25/25 rollup) + 17-leaf coverage map consuming the W1 RPC;
+  three separated score slots (Readiness = honest give-up state, Performance = Thursday placeholder);
+  Python view-model + vendored taxonomy + standalone SvelteKit route; TDD task breakdown (docs only;
+  the Qt/TS implementation is a separate fast-lane PR).
 
 ## In flight
 
@@ -45,6 +50,7 @@ _Last updated: 2026-06-30 (Tue)._
 
 - **Wednesday — Milestone 1 (decomposed):**
   - **W1 — Mastery Query (Rust engine change):** ✅ **shipped (PR #7).** Read RPC, never `OpChanges`.
-  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC) — **next.**
+  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC). Spec +
+    plan shipped (PR #8); **build is next** (fast lane, in the fork).
   - **W3 — Android review:** rebuild rsdroid with our change; review the shared deck on the same engine.
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
