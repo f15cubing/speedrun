@@ -57,18 +57,21 @@ _Last updated: 2026-07-01 (Wed)._
   real review session on an emulator + a read-only Kotlin `Collection.masteryQuery` binding proven by a
   Robolectric test (host `.jar`) + an on-emulator smoke; both Android repos tracked as recursive
   submodules; engine-lane w/ different-agent review. Docs only; the Android build is a separate PR.
+- **PR #12** (merged) — **W3 Android review build** (engine lane): rebuilt `rsdroid` from source (our
+  fork) so its bundled `rslib` carries the W1 mastery query; wired AnkiDroid via `local_backend=true`;
+  added a read-only Kotlin `Collection.masteryQuery` binding proven by a host-JVM test against the real
+  compiled `rslib` (`MasteryQueryTest`, green); on-emulator smoke shows `librsdroid.so` loads + the
+  DeckPicker launches. Forks (recursive submodules): `f15cubing/Anki-Android@67364a7`,
+  `f15cubing/Anki-Android-Backend@3dc30c2` (bundles `f15cubing/anki@ea3acae`). Different-agent review
+  passed (read-only + no-`OpChanges` ceilings hold; no new engine code). **⚠️ Deferred Milestone-1
+  follow-up (not yet captured):** the manual on-device review-session evidence — study a real FSRS
+  session on the emulator + Settings ▸ Advanced ▸ Check Database no-corruption smoke.
 
 ## In flight
 
-- **W3 — Android review build** (engine lane): spec + plan shipped (PR #11). **Build + binding done,
-  engine-lane PR open for different-agent review.** Forked rsdroid + AnkiDroid as recursive submodules;
-  rebuilt the backend from source bundling `f15cubing/anki@ea3acae` (arm64-v8a `librsdroid.so`);
-  `local_backend=true` wires AnkiDroid to it; `assembleFullDebug` green; on-emulator smoke shows
-  `librsdroid.so` loads + DeckPicker launches. Read-only `Collection.masteryQuery` binding added, proven
-  by a host-JVM test against the real compiled `rslib` (`MasteryQueryTest`, green). Forks:
-  `f15cubing/Anki-Android@67364a7`, `f15cubing/Anki-Android-Backend@3dc30c2`. **Remaining before merge:**
-  the manual Milestone-1 review-session evidence (study cards on the emulator + Settings ▸ Check
-  Database no-corruption smoke), verified by the reviewing agent.
+- **W3 Milestone-1 evidence (follow-up to merged PR #12):** capture the on-emulator review-session
+  screenshot + the Check-Database no-corruption smoke and attach them. The build, binding, host-JVM
+  proof, and `librsdroid.so`-loads smoke already merged; this is the remaining hands-on-device proof.
 
 ## Next (per execution-plan)
 
@@ -76,7 +79,7 @@ _Last updated: 2026-07-01 (Wed)._
   - **W1 — Mastery Query (Rust engine change):** ✅ **shipped (PR #7).** Read RPC, never `OpChanges`.
   - **W2 — Desktop dashboard:** ✅ **shipped (PR #9).** Memory score as a range + coverage map
     (consumes the RPC); read-only, three separated slots. Spec + plan were PR #8.
-  - **W3 — Android review:** spec + plan shipped (PR #11); **backend rebuilt with our change + APK on
-    the local backend + `masteryQuery` binding proven (host-JVM test).** Engine-lane PR open for
-    different-agent review; the manual on-emulator review-session gate is the last item before merge.
+  - **W3 — Android review:** ✅ **build shipped (PR #12).** rsdroid rebuilt with our change + APK on the
+    local backend + `masteryQuery` binding proven (host-JVM test) + `librsdroid.so`-loads smoke.
+    Deferred: the hands-on-device review-session + Check-Database evidence (follow-up above).
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
