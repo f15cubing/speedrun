@@ -27,24 +27,21 @@ _Last updated: 2026-06-30 (Tue)._
 - **PR #5** (merged) — Mastery Query (W1) design spec + implementation plan: read-only
   `StatsService.MasteryQuery` RPC (per-topic FSRS mastery aggregate), single-pass SQL + Rust
   aggregation, TDD task breakdown (docs only; the engine-lane implementation is separate).
+- **PR #7** (merged) — **W1 Mastery Query engine change** (the real Rust engine change, D1):
+  read-only `StatsService.MasteryQuery` RPC + pylib `Collection.mastery_query` + 3 Rust unit tests
+  (empty/zero · aggregation+hierarchy · read-only invariant asserting undo step + study-queue counts +
+  `quick_check_corrupt`) + Python integration test + `#[ignore]`d 50k perf bench (p50 ~19 ms) +
+  rsdroid codegen reachability. anki fork bumped to `f15cubing/anki@352135e`; `.gitmodules` repointed
+  to the fork. Engine extra gate passed (different-agent review). Live Android AAR rebuild + review is W3.
 
 ## In flight
 
-- **W1 — Mastery Query (Rust engine change):** implemented on outer branch
-  `agent/rslib-mastery-query` (anki fork `f15cubing/anki@engine/mastery-query`, `352135e`); **PR open,
-  awaiting the different-agent extra gate** (engine lane — never self-merge). Read-only
-  `StatsService.MasteryQuery` RPC (per-topic FSRS mastery aggregate) + pylib `Collection.mastery_query`
-  + 3 Rust unit tests (empty/zero · aggregation+hierarchy · read-only-invariant) + Python integration
-  test + `#[ignore]`d 50k perf bench (p50 ~19 ms, < 50 ms target) + rsdroid **codegen** reachability
-  (RPC in proto descriptor + generated `backend.rs`/`_backend_generated.py`/`backend.ts`; live AAR
-  rebuild deferred to W3). On merge, the reviewer moves this to **Done** with the PR number.
+- _(nothing mid-merge)_
 
 ## Next (per execution-plan)
 
 - **Wednesday — Milestone 1 (decomposed):**
-  - **W1 — Mastery Query (Rust engine change):** **implemented; in review** (see "In flight"). Read
-    RPC, never `OpChanges`.
-  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC).
+  - **W1 — Mastery Query (Rust engine change):** ✅ **shipped (PR #7).** Read RPC, never `OpChanges`.
+  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC) — **next.**
   - **W3 — Android review:** rebuild rsdroid with our change; review the shared deck on the same engine.
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
-  - **This is the critical path — front-load W1.**
