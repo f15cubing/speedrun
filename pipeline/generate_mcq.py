@@ -1,0 +1,155 @@
+"""Seeded generator for exam-format MCQ cards (computational lane).
+
+Reuses the pure problem-construction helpers from ``generate_deck`` and the
+distractor engine to emit deterministic 5-option multiple-choice items for a
+representative set of computational leaves. Each builder returns
+``(stem, correct_expr, wrong_exprs, explanation)``; the correct answer and the
+operation-specific wrong answers are all SymPy, so every option is computed (no
+hand-typed answers, no model calls). Output is byte-stable for a fixed seed.
+
+These cards drive the Performance surface (PRD §7b/§8a); they review through the
+same FSRS loop as flashcards (no engine change).
+"""
+
+from __future__ import annotations
+
+import sympy as sp
+
+import distractors
+import taxonomy
+from generate_deck import DEFAULT_SEED, _leaf_rng, _nonzero, _poly, _s, x
+
+# Cards per MCQ leaf. Two calculus + two algebra leaves keeps the merged deck's
+# calculus weight comfortably >= 50% (see coverage_report).
+MCQ_COUNTS = {
+    "differential_single": 4,
+    "integral_single": 4,
+    "linear": 4,
+    "number_theory": 4,
+}
+
+
+def _mcq_differential_single(rng):
+    f = _poly(rng, x, 2, 4)
+    correct = sp.diff(f, x)
+    wrongs = [
+        sp.integrate(f, x),              # swapped operation (integrated)
+        sp.diff(sp.diff(f, x), x),       # differentiated twice
+    ]
+    stem = "Differentiate with respect to x:\n\nf(x) = {}".format(_s(f))
+    explanation = "f'(x) = {}".format(_s(correct))
+    return stem, correct, wrongs, explanation
+
+
+def _mcq_integral_single(rng):
+    f = _poly(rng, x, 1, 3)
+    correct = sp.integrate(f, x)         # antiderivative; options omit + C
+    wrongs = [
+        sp.diff(f, x),                   # swapped operation (differentiated)
+        f,                               # forgot to integrate
+    ]
+    stem = (
+        "Evaluate the indefinite integral (give the antiderivative, omit + C):"
+        "\n\n\u222b ({}) dx".format(_s(f))
+    )
+    explanation = "F(x) = {} + C".format(_s(correct))
+    return stem, correct, wrongs, explanation
+
+
+def _mcq_linear(rng):
+    a = _nonzero(rng, -6, 6)
+    b = rng.randint(-6, 6)
+    c = rng.randint(-6, 6)
+    d = _nonzero(rng, -6, 6)
+    correct = sp.Integer(a * d - b * c)
+    wrongs = [
+        sp.Integer(a * d + b * c),       # added instead of subtracted
+        sp.Integer(a * b - c * d),       # multiplied the wrong pairs
+    ]
+    stem = "Compute the determinant of the 2x2 matrix:\n\n[[{}, {}], [{}, {}]]".format(
+        a, b, c, d
+    )
+    explanation = "det = ({})*({}) - ({})*({}) = {}".format(a, d, b, c, _s(correct))
+    return stem, correct, wrongs, explanation
+
+
+def _mcq_number_theory(rng):
+    a = rng.randint(12, 120)
+    b = rng.randint(12, 120)
+    g = sp.igcd(a, b)
+    correct = sp.Integer(g)
+    wrongs = [
+        sp.Integer(a * b // g),          # lcm instead of gcd
+        sp.Integer(min(a, b)),           # picked the smaller input
+    ]
+    stem = "Compute the greatest common divisor:\n\ngcd({}, {})".format(a, b)
+    explanation = "gcd({}, {}) = {}".format(a, b, _s(correct))
+    return stem, correct, wrongs, explanation
+
+
+_MCQ_BUILDERS = {
+    "differential_single": _mcq_differential_single,
+    "integral_single": _mcq_integral_single,
+    "linear": _mcq_linear,
+    "number_theory": _mcq_number_theory,
+}
+
+# Emit in canonical taxonomy order so the card list is stable.
+_MCQ_LEAVES_IN_ORDER = tuple(
+    leaf.leaf for leaf in taxonomy.LEAVES if leaf.leaf in MCQ_COUNTS
+)
+
+
+def generate_mcq_cards(seed=DEFAULT_SEED):
+    """Return the ordered list of computational MCQ card dicts (deterministic)."""
+    cards = []
+    for leaf in _MCQ_LEAVES_IN_ORDER:
+        tag = taxonomy.TAG_BY_LEAF[leaf]
+        builder = _MCQ_BUILDERS[leaf]
+        count = MCQ_COUNTS[leaf]
+        # Distinct RNG namespace from the flashcard generator (":mcq" suffix) so
+        # adding MCQ never perturbs the existing flashcard determinism.
+        rng = _leaf_rng(seed, tag + "::mcq")
+        seen = set()
+        attempts = 0
+        max_attempts = max(400, count * 400)
+        while len(seen) < count:
+            attempts += 1
+            if attempts > max_attempts:
+                raise RuntimeError(
+                    "could not generate {} MCQ cards for {}".format(count, leaf)
+                )
+            stem, correct, wrongs, explanation = builder(rng)
+            if stem in seen:
+                continue
+            try:
+                options, correct_index = distractors.make_options(rng, correct, wrongs)
+            except distractors.InsufficientDistractors:
+                continue
+            seen.add(stem)
+            cards.append(
+                {
+                    "leaf_tag": tag,
+                    "format": "mcq",
+                    "question": stem,
+                    "options": options,
+                    "correct_index": correct_index,
+                    "explanation": explanation,
+                }
+            )
+    return cards
+
+
+def _main():
+    cards = generate_mcq_cards()
+    print("generated {} MCQ cards".format(len(cards)))
+    for card in cards[:2]:
+        print("\n--- {} ---".format(card["leaf_tag"]))
+        print(card["question"])
+        for i, opt in enumerate(card["options"]):
+            mark = " (correct)" if i == card["correct_index"] else ""
+            print("  {}. {}{}".format("ABCDE"[i], opt, mark))
+
+
+if __name__ == "__main__":
+    _main()
