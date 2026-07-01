@@ -44,7 +44,7 @@ _Last updated: 2026-07-01 (Wed)._
 
 ## In flight
 
-- **W2 — Desktop dashboard** (memory score as a range + 17-leaf coverage map): build complete on `feat/gre-dashboard` (`f15cubing/anki@d8408db`), PR pending.
+- **W2 — Desktop dashboard** (memory score as a range + 17-leaf coverage map): playtested (fixed stale route bundle + webview API access); **PR #9** open on `feat/gre-dashboard` (`f15cubing/anki@ea3acae`).
 
 ## Next (per execution-plan)
 
