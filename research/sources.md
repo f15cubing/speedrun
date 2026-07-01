@@ -2,7 +2,7 @@
 
 _Consolidated from sub-agent responses; confidence/quality assessments live in the per-response critiques (`research/critiques/`) and `research/SYNTHESIS.md`._
 
-_Deduplicated across the 15 stored responses (`research/responses/01`–`07`, `01b`, `08`–`14`). Each entry notes which prompt(s) cited it, e.g. `[cited in: 02, 03]`. Flags: `[SUPERSEDED]` = a newer edition replaces it; `[contested]` / `[unofficial]` / `[erroneous]` = reliability caveat carried from the responses; `[replication-failed]` / `[small-sample]` / `[verify]` = robustness caveat from Round 3; `[vendor]` / `[practitioner]` = non-peer-reviewed source type._
+_Deduplicated across the 16 stored responses (`research/responses/01`–`07`, `01b`, `08`–`15`). Each entry notes which prompt(s) cited it, e.g. `[cited in: 02, 03]`. Flags: `[SUPERSEDED]` = a newer edition replaces it; `[contested]` / `[unofficial]` / `[erroneous]` = reliability caveat carried from the responses; `[replication-failed]` / `[small-sample]` / `[verify]` = robustness caveat from Rounds 3–4; `[vendor]` / `[practitioner]` = non-peer-reviewed source type._
 
 ---
 
@@ -19,7 +19,7 @@ _Deduplicated across the 15 stored responses (`research/responses/01`–`07`, `0
 - Roediger, H. L., & Karpicke, J. D. (2006). *The Power of Testing Memory* (Perspectives on Psych. Science 1:181–210) and *Test-Enhanced Learning* (Psychological Science 17:249–255). [cited in: 02]
 - Rowland, C. A. (2014). *The effect of testing versus restudy on retention: a meta-analytic review.* Psychological Bulletin 140(6):1432–1463 (g≈0.50). [cited in: 02, 04]
 - Adesope, O. O., Trevisan, D. A., & Sundararajan, N. (2017). *Rethinking the Use of Tests: A Meta-Analysis of Practice Testing.* Review of Educational Research 87(3):659–701. doi:10.3102/0034654316689306 (g=0.61). [cited in: 02, 04]
-- Pan, S. C., & Rickard, T. C. (2018). *Transfer of Test-Enhanced Learning: Meta-Analytic Review and Synthesis.* Psychological Bulletin 144(7):710–756 (transfer d≈0.40; format-match d=0.58). [cited in: 02, 04, 10]
+- Pan, S. C., & Rickard, T. C. (2018). *Transfer of Test-Enhanced Learning: Meta-Analytic Review and Synthesis.* Psychological Bulletin 144(7):710–756 (transfer d≈0.40; format-match d=0.58). [cited in: 02, 04, 10, 15]
 
 ### Psychometrics, statistics, ML calibration/leakage (performance/readiness/eval)
 - McNemar, Q. (1947). *Note on the sampling error of the difference between correlated proportions or percentages.* Psychometrika 12(2):153–157. [cited in: 03]
@@ -47,7 +47,7 @@ _Deduplicated across the 15 stored responses (`research/responses/01`–`07`, `0
 - Shute, V. J. (2008). *Focus on Formative Feedback.* Review of Educational Research 78(1):153–189. [cited in: 04]
 - Ryan et al. (2024). RCT on immediate vs delayed feedback. *Medical Education.* [cited in: 04]
 - Faul, F., Erdfelder, E., Lang, A.-G., & Buchner, A. (2007). *G*Power 3.* [cited in: 04]
-- Lakens, D. (2017). *Equivalence tests (TOST).* Social Psychological and Personality Science. [cited in: 04, 14]
+- Lakens, D. (2017). *Equivalence tests (TOST).* Social Psychological and Personality Science 8(4):355–362. doi:10.1177/1948550617697177 [cited in: 04, 14, 15]
 - Lakens, D., Scheel, A. M., & Isager, P. M. (2018). *Equivalence testing for psychological research.* AMPPS. [cited in: 04]
 - Sweller, J. (1988). *Cognitive Load During Problem Solving: Effects on Learning.* Cognitive Science 12(2):257–285. [cited in: 09, 10]
 - Kalyuga, S., Ayres, P., Chandler, P., & Sweller, J. (2003). *The Expertise Reversal Effect.* Educational Psychologist 38(1):23–31. [cited in: 10]
@@ -140,12 +140,34 @@ _Deduplicated across the 15 stored responses (`research/responses/01`–`07`, `0
 - Blascovich, J., & Mendes, W. B. (2010). *Social psychophysiology and embodiment.* In Handbook of Social Psychology (5th ed.) (challenge-vs-threat / biopsychosocial model). [cited in: 13]
 - Meichenbaum, D. H., & Deffenbacher, J. L. (1988). *Stress inoculation training.* The Counseling Psychologist 16(1):69–90. doi:10.1177/0011000088161005 (3-phase SIT; application/graded-exposure phase). [cited in: 13, 14]
 
+### Test-taking UI, computer-based testing & interface effects (Round 4 — testing-UI thread)
+*Mode effects & CBT interface (objective-score/latency)*
+- Wang, S., Jiao, H., Young, M. J., Brooks, T., & Olson, J. (2007). *A Meta-Analysis of Testing Mode Effects in Grade K–12 Mathematics Tests.* Educational and Psychological Measurement 67(2):219–238. doi:10.1177/0013164406288166 (no significant computer-vs-paper math effect; larger for linear than adaptive tests). [cited in: 15]
+- Mead, A. D., & Drasgow, F. (1993). *Equivalence of computerized and paper-and-pencil cognitive ability tests: A meta-analysis.* Psychological Bulletin 114(3):449–458. (159 corrected correlations; cross-mode r≈.97 for power vs .72 for speeded tests — key for speeded GRE Math). [cited in: 15]
+- Bridgeman, B., Lennon, M. L., & Jackenthal, A. (2003). *Effects of Screen Size, Screen Resolution, and Display Rate on Computer-Based Test Performance.* Applied Measurement in Education 16(3):191–205. doi:10.1207/S15324818AME1603_2 (n=357; smaller screens hurt reading ~¼ SD, **not math**). [cited in: 15]
+- He, J. (2024). *The impact of clock timing on VDT visual search performance under time constraint.* Frontiers in Psychology 15:1369920. doi:10.3389/fpsyg.2024.1369920 (visible clock → faster RT, no accuracy change). `[small-sample n=21; verify]` [cited in: 15]
+- Hallez, Q., & Vallier, V. (2025). *Time on Their Side: How Visual Timers Affect Anticipatory Anxiety, Performance, and On-Task Behavior in Elementary Math Assessments.* EJIHPE 15(12):243. doi:10.3390/ejihpe15120243 (visible timer ↓ anticipatory anxiety, no performance change). `[children n=44; verify]` [cited in: 15]
+
+*Item review / answer change (objective-score)*
+- van der Linden, W. J., Jeon, M., & Ferrara, S. (2011). *A Paradox in the Study of the Benefits of Test-Item Review.* Journal of Educational Measurement 48(4):380–398 (with erratum). doi:10.1111/j.1745-3984.2011.00151.x (argued review causes "substantial losses"; empirical basis withdrawn via erratum — model non-convergence). `[verify — erratum is load-bearing]` [cited in: 15]
+- Bridgeman, B. (2012). *A Simple Answer to a Simple Question on Changing Answers.* Journal of Educational Measurement 49(4):467–468. doi:10.1111/j.1745-3984.2012.00189.x (overwhelming majority improve after changing answers). [cited in: 15]
+- Liu, O. L., Bridgeman, B., Gu, L., Xu, J., & Kong, N. (2015). *Investigation of Response Changes in the GRE Revised General Test.* Educational and Psychological Measurement 75(6):1002–1020. (n≈8,538 Quant / 9,140 Verbal; net benefit that increases with ability). https://pmc.ncbi.nlm.nih.gov/articles/PMC5965601/ [cited in: 15]
+
+*Feedback timing & cognitive load*
+- Van der Kleij, F. M., Feskens, R. C. W., & Eggen, T. J. H. M. (2015). *Effects of Feedback in a Computer-Based Learning Environment on Students' Learning Outcomes: A Meta-Analysis.* Review of Educational Research 85(4):475–511. (elaborated feedback g=0.49 > KR 0.05 / KCR 0.32). [cited in: 15]
+- Kulik, J. A., & Kulik, C.-L. C. (1988). *Timing of Feedback and Verbal Learning.* Review of Educational Research 58:79–97. [cited in: 15]
+- Chandler, P., & Sweller, J. (1992). *The split-attention effect as a factor in the design of instruction.* British Journal of Educational Psychology 62:233–246. doi:10.1111/j.2044-8279.1992.tb01017.x (extraneous load from split attention — chrome/navigator grids). [cited in: 15]
+
+*Novelty effect & time pressure*
+- Rodrigues, L., Toda, A. M., Oliveira, W., Palomino, P. T., Avila-Santos, A. P., & Isotani, S. (2022). *Gamification suffers from the novelty effect but benefits from the familiarization effect.* International Journal of Educational Technology in Higher Education 19. https://link.springer.com/article/10.1186/s41239-021-00314-6 (N=756, 14-wk; novelty acts ~wk 4, lasts 2–6 wk, U-shaped). `[verify — figures]` [cited in: 15]
+- "Should Intelligence Tests Be Speeded or Unspeeded?" (2023). PMC10299616 (Raven's; time pressure d≈0.35 accuracy decrement, concentrated in high-ability/WM examinees). https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10299616/ `[verify]` [cited in: 15]
+
 ---
 
 ## 2. Institutional / standards bodies
 
 - **ETS** — *Practice Book for the GRE® Subject Test in Mathematics*, Form GR3768 (© 2024). Score Conversion Table p. 35 (60→880, 57–58→860; form ceiling 970). https://www.ets.org/pdfs/gre/practice-book-math.pdf [cited in: 01, 01b, 08, 10, 11]
-- **ETS** — *GRE Subject Test Content and Structure* (blueprint: ~66 items; Calculus ~50%, Algebra ~25%, Additional ~25%; rights-only; 2h50m). https://www.ets.org/gre/test-takers/subject-tests/about/content-structure.html [cited in: 01, 08, 09, 10, 11]
+- **ETS** — *GRE Subject Test Content and Structure* (blueprint: ~66 items; Calculus ~50%, Algebra ~25%, Additional ~25%; rights-only; 2h50m; computer-delivered since Sept 2023; scaled 200–990). https://www.ets.org/gre/test-takers/subject-tests/about/content-structure.html [cited in: 01, 08, 09, 10, 11, 15]
 - **ETS** — *GRE Subject Test Interpretative Data*, Tables 2A/2B, **© 2025** (cohort July 2021–June 2024; Mathematics N=5,180, mean 680, SD 161; 880→88th, 800→71st). https://www.ets.org/pdfs/gre/gre-guide-table-2.pdf — **current edition.** [cited in: 01b, 03, 10]
 - **ETS** — *GRE Subject Test Interpretive Data*, **© 2024** edition (cohort July 2019–June 2023; Mathematics N=7,452, mean 676, SD 154; 880→90th). `[SUPERSEDED]` by the © 2025 edition. [cited in: 01]
 - **ETS** — *Interpreting Your GRE® Scores: 2024 and 2025–26* (Subject Test "Table 3"). https://www.ets.org/pdfs/gre/interpreting-gre-scores.pdf [cited in: 01b]
@@ -176,8 +198,11 @@ _Deduplicated across the 15 stored responses (`research/responses/01`–`07`, `0
 - Polya, G. (1945). *How to Solve It.* Princeton University Press. [cited in: 09]
 - Detterman, D. K., & Sternberg, R. J. (eds.) (1993). *Transfer on Trial.* ("Transfer is rare."). [cited in: 09]
 - Singley, M. K., & Anderson, J. R. (1989). *The Transfer of Cognitive Skill.* [cited in: 09]
-- Robert A. Bjork & Elizabeth L. Bjork — desirable difficulties (Bjork & Bjork 2011; Soderstrom & Bjork 2015, *Perspectives on Psych. Science* 10(2):176–199 — learning-vs-performance, delayed-endpoint rationale); UCLA Bjork Learning & Forgetting Lab. [cited in: 04, 10, 14]
+- Robert A. Bjork & Elizabeth L. Bjork — desirable difficulties (Bjork & Bjork 2011; Soderstrom & Bjork 2015, *Perspectives on Psych. Science* 10(2):176–199 — learning-vs-performance, delayed-endpoint rationale); UCLA Bjork Learning & Forgetting Lab. [cited in: 04, 10, 14, 15]
 - Spielberger, C. D., Gorsuch, R. L., & Lushene, R. E. (1970; 1983). *Manual for the State-Trait Anxiety Inventory (STAI).* Palo Alto, CA: Consulting Psychologists Press (STAI-state, 20 items, 20–80). [cited in: 14]
+- Brooke, J. (1996). *SUS: A "quick and dirty" usability scale.* In P. W. Jordan et al. (eds.), *Usability Evaluation in Industry* (pp. 189–194). Taylor & Francis (10-item System Usability Scale). [cited in: 15]
+- Sauro, J., & Lewis, J. R. (2016). *Quantifying the User Experience* (2nd ed.). Morgan Kaufmann (SUS benchmark mean 68, SD 12.5; percentile/grade interpretation). [cited in: 15]
+- Hart, S. G., & Staveland, L. E. (1988). *Development of NASA-TLX (Task Load Index): Results of empirical and theoretical research.* In *Human Mental Workload* (pp. 139–183). North-Holland (six subscales; raw/unweighted TLX for cognitive load). [cited in: 15]
 - Zeidner, M. (1998). *Test Anxiety: The State of the Art.* New York: Plenum Press. [cited in: 12]
 - Ashcraft, M. H. (2002). *Math anxiety: Personal, educational, and cognitive consequences.* Current Directions in Psychological Science 11(5):181–185. [cited in: 12]
 - K. Anders Ericsson — deliberate-practice framework (Ericsson 2016 reply, Perspectives on Psych. Science 11(3):351–354). [cited in: 10]
@@ -238,13 +263,13 @@ _Deduplicated across the 15 stored responses (`research/responses/01`–`07`, `0
 ## Cross-citation summary (sources used by ≥2 prompts)
 
 - **ETS Practice Book GR3768** — 01, 01b, 08, 10, 11
-- **ETS Content & Structure** — 01, 08, 09, 10, 11
+- **ETS Content & Structure** — 01, 08, 09, 10, 11, 15
 - **ETS Subject Test Interpretive Data** (current © 2025 + superseded © 2024) — 01, 01b, 03, 10
 - **Kapoor & Narayanan (2023)** — 03, 07, 11
 - **Yang et al. (2023), rephrased samples** — 03, 07, 11
-- **Pan & Rickard (2018)** — 02, 04, 10
+- **Pan & Rickard (2018)** — 02, 04, 10, 15
 - **Brunmair & Richter (2019)** — 04, 10
-- **Bjork & Bjork (2011) / desirable difficulties** — 04, 10
+- **Bjork & Bjork (2011) / desirable difficulties** — 04, 10, 14, 15
 - **Sweller (1988)** — 09, 10
 - **Barnett & Ceci (2002)** — 02, 09
 - **Rowland (2014)** — 02, 04
@@ -266,5 +291,7 @@ _Deduplicated across the 15 stored responses (`research/responses/01`–`07`, `0
 - **Cassady & Johnson (2002), CTAS** — 12, 14
 - **Ergene (2003)** — 12, 14
 - **Saunders et al. (1996), SIT** — 09, 13
-- **Soderstrom & Bjork (2015)** — 04, 10, 14
+- **Soderstrom & Bjork (2015)** — 04, 10, 14, 15
 - **Meichenbaum & Deffenbacher (1988), SIT** — 13, 14
+- **Lakens (2017), TOST** — 04, 14, 15
+- **Bridgeman (2012) / Liu et al. (2015), answer review** — 15 _(new Round 4 thread; single-prompt but load-bearing for the interface decision)_
