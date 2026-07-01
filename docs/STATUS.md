@@ -24,14 +24,21 @@ _Last updated: 2026-06-30 (Tue)._
   the content-generation pipeline plan, with matching PRD/INDEX/architecture/execution-plan updates
   (§8 interleaving algorithm, §8a flashcards→MCQ→timed, §12a two-lane generation, Appendix A
   tag/verification conventions).
+- **PR #5** (merged) — Mastery Query (W1) design spec + implementation plan: read-only
+  `StatsService.MasteryQuery` RPC (per-topic FSRS mastery aggregate), single-pass SQL + Rust
+  aggregation, TDD task breakdown (docs only; the engine-lane implementation is separate).
 
 ## In flight
 
-- **Wednesday Mastery Query spec** — drafting the read-only Mastery Query (Rust engine change,
-  PRD §5) design spec via `brainstorming`, as the first decomposed Wednesday sub-spec.
+- _(nothing mid-merge)_
 
 ## Next (per execution-plan)
 
-- **Wednesday — Milestone 1:** Rust mastery-query change end-to-end (read RPC, never `OpChanges`) →
-  desktop review + memory score as a range + coverage map; Android reviews the shared deck on the
-  same engine; sync-server smoke test. **This is the critical path — front-load it.**
+- **Wednesday — Milestone 1 (decomposed):**
+  - **W1 — Mastery Query (Rust engine change):** specced + planned; **engine-lane implementation is the
+    immediate next step** — branch `agent/rslib-mastery-query`, subagent-driven, different-agent extra
+    gate. Read RPC, never `OpChanges`.
+  - **W2 — Desktop dashboard:** memory score as a range + coverage map (consumes the RPC).
+  - **W3 — Android review:** rebuild rsdroid with our change; review the shared deck on the same engine.
+  - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
+  - **This is the critical path — front-load W1.**
