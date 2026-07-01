@@ -117,4 +117,4 @@ always go through the generated client wrappers.
   (`anki/pylib/tests/`, see `pylib.md`); there is no separate "proto" test suite.
 
 ---
-Last verified against: `f15cubing/anki@3f5b2b2` (25.09.4 `d52ca66` + Mastery Query)
+Last verified against: `f15cubing/anki@352135e` (25.09.4 `d52ca66` + Mastery Query)

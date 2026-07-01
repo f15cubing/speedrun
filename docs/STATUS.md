@@ -31,7 +31,7 @@ _Last updated: 2026-06-30 (Tue)._
 ## In flight
 
 - **W1 — Mastery Query (Rust engine change):** implemented on outer branch
-  `agent/rslib-mastery-query` (anki fork `f15cubing/anki@engine/mastery-query`, `3f5b2b2`); **PR open,
+  `agent/rslib-mastery-query` (anki fork `f15cubing/anki@engine/mastery-query`, `352135e`); **PR open,
   awaiting the different-agent extra gate** (engine lane — never self-merge). Read-only
   `StatsService.MasteryQuery` RPC (per-topic FSRS mastery aggregate) + pylib `Collection.mastery_query`
   + 3 Rust unit tests (empty/zero · aggregation+hierarchy · read-only-invariant) + Python integration

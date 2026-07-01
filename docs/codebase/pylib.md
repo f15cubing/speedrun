@@ -109,4 +109,4 @@ After the proto + Rust impl exist (`proto-rpc.md`, `rslib.md`):
   the mastery call in between.
 
 ---
-Last verified against: `f15cubing/anki@3f5b2b2` (25.09.4 `d52ca66` + Mastery Query)
+Last verified against: `f15cubing/anki@352135e` (25.09.4 `d52ca66` + Mastery Query)

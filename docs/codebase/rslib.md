@@ -118,4 +118,4 @@ descendants), one row per requested topic in request order.
   `add_note → mastery_query → undo` round-trip).
 
 ---
-Last verified against: `f15cubing/anki@3f5b2b2` (25.09.4 `d52ca66` + Mastery Query)
+Last verified against: `f15cubing/anki@352135e` (25.09.4 `d52ca66` + Mastery Query)
