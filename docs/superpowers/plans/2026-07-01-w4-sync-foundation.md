@@ -22,7 +22,11 @@
 ## Environment (known facts for this machine)
 
 - Repo root (this worktree): `/Users/felipecaicedo/Desktop/alpha/speedrun-worktrees/w4-sync`; branch `agent/w4-sync-foundation`.
-- The desktop **Anki fork build** provides both `$FORK_PY` (the interpreter with our compiled `anki`/`_rsbridge`) and the GUI app. Expected `$FORK_PY` ≈ `anki/out/pyenv/bin/python`; **confirm at execution** and record the real path in `docs/codebase/sync.md`. If the build is absent, rebuild the desktop fork first (`.cursor/skills/building-and-testing`).
+- **VERIFIED run recipe (resolved at execution, 2026-07-01).** The engine that imports cleanly is the **primary worktree's complete build**, NOT this worktree's `anki/out` (which is only partially built and errors `No module named 'anki.buildinfo'`). Use:
+  - `FORK_ANKI=/Users/felipecaicedo/Desktop/alpha/speedrun/anki` (the primary worktree's anki, engine `25.09.4` / `ea3acae`)
+  - interpreter `$FORK_ANKI/out/pyenv/bin/python`
+  - **with** `PYTHONPATH=$FORK_ANKI/out/pylib` prepended — this dir is the complete generated package (`buildinfo.py`, `_rsbridge.so`, `*_pb2.py`, source copies). Confirmed: `PYTHONPATH=$FORK_ANKI/out/pylib $FORK_ANKI/out/pyenv/bin/python -c 'import anki, anki.buildinfo, anki.syncserver'` → `IMPORT OK version= 25.09.4`, and `python -m anki.syncserver` logs `INFO listening addr=127.0.0.1:8080` (curl → HTTP 404 = serving).
+  - The desktop GUI app for Task 3 is the same primary build (`cd $FORK_ANKI && ./run`) → server + desktop client share one engine. If the primary build ever goes missing, rebuild via `.cursor/skills/building-and-testing` (`cd anki && ./ninja pylib qt`).
 - The **Android emulator** `anki_test` (arm64-v8a, API 35) with our AnkiDroid debug build (`com.ichi2.anki.debug`) is already installed (W3). `ANDROID_HOME=/Users/felipecaicedo/Library/Android/sdk`; `adb` on `PATH` via `$ANDROID_HOME/platform-tools`.
 - The seeded GRE deck: `python pipeline/build_deck.py --seed 42` → `pipeline/dist/gre-study-deck.apkg` (already importable; used as the sync payload).
 - Lane: **fast lane** — self-review checklist, no separate reviewer agent, no submodule/engine edits.
@@ -79,20 +83,25 @@ if [[ -f "$REPO_ROOT/sync/.env" ]]; then set -a; source "$REPO_ROOT/sync/.env"; 
 : "${SYNC_BASE:=$REPO_ROOT/sync/.sync-data}"
 export SYNC_USER1 SYNC_HOST SYNC_PORT SYNC_BASE
 
-# Resolve the desktop build's Python (the interpreter with our compiled `anki` = _rsbridge).
-FORK_PY="${FORK_PY:-$REPO_ROOT/anki/out/pyenv/bin/python}"
+# Resolve the desktop fork's COMPLETE build. VERIFIED 2026-07-01: the importable engine is the
+# primary worktree's build (its out/pylib carries generated buildinfo + _rsbridge). This
+# worktree's own anki/out is only partially built. Override FORK_ANKI/FORK_PY in sync/.env.
+: "${FORK_ANKI:=/Users/felipecaicedo/Desktop/alpha/speedrun/anki}"
+FORK_PY="${FORK_PY:-$FORK_ANKI/out/pyenv/bin/python}"
+export PYTHONPATH="$FORK_ANKI/out/pylib${PYTHONPATH:+:$PYTHONPATH}"
 if [[ ! -x "$FORK_PY" ]]; then
   echo "ERROR: desktop-build Python not found at: $FORK_PY" >&2
-  echo "Build the desktop fork (.cursor/skills/building-and-testing) or set FORK_PY in sync/.env." >&2
+  echo "Build the desktop fork (cd \$FORK_ANKI && ./ninja pylib qt) or set FORK_ANKI/FORK_PY in sync/.env." >&2
   exit 1
 fi
-if ! "$FORK_PY" -c 'import anki, anki._backend' 2>/dev/null; then
-  echo "ERROR: $FORK_PY cannot import our built 'anki' (_rsbridge missing). Rebuild the desktop fork." >&2
+if ! "$FORK_PY" -c 'import anki, anki.buildinfo, anki.syncserver' 2>/dev/null; then
+  echo "ERROR: $FORK_PY cannot import our built 'anki' (buildinfo/_rsbridge missing on PYTHONPATH=$PYTHONPATH)." >&2
+  echo "Rebuild the desktop fork: cd \$FORK_ANKI && ./ninja pylib qt" >&2
   exit 1
 fi
 
 mkdir -p "$SYNC_BASE"
-echo "anki-sync-server  (engine f15cubing/anki@ea3acae)"
+echo "anki-sync-server  (engine f15cubing/anki@ea3acae, via $FORK_ANKI/out/pylib)"
 echo "  data dir : $SYNC_BASE"
 echo "  desktop  : http://127.0.0.1:${SYNC_PORT}/"
 echo "  emulator : http://10.0.2.2:${SYNC_PORT}/"
@@ -108,8 +117,10 @@ exec env RUST_LOG="${RUST_LOG:-anki=info}" "$FORK_PY" -m anki.syncserver
 SYNC_USER1=greuser:grepass
 # SYNC_PORT=8080
 # SYNC_HOST=0.0.0.0
-# Absolute path to the desktop build's Python (with our compiled `anki`):
-# FORK_PY=/Users/felipecaicedo/Desktop/alpha/speedrun-worktrees/w4-sync/anki/out/pyenv/bin/python
+# The desktop fork's COMPLETE build (its out/pylib has generated buildinfo + _rsbridge).
+# Default points at the primary worktree; override if your built anki lives elsewhere:
+# FORK_ANKI=/Users/felipecaicedo/Desktop/alpha/speedrun/anki
+# FORK_PY=$FORK_ANKI/out/pyenv/bin/python
 ```
 
 - [ ] **Step 3: Write the root `Makefile`**
@@ -124,8 +135,9 @@ sync-server: ## Start the self-hosted Anki sync server on our engine (foreground
 	@sync/run-sync-server.sh
 
 sync-smoke: ## Headless desktop-collection sync round-trip (server must already be running).
-	@FORK_PY="$${FORK_PY:-anki/out/pyenv/bin/python}"; \
-	"$$FORK_PY" sync/roundtrip_smoke.py
+	@FORK_ANKI="$${FORK_ANKI:-/Users/felipecaicedo/Desktop/alpha/speedrun/anki}"; \
+	FORK_PY="$${FORK_PY:-$$FORK_ANKI/out/pyenv/bin/python}"; \
+	PYTHONPATH="$$FORK_ANKI/out/pylib$${PYTHONPATH:+:$$PYTHONPATH}" "$$FORK_PY" sync/roundtrip_smoke.py
 ```
 
 - [ ] **Step 4: Make the launcher executable + append `.gitignore`**
@@ -273,7 +285,7 @@ if __name__ == "__main__":
 
 - [ ] **Step 2: Run it to verify it FAILS with no server running**
 
-Run: `$FORK_PY sync/roundtrip_smoke.py` (with the server stopped)
+Run (with the server stopped): `make sync-smoke` (equivalently `PYTHONPATH=$FORK_ANKI/out/pylib $FORK_ANKI/out/pyenv/bin/python sync/roundtrip_smoke.py`, `FORK_ANKI=/Users/felipecaicedo/Desktop/alpha/speedrun/anki`)
 Expected: a non-zero exit — a connection/sync error (the server isn't up). This confirms the script really talks to the server rather than passing vacuously.
 
 - [ ] **Step 3: Start the server, then run the smoke to verify it PASSES**
@@ -372,7 +384,7 @@ git commit -m "docs(w4): live desktop<->Android sync round-trip evidence (no cor
 
 - [ ] **Step 1: Write `docs/codebase/sync.md`** using the module-doc template
   (`.cursor/skills/codebase-docs/module-doc-template.md`). It MUST contain:
-  - **Topology** (the §1 diagram) + the exact **verified** launch command and the real resolved `$FORK_PY` path.
+  - **Topology** (the §1 diagram) + the exact **verified** launch command and the real resolved engine path: `FORK_ANKI=/Users/felipecaicedo/Desktop/alpha/speedrun/anki`, run with `PYTHONPATH=$FORK_ANKI/out/pylib` + `$FORK_ANKI/out/pyenv/bin/python -m anki.syncserver` (the primary worktree's complete build; this worktree's `anki/out` is only partially built).
   - **Client config:** desktop `127.0.0.1:8080` (Preferences ▸ Syncing) and AnkiDroid `10.0.2.2:8080` (Settings ▸ Sync ▸ custom sync server); "set the URL before first login; never leave it blank."
   - **The two proofs:** `make sync-smoke` (automated) and the `docs/evidence/w4-sync/` live round-trip.
   - **Conflict rule (honest, spec §5):** revlog **union** (stock, holds) · card scheduling **LWW by mod time** (stock, holds) · device-UUID tie-break **DEFERRED** (Thursday demo made deterministic by controlling sync order + recording UUIDs) · structural divergence → **forced full sync** (so the Thursday conflict demo must be pure review divergence).
