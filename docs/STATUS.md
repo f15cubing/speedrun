@@ -52,10 +52,17 @@ _Last updated: 2026-07-01 (Wed)._
   page / SvelteKit route / dialog (fast-lane + base checklists), and document the two W2 gotchas
   (configure-time route globs → stale bundle; `webview.py` api-access allowlist → 403) in
   `building-and-testing`. Closes the gap where handler-level unit tests passed on an end-to-end-broken page.
+- **PR #11** (merged) — **W3 Android review** design spec + implementation plan: rebuild rsdroid against
+  our anki fork (bundles `rslib` w/ the W1 mastery query) + AnkiDroid-fork wiring (`local_backend`) + a
+  real review session on an emulator + a read-only Kotlin `Collection.masteryQuery` binding proven by a
+  Robolectric test (host `.jar`) + an on-emulator smoke; both Android repos tracked as recursive
+  submodules; engine-lane w/ different-agent review. Docs only; the Android build is a separate PR.
 
 ## In flight
 
-- _(nothing mid-merge)_
+- **W3 — Android review build** (engine lane): spec + plan shipped (PR #11); **executing now** — fork
+  rsdroid + AnkiDroid, rebuild the backend against `f15cubing/anki@ea3acae`, review on emulator, prove
+  `masteryQuery`.
 
 ## Next (per execution-plan)
 
@@ -63,5 +70,6 @@ _Last updated: 2026-07-01 (Wed)._
   - **W1 — Mastery Query (Rust engine change):** ✅ **shipped (PR #7).** Read RPC, never `OpChanges`.
   - **W2 — Desktop dashboard:** ✅ **shipped (PR #9).** Memory score as a range + coverage map
     (consumes the RPC); read-only, three separated slots. Spec + plan were PR #8.
-  - **W3 — Android review:** rebuild rsdroid with our change; review the shared deck on the same engine.
+  - **W3 — Android review:** spec + plan shipped (PR #11); **build in progress.** Rebuild rsdroid with
+    our change; review the shared deck on the same engine.
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.
