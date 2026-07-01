@@ -27,6 +27,9 @@ _Last updated: 2026-06-30 (Tue)._
 - **PR #5** (merged) — Mastery Query (W1) design spec + implementation plan: read-only
   `StatsService.MasteryQuery` RPC (per-topic FSRS mastery aggregate), single-pass SQL + Rust
   aggregation, TDD task breakdown (docs only; the engine-lane implementation is separate).
+- **PR #6** (merged) — Round-4 testing-UI research thread (SQ15: authentic exam-shell UI
+  design/ablation/decision) added to `research/` + folded into SYNTHESIS/frame/sources. Verdict:
+  COMPLEMENT (opt-in "Exam Mode" gating Readiness only); does not consume interleaving's ablation slot.
 - **PR #7** (merged) — **W1 Mastery Query engine change** (the real Rust engine change, D1):
   read-only `StatsService.MasteryQuery` RPC + pylib `Collection.mastery_query` + 3 Rust unit tests
   (empty/zero · aggregation+hierarchy · read-only invariant asserting undo step + study-queue counts +
