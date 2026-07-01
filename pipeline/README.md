@@ -27,18 +27,27 @@ This writes `pipeline/dist/gre-study-deck.apkg`, prints the coverage report, and
   (the 17-leaf taxonomy from PRD Appendix A; see `taxonomy.py`).
 - The deck covers **all 17** taxonomy leaves (gate requires ≥ 9 = ≥ 50%).
 - **≥ 50 % of cards are calculus-tagged**, reflecting the ETS ~50% calculus weight.
+- Two card formats: **basic flashcards** (the Memory surface) and **MCQ** cards
+  (the Performance surface, §8a) via a new **"GRE MCQ"** note type. Computational
+  MCQ are generated for `differential_single`, `integral_single`, `linear`,
+  `number_theory` with SymPy-templated distractors; a couple of conceptual MCQ are
+  hand-authored. All MCQ review through the same FSRS loop — no engine change.
+- **Conceptual cards are gated:** only `status: verified` (with attribution) cards
+  ship; drafts are skipped by the dev build and rejected by the production gate.
 
 ## Files
 
 | File | Role |
 |---|---|
 | `taxonomy.py` | Single source of truth: leaves, buckets, weights, `bucket_of`, `validate_leaf_tag`. |
-| `generate_deck.py` | Seeded SymPy generator for the templatable (computational) leaves. SymPy computes every answer, so backs are correct by construction. |
-| `conceptual_cards.yaml` | Hand-authored, correct cards for the conceptual leaves that don't templatize. |
-| `build_deck.py` | Merges generator + YAML, packs the deterministic `.apkg` via `genanki`, runs the coverage gate. |
-| `coverage_report.py` | Computes/prints leaf coverage % + calculus weight %; asserts the invariants; non-zero exit on violation. |
+| `generate_deck.py` | Seeded SymPy generator for the templatable (computational) flashcard leaves. SymPy computes every answer, so backs are correct by construction. |
+| `distractors.py` | Deterministic MCQ option assembly + common-error distractors (SymPy dedupe, wrongs ≠ key). |
+| `generate_mcq.py` | Seeded computational MCQ generator (5-option items, SymPy-computed key + distractors). |
+| `conceptual_cards.yaml` | Hand-authored, correct flashcard + MCQ cards for the conceptual leaves; every entry gated by `status: verified` + attribution. |
+| `build_deck.py` | Merges flashcards + MCQ + verified conceptual, packs the deterministic `.apkg` (basic + "GRE MCQ" note types) via `genanki`, runs the coverage gate. |
+| `coverage_report.py` | Computes/prints leaf coverage % + calculus weight % + per-format counts; asserts coverage + the verification gate; non-zero exit on violation. |
 | `requirements.txt` | Pinned dependency versions. |
-| `tests/` | pytest suite (tagging, determinism, coverage, recomputation). |
+| `tests/` | pytest suite (tagging, determinism, coverage, recomputation, distractors, MCQ generation, verification gate, MCQ note type). |
 
 ## Regenerate / verify
 

@@ -26,7 +26,10 @@ def summarize(cards):
     per_leaf = {tag: 0 for tag in taxonomy.LEAF_TAGS}
     invalid = []
     calc_cards = 0
+    by_format = {}
     for index, card in enumerate(cards):
+        fmt = card.get("format", "flashcard") if isinstance(card, dict) else "?"
+        by_format[fmt] = by_format.get(fmt, 0) + 1
         tag = card.get("leaf_tag") if isinstance(card, dict) else None
         if not taxonomy.validate_leaf_tag(tag):
             invalid.append((index, tag))
@@ -45,6 +48,7 @@ def summarize(cards):
         "leaf_coverage": (len(covered) / len(taxonomy.LEAF_TAGS)) if taxonomy.LEAF_TAGS else 0.0,
         "calc_cards": calc_cards,
         "calc_weight": (calc_cards / total) if total else 0.0,
+        "by_format": by_format,
         "invalid": invalid,
     }
 
@@ -69,6 +73,11 @@ def format_report(summary):
             summary["total"],
             100 * summary["calc_weight"],
             100 * taxonomy.MIN_CALCULUS_CARD_WEIGHT,
+        )
+    )
+    lines.append(
+        "By format:        " + ", ".join(
+            "{}={}".format(k, summary["by_format"][k]) for k in sorted(summary["by_format"])
         )
     )
     lines.append("")
@@ -139,8 +148,9 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     # Lazy import to avoid an import cycle (build_deck imports this module).
-    from build_deck import load_all_cards
+    from build_deck import assert_all_verified, load_all_cards
 
+    assert_all_verified()
     cards = load_all_cards(seed=args.seed)
     summary = summarize(cards)
     print(format_report(summary))
