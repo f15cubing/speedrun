@@ -60,9 +60,15 @@ _Last updated: 2026-07-01 (Wed)._
 
 ## In flight
 
-- **W3 — Android review build** (engine lane): spec + plan shipped (PR #11); **executing now** — fork
-  rsdroid + AnkiDroid, rebuild the backend against `f15cubing/anki@ea3acae`, review on emulator, prove
-  `masteryQuery`.
+- **W3 — Android review build** (engine lane): spec + plan shipped (PR #11). **Build + binding done,
+  engine-lane PR open for different-agent review.** Forked rsdroid + AnkiDroid as recursive submodules;
+  rebuilt the backend from source bundling `f15cubing/anki@ea3acae` (arm64-v8a `librsdroid.so`);
+  `local_backend=true` wires AnkiDroid to it; `assembleFullDebug` green; on-emulator smoke shows
+  `librsdroid.so` loads + DeckPicker launches. Read-only `Collection.masteryQuery` binding added, proven
+  by a host-JVM test against the real compiled `rslib` (`MasteryQueryTest`, green). Forks:
+  `f15cubing/Anki-Android@67364a7`, `f15cubing/Anki-Android-Backend@3dc30c2`. **Remaining before merge:**
+  the manual Milestone-1 review-session evidence (study cards on the emulator + Settings ▸ Check
+  Database no-corruption smoke), verified by the reviewing agent.
 
 ## Next (per execution-plan)
 
@@ -70,6 +76,7 @@ _Last updated: 2026-07-01 (Wed)._
   - **W1 — Mastery Query (Rust engine change):** ✅ **shipped (PR #7).** Read RPC, never `OpChanges`.
   - **W2 — Desktop dashboard:** ✅ **shipped (PR #9).** Memory score as a range + coverage map
     (consumes the RPC); read-only, three separated slots. Spec + plan were PR #8.
-  - **W3 — Android review:** spec + plan shipped (PR #11); **build in progress.** Rebuild rsdroid with
-    our change; review the shared deck on the same engine.
+  - **W3 — Android review:** spec + plan shipped (PR #11); **backend rebuilt with our change + APK on
+    the local backend + `masteryQuery` binding proven (host-JVM test).** Engine-lane PR open for
+    different-agent review; the manual on-emulator review-session gate is the last item before merge.
   - **W4 — Sync foundation:** `anki-sync-server` + conflict-rule smoke test.

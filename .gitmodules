@@ -18,5 +18,8 @@
 
 [submodule "Anki-Android"]
 	path = Anki-Android
-	url = https://github.com/ankidroid/Anki-Android.git
+	url = https://github.com/f15cubing/Anki-Android.git
 	ignore = dirty
+[submodule "Anki-Android-Backend"]
+	path = Anki-Android-Backend
+	url = https://github.com/f15cubing/Anki-Android-Backend.git

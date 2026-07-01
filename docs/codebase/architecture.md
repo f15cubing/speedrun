@@ -4,11 +4,11 @@
 > `docs/codebase/INDEX.md`. Every path here was verified against the vendored source at the SHAs in
 > the footer. See `docs/PRD.md` for *why* (product) and `docs/execution-plan.md` for *when*.
 
-**Repo layout note.** The outer `speedrun/` folder is a git repo (`f15cubing/speedrun`); the two
-upstream forks are wired as **git submodules** (`anki/`, `Anki-Android/`) pinned to the SHAs in the
+**Repo layout note.** The outer `speedrun/` folder is a git repo (`f15cubing/speedrun`); the
+upstream forks are wired as **git submodules** (`anki/`, `Anki-Android/`, and — since W3 —
+`Anki-Android-Backend/`, which recursively vendors its own nested `anki/`) pinned to the SHAs in the
 footer. Our codebase docs live **centrally here**, not co-located inside the forks, so they don't
-pollute upstream code or complicate submodule updates. (`rsdroid` / `Anki-Android-Backend` is a
-planned third submodule — see `README.md`.)
+pollute upstream code or complicate submodule updates.
 
 ---
 
@@ -82,8 +82,8 @@ server.*
 | Protobuf / RPC boundary | `anki/proto/`, `anki/rslib/build.rs`, `anki/rslib/rust_interface.rs`, `anki/rslib/proto_gen/` | `docs/codebase/proto-rpc.md` | `anki@25.09.4` (`d52ca66`) |
 | Python bindings / FFI | `anki/pylib/` (`rsbridge/`, `anki/_backend.py`, `anki/collection.py`) | `docs/codebase/pylib.md` | `anki@25.09.4` (`d52ca66`) |
 | Qt desktop UI | `anki/qt/` (`aqt/`), `anki/ts/` | `docs/codebase/qt.md` | `anki@25.09.4` (`d52ca66`) |
-| Android (rsdroid) | `Anki-Android/libanki/`, `Anki-Android/AnkiDroid/`, external `rsdroid` AAR | `docs/codebase/rsdroid.md` | `Anki-Android@v2.24.0` (`ebcf8e0`); backend `0.1.64-anki25.09.2` |
-| Our app additions (mastery query, dashboard, interleaving) | *(not built yet)* | planned — see PRD §5/§7/§8 | n/a |
+| Android (rsdroid) | `Anki-Android/libanki/`, `Anki-Android/AnkiDroid/`, locally-built `Anki-Android-Backend/` AAR | `docs/codebase/rsdroid.md` | `f15cubing/Anki-Android@67364a7`; rsdroid `f15cubing/Anki-Android-Backend@3dc30c2` (bundles `anki@ea3acae`) |
+| Our app additions — mastery query (W1 engine + W3 Android binding), W2 dashboard | `anki/rslib/src/stats/`, `anki/qt/aqt/gre/`, `Anki-Android/libanki/.../stats/BackendStats.kt` | `rslib.md`, `qt.md`, `rsdroid.md` | `f15cubing/anki@ea3acae`; Android forks above |
 | Our app additions (MCQ note type, timed practice mode) | *(not built yet — content/UX above the engine)* | planned — see PRD §8a | n/a |
 | Scoring models (memory / performance / readiness) | *(not built yet — Python sidecar)* | planned — see PRD §7 | n/a |
 | Sync conflict rules | builds on `anki/rslib/src/sync/` | planned — see PRD §10 / D3 | n/a |
@@ -212,10 +212,11 @@ Two boundaries cross into the same Rust engine, both carrying protobuf bytes:
 - **Desktop:** Python → `rsbridge` (PyO3) → Rust (`Backend.command(service, method, bytes)`). See `pylib.md`.
 - **Android:** Kotlin → `rsdroid` AAR (JNI) → Rust (`net.ankiweb.rsdroid.Backend`). See `rsdroid.md`.
 
-Our Mastery Query must reach **both**: implementing it in `rslib` gives desktop access immediately,
-but Android additionally needs the `rsdroid` AAR rebuilt against an `rslib` that contains the change
-(and the version bumped in `Anki-Android/gradle/libs.versions.toml`). **Version skew to reconcile:**
-desktop is pinned to `anki@25.09.4`, AnkiDroid's backend is `0.1.64-anki25.09.2`.
+Our Mastery Query reaches **both** (W1 desktop + W3 Android): implementing it in `rslib` gave desktop
+access immediately, and W3 rebuilt the `rsdroid` AAR from `Anki-Android-Backend/` against our `rslib`
+(`anki@ea3acae`), consumed via `local_backend=true` (raw `files(...)`, no version-string match needed).
+**Version skew reconciled:** AnkiDroid v2.24.0 expects `*-anki25.09.2` but runs on our 25.09.4 engine
+via one compat shim (`Backend.MAX_INDIVIDUAL_MEDIA_FILE_SIZE`); see `rsdroid.md`.
 
 ### Undo / transaction model (a hard ceiling)
 Mutations go through `Collection::transact(op, ...)` (`anki/rslib/src/collection/transact.rs`), which
@@ -238,4 +239,4 @@ the built-in Rust `anki-sync-server` (`anki/rslib/sync/main.rs`), pinned to our 
 
 ---
 
-Last verified against: `anki@25.09.4` (`d52ca66`), `Anki-Android@v2.24.0` (`ebcf8e0`), rsdroid backend `0.1.64-anki25.09.2`
+Last verified against: `f15cubing/anki@ea3acae` (25.09.4 `d52ca66` + W1 + W2), `f15cubing/Anki-Android@67364a7` (fork of `v2.24.0` `ebcf8e0`), `f15cubing/Anki-Android-Backend@3dc30c2` (built locally, bundles `anki@ea3acae`)

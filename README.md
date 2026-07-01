@@ -26,8 +26,8 @@ We do not reuse or redistribute official ETS exam items (see `docs/PRD.md` §12)
 ```
 speedrun/
 ├─ anki/             # submodule → ankitects/anki   (desktop engine: rslib, pylib, qt, proto, ts)
-├─ Anki-Android/     # submodule → ankidroid/Anki-Android  (Android client; uses rsdroid over JNI)
-├─ Anki-Android-Backend/   # submodule (PLANNED) → rsdroid: rslib-over-JNI for Android
+├─ Anki-Android/     # submodule → f15cubing/Anki-Android  (Android client; uses rsdroid over JNI)
+├─ Anki-Android-Backend/   # submodule → f15cubing/Anki-Android-Backend  (rsdroid: rslib-over-JNI; recursively vendors anki)
 ├─ docs/             # PRD, execution plan, assignment spec, and codebase docs + diagrams
 │  └─ codebase/      # architecture.md (start here) + per-area module docs
 ├─ research/         # source-of-truth research synthesis + the brainlift (a deliverable)
@@ -35,8 +35,10 @@ speedrun/
 └─ .cursor/skills/   # project skills: codebase-docs, shipping-changes
 ```
 
-**Pinned upstream versions** (what the docs are verified against): `anki@25.09.4` (`d52ca66`),
-`Anki-Android@v2.24.0` (`ebcf8e0`), rsdroid backend `0.1.64-anki25.09.2`.
+**Pinned upstream versions** (what the docs are verified against): `anki` fork
+`f15cubing/anki@ea3acae` (25.09.4 `d52ca66` + our W1/W2 work), `Anki-Android` fork
+`f15cubing/Anki-Android@67364a7` (of `v2.24.0` `ebcf8e0`), `Anki-Android-Backend` (rsdroid) fork
+`f15cubing/Anki-Android-Backend@3dc30c2` (built locally from source; bundles `anki@ea3acae`).
 
 ## Getting started
 
@@ -69,14 +71,17 @@ source .androidenv
 | How the code fits together (+ diagrams) | `docs/codebase/architecture.md` |
 | Rules for changing code | `AGENTS.md` |
 
-## Adding the rsdroid backend later
+## The rsdroid backend (Android)
 
-When we wire the Android backend (`rsdroid`), add it as a submodule (it vendors `anki` itself, so
-always init recursively):
+The Android backend (`rsdroid` / `Anki-Android-Backend`) is wired as a recursive submodule of our fork
+and **built locally** so its bundled `rslib` carries our engine change (W3). It vendors `anki` itself,
+so always init recursively:
 
 ```bash
-git submodule add https://github.com/ankidroid/Anki-Android-Backend.git Anki-Android-Backend
-git submodule update --init --recursive
+git submodule update --init --recursive   # populates Anki-Android-Backend/ + its nested anki/
 ```
+
+Build + run recipe: `docs/codebase/rsdroid.md` (§ Building rsdroid from source). AnkiDroid consumes the
+local build via `local_backend=true` in `Anki-Android/local.properties` (gitignored).
 
 > Status: **Day 1 (setup)** — work in progress toward the Sunday deadline. AGPL-3.0-or-later.
