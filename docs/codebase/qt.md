@@ -56,15 +56,28 @@ SvelteKit app (Vite). Routes in `anki/ts/routes/` (`graphs/`, `deck-options/`, `
 by `anki/ts/svelte.config.js` to `out/sveltekit/`, packaged to `anki/qt/aqt/data/web/sveltekit/`,
 served by `mediasrv`. The web UI calls the engine via POST to `/_anki/{camelCaseEndpoint}`.
 
-## Where the 3-score dashboard + coverage map attach (PRD §7 — planned)
+## Where the 3-score dashboard + coverage map attach (W2 — implemented)
 
-Closest precedent is **graphs / deck-options**, not the legacy deck-browser HTML:
-1. Add a SvelteKit route under `anki/ts/routes/` (e.g. `gre-dashboard/`).
-2. Register the path in `mediasrv.is_sveltekit_page()` and add any read endpoints to the exposed
-   backend list (mastery query, coverage).
-3. Add a Python loader/dialog in `aqt/` (a dialog like `stats.py`, or a section integrated via the
-   state machine like `overview._show_finished_screen()`), and a menu `QAction`.
-4. Fetch data with `QueryOp` (read-only) so it never emits `operation_did_execute`.
+Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
+
+**New files:**
+- `anki/qt/aqt/gre/__init__.py` — package init
+- `anki/qt/aqt/gre/taxonomy.json` — frozen 17-leaf / 3-bucket / 50/25/25 taxonomy
+- `anki/qt/aqt/gre/dashboard_data.py` — pure view-model: taxonomy loader, Wilson interval, `headline()` (50/25/25 rollup with n=0 renorm), coverage/next-best-topic, `build_view_model()`
+- `anki/qt/aqt/gre_dashboard.py` — `GreDashboard` QDialog + `setup_gre_dashboard_menu()` Tools-menu action
+- `anki/ts/routes/gre-dashboard/+page.svelte` — SvelteKit page root (fetches `greDashboardData` on mount)
+- `anki/ts/routes/gre-dashboard/MemoryPanel.svelte` — memory range headline + per-bucket/per-leaf ranges
+- `anki/ts/routes/gre-dashboard/CoverageMap.svelte` — 17-leaf coverage percentages
+- `anki/ts/routes/gre-dashboard/ScoreSlot.svelte` — generic score slot; Readiness shows `insufficient_evidence` gate; Performance shows Thursday placeholder
+
+**Modified files:**
+- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-dashboard")` registration + read-only `gre_dashboard_data` handler → POST `/_anki/greDashboardData` endpoint (calls `col.mastery_query(20 topics)` on the request thread, same pattern as `graphs`/`congrats_info`; never emits `OpChanges`)
+- `anki/qt/aqt/main.py` — Tools-menu hook via `main_window_did_init`
+- `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_DASHBOARD`
+
+**Data flow:** Tools ▸ "GRE readiness dashboard" → `GreDashboard` QDialog → `load_sveltekit_page("gre-dashboard")` → Svelte page POSTs `/_anki/greDashboardData` → handler calls read-only `col.mastery_query(17 leaves + 3 buckets)` → `build_view_model()` JSON → Svelte renders memory range + coverage map + 3 separated score slots. Strictly read-only (no `OpChanges`).
+
+**Tests:** `anki/qt/tests/test_gre_dashboard_data.py` (11 unit tests covering taxonomy, Wilson, headline renorm, view-model), `anki/qt/tests/test_gre_dashboard_mediasrv.py` (2 tests: route registration + endpoint read-only invariant). Outer drift guard: `tests/test_taxonomy_sync.py`.
 
 ## Add-ons & hooks
 - `anki/qt/aqt/addons.py` — `AddonManager` imports enabled add-ons.
@@ -93,4 +106,4 @@ Closest precedent is **graphs / deck-options**, not the legacy deck-browser HTML
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `anki@25.09.4` (`d52ca66`)
+Last verified against: `f15cubing/anki@b15a71e` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard)

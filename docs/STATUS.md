@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-06-30 (Tue)._
+_Last updated: 2026-07-01 (Wed)._
 
 ## Done
 
@@ -44,7 +44,7 @@ _Last updated: 2026-06-30 (Tue)._
 
 ## In flight
 
-- _(nothing mid-merge)_
+- **W2 — Desktop dashboard** (memory score as a range + 17-leaf coverage map): build complete on `feat/gre-dashboard` (`f15cubing/anki@b4d81a6`), PR pending.
 
 ## Next (per execution-plan)
 
