@@ -13,8 +13,9 @@
 | Python bindings / FFI | `docs/codebase/pylib.md` | `anki/pylib/` (`rsbridge/`, `anki/_backend.py`, `anki/collection.py`) | `anki@25.09.4` (`d52ca66`) |
 | Qt desktop UI | `docs/codebase/qt.md` | `anki/qt/` (`aqt/`), `anki/ts/` | `anki@25.09.4` (`d52ca66`) |
 | Our app additions — 3-score dashboard + coverage map (W2) | `docs/codebase/qt.md` (§ dashboard) | `anki/qt/aqt/gre/` (`__init__.py`, `taxonomy.json`, `dashboard_data.py`), `anki/qt/aqt/gre_dashboard.py`, `anki/ts/routes/gre-dashboard/` (`+page.svelte`, `MemoryPanel.svelte`, `CoverageMap.svelte`, `ScoreSlot.svelte`), `anki/qt/aqt/mediasrv.py` (`greDashboardData` endpoint + `is_sveltekit_page`), `anki/qt/aqt/main.py` (Tools-menu hook), `anki/qt/aqt/webview.py` (`AnkiWebViewKind.GRE_DASHBOARD`) | `f15cubing/anki@ea3acae` |
-| Android (rsdroid) | `docs/codebase/rsdroid.md` | `Anki-Android/libanki/`, `Anki-Android/AnkiDroid/`, external `rsdroid` AAR | `Anki-Android@v2.24.0` (`ebcf8e0`); backend `0.1.64-anki25.09.2` |
+| Android (rsdroid) | `docs/codebase/rsdroid.md` | `Anki-Android/libanki/`, `Anki-Android/AnkiDroid/`, locally-built `Anki-Android-Backend/` (rsdroid) AAR | `f15cubing/Anki-Android@67364a7` (fork of `v2.24.0`); rsdroid `f15cubing/Anki-Android-Backend@3dc30c2` (bundles `anki@ea3acae`) |
 | Our app additions — Mastery Query (read-only RPC, W1) | `docs/codebase/rslib.md` (§ Mastery Query) | `anki/proto/anki/stats.proto`, `anki/rslib/src/stats/mastery.rs`, `anki/rslib/src/storage/card/mod.rs`, `anki/rslib/src/stats/service.rs`, `anki/pylib/anki/collection.py` | `f15cubing/anki@352135e` |
+| Our app additions — Mastery Query on Android (read-only binding, W3) | `docs/codebase/rsdroid.md` (§ Mastery Query on Android) | `Anki-Android/libanki/src/main/java/com/ichi2/anki/libanki/stats/BackendStats.kt` (`Collection.masteryQuery`), `Anki-Android/libanki/src/test/.../stats/MasteryQueryTest.kt`; backend rebuilt from `Anki-Android-Backend/` bundling `anki@ea3acae` | `f15cubing/Anki-Android@67364a7`, `f15cubing/Anki-Android-Backend@3dc30c2` |
 | AI gold-set (eval) | `eval/goldset/goldset.md` | `eval/goldset/` | `6941192` |
 | Study-deck + tagging pipeline | `pipeline/pipeline.md` | `pipeline/` | `6941192` |
 
@@ -34,4 +35,4 @@ the PR that first builds each of these.
 
 ---
 
-Last verified against: `f15cubing/anki@ea3acae` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard), `Anki-Android@v2.24.0` (`ebcf8e0`)
+Last verified against: `f15cubing/anki@ea3acae` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard), `f15cubing/Anki-Android@67364a7` (fork of `v2.24.0` `ebcf8e0`), `f15cubing/Anki-Android-Backend@3dc30c2` (built locally, bundles `anki@ea3acae`)

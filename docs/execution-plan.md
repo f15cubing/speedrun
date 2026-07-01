@@ -48,7 +48,9 @@ Goal: every irreversible decision locked in writing, environments building, deck
 - [ ] Implement the mastery-query end-to-end: new proto message → read RPC (returns a plain response, **never `OpChanges`**) → grouped SQL aggregate over `cards`⋈notes/tags reusing FSRS retrievability helpers → `pylib` binding.
 - [ ] Tests: 3 Rust unit (empty/zero · aggregation correctness · **read-only invariant**) + 1 Python integration; `PRAGMA quick_check` = ok; `add_note→undo` round-trip intact.
 - [ ] Benchmark the aggregate at 50k cards (< ~50 ms; add an index if not).
-- [ ] Confirm the new RPC is reachable through the **rsdroid** build (ships to Android).
+- [x] Confirm the new RPC is reachable through the **rsdroid** build (ships to Android). ✅ **W3** —
+  backend rebuilt from source bundling `anki@ea3acae`; `Collection.masteryQuery` binding green in a
+  host-JVM test against the real compiled `rslib` (`MasteryQueryTest`).
 
 **Desktop:**
 - [ ] Review loop runs FSRS on the GRE deck.
@@ -57,7 +59,7 @@ Goal: every irreversible decision locked in writing, environments building, deck
 - [ ] Desktop installer runs on a clean machine (record it).
 
 **Android:**
-- [ ] Loads the exam deck; runs a real review session on the shared engine. (Two-way sync NOT required today — same-deck review is.)
+- [~] Loads the exam deck; runs a real review session on the shared engine. (Two-way sync NOT required today — same-deck review is.) — **W3 in review:** APK built on our local backend, `librsdroid.so` loads + DeckPicker launches on an arm64 emulator; the real review-session evidence (study cards + Check Database no-corruption smoke) is the remaining manual gate the reviewing agent signs off.
 
 **Sync foundation:**
 - [ ] Conflict rule documented (PRD D3). Stand up `anki-sync-server` (pinned tag). Manual sync smoke test.
