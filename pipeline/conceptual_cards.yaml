@@ -145,3 +145,35 @@ cards:
     verified_by: "fc"
     verified_on: "2026-06-30"
     source: "original (standard textbook fact)"
+
+  # --- conceptual MCQ (format: mcq) --------------------------------------
+  - leaf_tag: "topic::additional::real_analysis"
+    format: mcq
+    question: "Which statement about the harmonic series sum_{n>=1} 1/n is true?"
+    options:
+      - "It diverges."
+      - "It converges to 1."
+      - "It converges to e."
+      - "It converges to a finite value greater than 2."
+      - "It converges only in the Cesaro sense."
+    correct_index: 0
+    explanation: "The harmonic series diverges (compare with the integral of 1/x = ln x -> infinity)."
+    status: verified
+    verified_by: "fc"
+    verified_on: "2026-06-30"
+    source: "original (standard analysis fact)"
+  - leaf_tag: "topic::additional::discrete"
+    format: mcq
+    question: "How many subsets does a set with n elements have?"
+    options:
+      - "2^n"
+      - "n^2"
+      - "n!"
+      - "2n"
+      - "n^n"
+    correct_index: 0
+    explanation: "Each element is independently in or out of a subset: 2 choices for each of n elements -> 2^n."
+    status: verified
+    verified_by: "fc"
+    verified_on: "2026-06-30"
+    source: "original (standard combinatorics fact)"

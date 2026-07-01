@@ -96,3 +96,14 @@ def test_strict_mode_fails_on_any_draft(tmp_path):
 def test_production_yaml_is_fully_verified():
     # The committed production file must contain zero drafts.
     build_deck.assert_all_verified()
+
+
+def test_conceptual_mcq_records_load_wellformed():
+    cards = build_deck.load_conceptual_cards()
+    mcq = [c for c in cards if c.get("format") == "mcq"]
+    assert len(mcq) >= 2
+    for c in mcq:
+        assert len(c["options"]) == 5
+        assert len(set(c["options"])) == 5
+        assert 0 <= c["correct_index"] < 5
+        assert c["explanation"]
