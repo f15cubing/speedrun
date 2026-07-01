@@ -84,21 +84,82 @@ def _to_html(text):
     return html.escape(text)
 
 
-def load_conceptual_cards(path=CONCEPTUAL_YAML):
-    """Load the hand-authored conceptual cards from YAML into card dicts."""
+_VALID_STATUSES = ("draft", "verified")
+_REQUIRED_WHEN_VERIFIED = ("verified_by", "verified_on", "source")
+
+
+def _conceptual_entry_to_card(entry):
+    """Convert a raw YAML entry to a card dict (flashcard or mcq)."""
+    fmt = str(entry.get("format", "flashcard"))
+    base = {"leaf_tag": str(entry["leaf_tag"]), "format": fmt}
+    if fmt == "mcq":
+        options = [str(o) for o in entry["options"]]
+        base.update(
+            {
+                "question": str(entry["question"]),
+                "options": options,
+                "correct_index": int(entry["correct_index"]),
+                "explanation": str(entry.get("explanation", "")),
+            }
+        )
+    else:
+        base.update({"front": str(entry["front"]), "back": str(entry["back"])})
+    return base
+
+
+def load_conceptual_cards(path=CONCEPTUAL_YAML, strict=False):
+    """Load conceptual cards, enforcing the human-verification gate (PRD §12a).
+
+    Returns built card dicts for ``status: verified`` entries only. ``draft``
+    entries are skipped with a warning (or, when ``strict=True``, raise). A
+    ``verified`` entry missing any of ``verified_by``/``verified_on``/``source``,
+    or any unknown ``status``, always raises ``ValueError``.
+    """
     with open(path, "r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle)
     raw = data["cards"] if isinstance(data, dict) else data
+
     cards = []
-    for entry in raw:
-        cards.append(
-            {
-                "front": str(entry["front"]),
-                "back": str(entry["back"]),
-                "leaf_tag": str(entry["leaf_tag"]),
-            }
+    skipped = []
+    for index, entry in enumerate(raw):
+        status = str(entry.get("status", "")).strip()
+        if status not in _VALID_STATUSES:
+            raise ValueError(
+                "conceptual card #{} ({!r}) has invalid status {!r}; "
+                "expected one of {}".format(
+                    index, entry.get("front") or entry.get("question"), status,
+                    _VALID_STATUSES,
+                )
+            )
+        if status == "draft":
+            if strict:
+                raise ValueError(
+                    "conceptual card #{} is still a draft (strict mode)".format(index)
+                )
+            skipped.append(index)
+            continue
+        missing = [k for k in _REQUIRED_WHEN_VERIFIED if not str(entry.get(k, "")).strip()]
+        if missing:
+            raise ValueError(
+                "verified conceptual card #{} is missing attribution: {}".format(
+                    index, ", ".join(missing)
+                )
+            )
+        cards.append(_conceptual_entry_to_card(entry))
+
+    if skipped:
+        print(
+            "NOTE: skipped {} unverified (draft) conceptual card(s): {}".format(
+                len(skipped), skipped
+            )
         )
     return cards
+
+
+def assert_all_verified(path=CONCEPTUAL_YAML):
+    """Production gate: raise if any conceptual card is not verified+attributed."""
+    # strict=True raises on the first draft; verified-but-unattributed also raises.
+    load_conceptual_cards(path=path, strict=True)
 
 
 def load_all_cards(seed=generate_deck.DEFAULT_SEED):
