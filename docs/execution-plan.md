@@ -52,8 +52,8 @@ Goal: every irreversible decision locked in writing, environments building, deck
 
 **Desktop:**
 - [ ] Review loop runs FSRS on the GRE deck.
-- [ ] **Memory score** displayed as a range with the give-up rule (not a single number).
-- [ ] **Coverage map** on the dashboard (leaf topics, % covered); readiness gated by coverage threshold.
+- [x] **Memory score** displayed as a range with the give-up rule (not a single number).
+- [x] **Coverage map** on the dashboard (leaf topics, % covered); readiness gated by coverage threshold.
 - [ ] Desktop installer runs on a clean machine (record it).
 
 **Android:**
