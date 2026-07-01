@@ -50,3 +50,8 @@ eval/goldset/data/
 # + pipeline/conceptual_cards.yaml. Regenerate: python pipeline/build_deck.py --seed 42
 # (.venv/ is already ignored above under the Python sidecars section.)
 pipeline/dist/
+
+# W4 sync foundation — local server data + creds (never commit)
+sync/.sync-data/
+sync/.env
+docs/evidence/w4-sync/*.tmp

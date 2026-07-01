@@ -62,7 +62,7 @@ Goal: every irreversible decision locked in writing, environments building, deck
 - [x] Loads the exam deck; runs a real review session on the shared engine. (Two-way sync NOT required today — same-deck review is.) — **W3 done (PR #12 + on-device gate):** APK built on our local backend, `librsdroid.so` loads; a real FSRS review session runs on the seeded GRE deck (FSRS intervals + `topic::*` leaf tags), the session persists across a force-stop/reopen, and Check Database reports "Database rebuilt and optimized" (no corruption). Evidence: `docs/evidence/w3-android/`.
 
 **Sync foundation:**
-- [ ] Conflict rule documented (PRD D3). Stand up `anki-sync-server` (pinned tag). Manual sync smoke test.
+- [x] Conflict rule documented (PRD D3). Stand up `anki-sync-server` (pinned tag). Manual sync smoke test. — **W4:** `make sync-server` on our engine (`f15cubing/anki@ea3acae`); headless `roundtrip_smoke.py` green (note+revlog+scheduling cross, `quick_check=ok`); live round-trip — real AnkiDroid ↔ headless desktop peer through our server, both directions, with AnkiDroid Check-Database clean (`docs/evidence/w4-sync/`); rule in `docs/codebase/sync.md`. 7b/7g deferred to Thursday.
 
 **Exit gate (Milestone 1):** review cards on **both** devices using the same engine; Rust change tested + undo-safe + non-corrupting; desktop installer runs clean.
 
