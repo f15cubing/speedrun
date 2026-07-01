@@ -48,6 +48,10 @@ _Last updated: 2026-07-01 (Wed)._
   taxonomy (drift-guarded) + standalone SvelteKit route + read-only `greDashboardData` endpoint +
   Tools-menu QDialog. Playtested end-to-end; fixed a stale-bundle rebuild gotcha + the webview
   API-access allowlist (`GRE_DASHBOARD` kind). anki fork → `f15cubing/anki@ea3acae`.
+- **PR #10** (merged) — **testing-process refinement:** require a GUI smoke test for any new webview
+  page / SvelteKit route / dialog (fast-lane + base checklists), and document the two W2 gotchas
+  (configure-time route globs → stale bundle; `webview.py` api-access allowlist → 403) in
+  `building-and-testing`. Closes the gap where handler-level unit tests passed on an end-to-end-broken page.
 
 ## In flight
 

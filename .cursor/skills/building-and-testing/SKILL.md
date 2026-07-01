@@ -41,6 +41,22 @@ First `./run` is slow (downloads + builds deps). `./run` auto-sets `ANKIDEV` (ex
 off — test profiles only); `TRACESQL` prints SQL. Proto changes: see `anki/docs/protobuf.md` and
 `docs/codebase/proto-rpc.md`.
 
+### Adding a new webview page / SvelteKit route (must GUI-smoke-test)
+
+Green unit tests do **not** prove a new page works: tests call the POST handler directly, which
+bypasses both the SvelteKit build and `mediasrv`'s webview-auth layer. Both of these bit the W2
+dashboard and passed every unit test + code review anyway. When you add a page:
+
+1. **Force a bundle rebuild.** The SvelteKit build's inputs are globbed at *configure* time
+   (`build/configure/src/web.rs`), so a brand-new `ts/routes/<page>/` does not trigger an incremental
+   rebuild — `./run` serves a stale bundle and the client router shows `Not found: /<page>`. Force it:
+   `rm -rf out/sveltekit out/sveltekit.marker && ./run` (or reconfigure).
+2. **Grant the page API access.** A page that POSTs to `/_anki/*` needs its `AnkiWebViewKind` added to
+   the allowlist in `qt/aqt/webview.py::_profileForPage`; otherwise the auth interceptor never injects
+   the `Bearer` token and `mediasrv` rejects the request with 403 "Unexpected API access."
+3. **Open the actual page and confirm data loads end-to-end** — this is the only gate that catches the
+   two failures above. Record it as the smoke check in the PR.
+
 ## Android — `Anki-Android/` (Kotlin over rsdroid/JNI)
 
 One-time setup: JDK 21 + Android SDK. Copy the repo's `.androidenv.example` → `.androidenv`, edit
@@ -88,6 +104,9 @@ cheap moves cut the repeated cost:
 - Hand-editing generated protobuf/backend code → regenerate via the build (`proto-rpc.md`,
   `pylib.md`).
 - An `anki/` checkout path containing spaces → the build forbids it.
+- New SvelteKit page shows `Not found: /<page>`, or its `/_anki/*` POST 403s "Unexpected API access" →
+  see "Adding a new webview page" above (stale bundle + missing api-access allowlist entry). Unit tests
+  won't catch either — GUI-smoke-test the page.
 
 ---
 Sourced from `anki@25.09.4` (`d52ca66`: `docs/development.md`, `build.md`, `mac.md`) and

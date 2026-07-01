@@ -15,6 +15,10 @@ or the collection store.
 - [ ] Change is non-engine (passes the "engine PR?" test as *no*) and scoped to one task.
 - [ ] On a branch + real PR (never committed to `main`).
 - [ ] What's verifiable was verified (tests/lint for the touched files); result noted in the PR body.
+- [ ] **UI-facing change?** If it adds/changes a webview page, SvelteKit route, dialog, or menu action,
+      **GUI-smoke-test the actual surface** (open it; confirm it loads end-to-end) and note it in the PR.
+      Unit tests call handlers directly — they bypass the SvelteKit build *and* `mediasrv` auth, so green
+      tests do NOT prove the UI works. (See `building-and-testing` → "Adding a new webview page.")
 - [ ] Relevant docs updated in THIS PR.
 - [ ] PR body has the 2–3 sentence intent note (template below).
 - [ ] On merge, `docs/STATUS.md` line updated.
@@ -24,7 +28,8 @@ or the collection store.
 - [ ] Builds cleanly.
 - [ ] Existing tests pass.
 - [ ] New tests added for the change and pass.
-- [ ] App runs (smoke check of the touched surface).
+- [ ] App runs (smoke check of the touched surface — for UI changes, open the actual page/dialog and
+      confirm it works end-to-end, not just that unit tests pass).
 - [ ] Change is scoped to one task (no unrelated edits).
 - [ ] Relevant docs updated in THIS PR; `Last verified against` SHA bumped.
 - [ ] PR body complete (template below).
