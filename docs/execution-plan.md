@@ -74,7 +74,12 @@ Goal: every irreversible decision locked in writing, environments building, deck
 
 - [ ] **Performance model (Step 2):** calibrated logistic regression + Platt; features = per-topic mastery (from mastery query), imported/firewalled difficulty, timing, coverage. Evaluate by Brier + reliability + ECE on a leakage-audited split.
 - [ ] **Readiness model (Step 3):** raw-correct → ETS percentile anchors → 200–990, conformal interval headline + Bayesian cross-check; build the evidence panel + "no track record yet"; start the prospective calibration log.
-- [ ] **MCQ study surface (PRD §8a):** new MCQ note type + card template (captures the selected option, grades into the same Again/Hard/Good/Easy path). Behaves like a flashcard on the same FSRS review loop — a content/data-model change, **not** a second engine change — and is what the Performance model scores.
+- [ ] **MCQ study surface (PRD §8a, design spec §4) — implement end-to-end:**
+  - [ ] **"GRE MCQ" note type + card template** (fields `Question`, `OptionA–E`, `CorrectOption`, `Explanation`, `LeafTag`; renders 5 single-select options; on answer reveals the key + explanation and grades into the same **Again/Hard/Good/Easy** path). `pipeline/notetypes/` (genanki model).
+  - [ ] **SymPy distractor generation** (`pipeline/distractors.py`): 4 named common-error transforms per computational item (sign flip, dropped `+C`, off-by-power, missing chain factor, swapped op), deterministic + provably ≠ key; conceptual distractors human-authored in the verified YAML.
+  - [ ] **Build + emit MCQ cards** through `pipeline/build_deck.py` alongside flashcards (one documented command, seeded, byte-stable); imports into desktop Anki and reviews on the **same FSRS loop** — a content/data-model change, **not** a second engine change.
+  - [ ] **Tests** (design spec §8): note type builds + renders 5 options + `CorrectOption` matches key + grades correctly; distractor sample has exactly 4 distinct ≠-key options and is deterministic for a fixed seed.
+  - MCQ is the in-app surface the **Performance** model scores (real five-option answers, the GRE's native format).
 - [ ] **Author 60 eval items** (30 cards × 2 rewordings) for the paraphrase test — original, blueprint-matched; partition into P0/P1/P2/P3.
 - [ ] **Leakage pipeline** (the one shared pipeline): exact→normalized→n-gram/Jaccard→embedding; run it; publish the residual rate.
 - [ ] **Ablation instrumentation:** wire the interleaved↔blocked toggle + plain-Anki arm; confirm the pre-registration (Appendix B) is committed/timestamped before any run.
