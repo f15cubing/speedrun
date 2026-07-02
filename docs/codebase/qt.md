@@ -85,13 +85,13 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
 
 **Tests:** `anki/qt/tests/test_gre_dashboard_data.py` (11 unit tests covering taxonomy, Wilson, headline renorm, view-model), `anki/qt/tests/test_gre_dashboard_mediasrv.py` (2 tests: route registration + endpoint read-only invariant). Outer drift guard: `tests/test_taxonomy_sync.py`.
 
-## Exam Mode — faithful GRE Math Subject Test (core; B-1)
+## Exam Mode — faithful GRE Math Subject Test
 
-Pure, engine-free **form assembly + rights-only scoring**, vendored into the fork so it runs in (and
-ships with) the app — the app can't read the outer `eval/bank/` at runtime, so the logic + items are
-vendored (the `dashboard_data.py` + `taxonomy.json` pattern).
+An opt-in "full mock" surface faithful to the computer-delivered GRE Math Subject Test (Tools ▸ GRE
+exam mode). Vendored into the fork (the app can't read the outer `eval/bank/` at runtime), so the
+logic + items live in `anki/qt/aqt/gre/` (the `dashboard_data.py` + `taxonomy.json` pattern).
 
-**New files:**
+**Core (B-1) — new files:**
 - `anki/qt/aqt/gre/exam.py` — deterministic, blueprint-matched (ETS 50/25/25) form assembly at the
   official pace (2.58 min/item; presets `full 66 / half 33 / third 22 / mini 11`) + **rights-only**
   scoring with per-leaf/bucket breakdown + Wilson CI + the attempts record for the scoring seam.
@@ -99,12 +99,31 @@ vendored (the `dashboard_data.py` + `taxonomy.json` pattern).
 - `anki/qt/aqt/gre/exam_items.json` — vendored copy of the authored eval bank (drift-guarded by the
   outer `tests/test_exam_items_sync.py`). Firewalled: only eval items ever reach a mock.
 
-**Tests:** `anki/qt/tests/test_gre_exam.py` (pace/blueprint/assembly determinism/insufficient/
-firewall/rights-only scoring/Wilson/attempts). Outer drift guard: `tests/test_exam_items_sync.py`.
+**Webview shell (B-2) — new files:**
+- `anki/ts/routes/gre-exam/` — `+page.svelte` (session state machine + one global countdown timer),
+  `ItemView.svelte` (one item, five A–E single-select options), `Countdown.svelte`, `Navigator.svelte`
+  (review-screen grid: answered/unanswered/marked, jump-to), `Results.svelte` (rights-only range +
+  per-area breakdown + item review, reusing the dashboard's `CalibrationStrip`), `lib.ts`/`lib.test.ts`.
+  Faithful: one global clock, one item at a time, Mark + free Back/Next, Review screen, **no
+  calculator**, **no pause**, auto-submit at 0:00, **no per-item feedback** (results only after submit).
 
-The **webview shell** — SvelteKit `gre-exam` route (item · countdown · navigator · review · results,
-reusing the dashboard's `CalibrationStrip` + `tokens.css`) + read-only `mediasrv` endpoints + a
-`gre_exam.py` dialog + Tools-menu action + mastery gate — is **B-2** (next PR).
+**Modified files (B-2):**
+- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-exam")` + two read-only handlers: `greExamForm`
+  (assembles a blueprint-matched form; **never sends the answer keys to the client**) and
+  `greExamSubmit` (rights-only **server-side** scoring; persists an attempts side-file — not the
+  collection — for the scoring layer; reveals keys only in the post-submit result).
+- `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_EXAM` + api-access allowlist.
+- `anki/qt/aqt/main.py` — Tools-menu action via `main_window_did_init` (`gre_exam.py`
+  `GreExam` QDialog). Mastery-gate structure present (`EXAM_MODE_MIN_STUDIED_PCT`, 0.0 for now).
+
+**Tests:** `anki/qt/tests/test_gre_exam.py` (pace/blueprint/assembly determinism/insufficient/
+firewall/rights-only scoring/Wilson/attempts) + `anki/ts/routes/gre-exam/lib.test.ts` (clock/tally).
+Outer drift guard: `tests/test_exam_items_sync.py`.
+
+**Data flow (read-only):** Tools ▸ GRE exam mode → `GreExam` QDialog → `load_sveltekit_page("gre-exam")`
+→ page POSTs `greExamForm` (server assembles + withholds keys) → timed session → `greExamSubmit`
+(server re-assembles deterministically from the echoed seed, scores rights-only, persists attempts,
+returns the revealed result). No `OpChanges`; attempts go to a profile side-file, never the collection.
 
 ## Add-ons & hooks
 - `anki/qt/aqt/addons.py` — `AddonManager` imports enabled add-ons.
@@ -133,4 +152,4 @@ reusing the dashboard's `CalibrationStrip` + `tokens.css`) + read-only `mediasrv
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@a22bafc` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam-mode core)
+Last verified against: `f15cubing/anki@484f66b` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode)
