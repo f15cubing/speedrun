@@ -32,20 +32,20 @@ x, y = sp.symbols("x y")
 
 DEFAULT_SEED = 42
 
-# Cards per templatable leaf. Calculus (6 leaves x 8 = 48) dominates so the
-# merged deck stays >=50% calculus by card count.
+# Cards per templatable leaf. Calculus leaves dominate to keep the merged deck
+# >=50% calculus by card count and reach ~5000 total unique cards.
 GENERATED_COUNTS = {
-    "differential_single": 8,
-    "integral_single": 8,
-    "differential_multi": 8,
-    "integral_multi": 8,
-    "differential_equations": 8,
-    "applications": 8,
-    "elementary": 4,
-    "linear": 4,
-    "number_theory": 4,
-    "probability_stats": 4,
-    "numerical": 4,
+    "differential_single": 700,
+    "integral_single": 700,
+    "differential_multi": 700,
+    "integral_multi": 500,
+    "differential_equations": 500,
+    "applications": 500,
+    "elementary": 250,
+    "linear": 250,
+    "number_theory": 250,
+    "probability_stats": 250,
+    "numerical": 250,
 }
 
 
@@ -379,7 +379,7 @@ def generate_cards(seed=DEFAULT_SEED):
         rng = _leaf_rng(seed, tag)
         seen = set()
         attempts = 0
-        max_attempts = max(200, count * 200)
+        max_attempts = max(2000, count * 60)
         while len(seen) < count:
             attempts += 1
             if attempts > max_attempts:
