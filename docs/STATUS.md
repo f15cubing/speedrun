@@ -79,6 +79,11 @@ _Last updated: 2026-07-01 (Wed) — W4 sync foundation._
   forced full sync) documented in `docs/codebase/sync.md`; evidence in `docs/evidence/w4-sync/`. No
   engine/submodule changes. 7b (10+10 no-loss + same-card conflict) and 7g (crash/offline) are Thursday.
 
+- **PR #18** (merged) — **docs:** represent the MCQ study surface in the plans — the Thursday
+  execution-plan item is now an end-to-end MCQ implementation checklist (GRE MCQ note type + template,
+  SymPy distractor generation, build-through-`build_deck.py`, tests) and the demo-plan Sunday-cut growth
+  list names the MCQ surface (drives Performance). MCQ stays a content/data-model change, not a second
+  engine change (D1 ceiling intact). Fast lane, docs only.
 - **PR #15** (merged) — **docs:** README now has concrete, copy-pasteable run instructions for both
   surfaces — desktop (`cd anki && ./run` + one-time macOS setup) and mobile (rsdroid backend build →
   `./gradlew installFullDebug` onto a running emulator, with `local_backend`/NDK/Rust-target prereqs),
