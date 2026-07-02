@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-02 (Thu) — deck auto-incorporation (bundled first-run import)._
+_Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readiness)._
 
 ## Done
 
@@ -125,11 +125,20 @@ _Last updated: 2026-07-02 (Thu) — deck auto-incorporation (bundled first-run i
   idempotent on relaunch). anki fork reconciled with the exam-mode line (importer + exam + dashboard
   hooks coexist). `make deck-asset` keeps the bundled asset in sync with `pipeline/`. Evidence in
   `docs/evidence/deck-auto/`.
+- **Scoring layer — Performance + Readiness** (Thu; pure-Python `scoring/` package): calibrated
+  Performance (logistic + **Platt**, analytic Fisher-SE single-item interval) and Readiness (projected
+  GRE 200–990 as a **range**: Poisson-binomial aleatoric SD + split-conformal on held-out form
+  residuals, **Bayesian normal-posterior cross-check**), gated by the 3-condition give-up rule
+  (≥200 reviews · ≥50% coverage · width ≤ 120). 32/32 tests; `make score-eval` green (Readiness shows
+  e.g. 711 [678–748]). Honest n≈1 labels throughout; difficulty firewalled; stdlib-only. Opus math
+  review CHANGES-REQUIRED items all fixed. The desktop adapter (writes the synced `gre_scorecard`) and
+  AnkiDroid read-only 3-score panel are separate engine-lane PRs.
 
 ## In flight
 
 - _Nothing in flight — dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck
-  auto-incorporation shipped._
+  auto-incorporation shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop +
+  AnkiDroid scoring UI (Tasks 6–7) pending._
 
 ## Next (per execution-plan)
 

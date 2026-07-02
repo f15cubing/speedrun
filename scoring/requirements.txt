@@ -1,0 +1,5 @@
+# scoring/ is pure Python stdlib — NO runtime dependencies (no numpy/scipy/sklearn).
+# The anki pyenv has none, and re-runnability wants zero heavy deps: all math
+# (logistic+Platt, Poisson-binomial, conformal, Fisher-SE) is hand-rolled + unit-tested.
+# Tests only:
+pytest==8.4.2

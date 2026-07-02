@@ -6,7 +6,7 @@ DECK_APKG := pipeline/dist/gre-study-deck.apkg
 DESKTOP_ASSET := anki/qt/aqt/gre/data/gre-study-deck.apkg
 ANDROID_ASSET := Anki-Android/AnkiDroid/src/main/assets/gre-study-deck.apkg
 
-.PHONY: sync-server sync-smoke deck-asset deck-asset-check
+.PHONY: sync-server sync-smoke deck-asset deck-asset-check score-eval
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -31,3 +31,6 @@ deck-asset-check: ## Fail if the committed app assets drift from the pipeline ou
 	 n=$$(shasum -a 256 $(ANDROID_ASSET) 2>/dev/null | awk '{print $$1}'); \
 	 if [ "$$a" = "$$d" ] && [ "$$a" = "$$n" ]; then echo "deck assets in sync ($$a)"; \
 	 else echo "DRIFT: pipeline=$$a desktop=$$d android=$$n — run 'make deck-asset'"; exit 1; fi
+
+score-eval: ## Simulate + fit + validate the scoring models; emit metrics + sample scorecard.
+	@PYTHONPATH=. python3 scoring/eval_cli.py --seed 42 --students 40 --out scoring/out
