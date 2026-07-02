@@ -92,7 +92,14 @@ _Last updated: 2026-07-01 (Wed) — W4 sync foundation._
 
 ## In flight
 
-- _Nothing in flight — Milestone 1 (W1–W4) complete; next is Thursday (7b full two-way proof + 7g crash/offline)._
+- **Dashboard redesign** (`agent/ui-redesign`, fast lane) — a distinctive "calibration-strip"
+  design system for the GRE dashboard: `tokens.css` (palette + tabular-mono numerals, light/dark) +
+  `CalibrationStrip.svelte` (the signature range component, reused at exam/bucket/leaf scale) + a
+  restyle of the four dashboard components; amber (not red) give-up state; best-next leaf ringed. Pure
+  presentation — **no** `dashboard_data.py`/view-model change (that stays the scoring layer's surface);
+  still read-only; three scores stay separate. `check:svelte` + 8 vitest geometry cases green; GUI
+  visual smoke pending. anki fork → `f60c2fe`. Ships the shared `CalibrationStrip` the Thursday
+  scoring layer renders Performance/Readiness through.
 
 ## Next (per execution-plan)
 

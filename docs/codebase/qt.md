@@ -65,10 +65,16 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
 - `anki/qt/aqt/gre/taxonomy.json` — frozen 17-leaf / 3-bucket / 50/25/25 taxonomy
 - `anki/qt/aqt/gre/dashboard_data.py` — pure view-model: taxonomy loader, Wilson interval, `headline()` (50/25/25 rollup with n=0 renorm), coverage/next-best-topic, `build_view_model()`
 - `anki/qt/aqt/gre_dashboard.py` — `GreDashboard` QDialog + `setup_gre_dashboard_menu()` Tools-menu action
-- `anki/ts/routes/gre-dashboard/+page.svelte` — SvelteKit page root (fetches `greDashboardData` on mount)
+- `anki/ts/routes/gre-dashboard/+page.svelte` — SvelteKit page root (fetches `greDashboardData` on mount); 3-zone layout (masthead · Memory · the two other slots · coverage)
 - `anki/ts/routes/gre-dashboard/MemoryPanel.svelte` — memory range headline + per-bucket/per-leaf ranges
-- `anki/ts/routes/gre-dashboard/CoverageMap.svelte` — 17-leaf coverage percentages
-- `anki/ts/routes/gre-dashboard/ScoreSlot.svelte` — generic score slot; Readiness shows `insufficient_evidence` gate; Performance shows Thursday placeholder
+- `anki/ts/routes/gre-dashboard/CoverageMap.svelte` — 17-leaf coverage, each studied leaf as a compact calibration strip; best-next leaf ringed
+- `anki/ts/routes/gre-dashboard/ScoreSlot.svelte` — generic score slot; Readiness shows `insufficient_evidence` gate (amber); Performance shows Thursday placeholder
+
+**Design system (redesign):**
+- `anki/ts/routes/gre-dashboard/tokens.css` — the dashboard's design tokens (6-colour palette + type roles + system tabular-mono for numerals); light/dark via Anki's `.night-mode`. No bundled fonts.
+- `anki/ts/routes/gre-dashboard/CalibrationStrip.svelte` — **signature component**: renders `{point, low, high, n}` as a shaded 95% band + point tick on a 0..max axis (used at exam / bucket / leaf scale); `point==null` → explicit dotted "not yet" rail. This is the shared primitive the Thursday scoring layer renders Performance/Readiness ranges through.
+- `anki/ts/routes/gre-dashboard/lib.ts` + `lib.test.ts` — pure strip geometry (`stripGeometry`, `formatValue`) + 8 vitest cases; the geometry guarantees a null point never yields a fabricated position.
+- Redesign is **pure presentation** — no `dashboard_data.py` / view-model change (that surface belongs to the scoring layer).
 
 **Modified files:**
 - `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-dashboard")` registration + read-only `gre_dashboard_data` handler → POST `/_anki/greDashboardData` endpoint (calls `col.mastery_query(20 topics)` on the request thread, same pattern as `graphs`/`congrats_info`; never emits `OpChanges`)
@@ -106,4 +112,4 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@ea3acae` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard)
+Last verified against: `f15cubing/anki@f60c2fe` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign)
