@@ -55,3 +55,4 @@ pipeline/dist/
 sync/.sync-data/
 sync/.env
 docs/evidence/w4-sync/*.tmp
+scoring/out/

@@ -1,0 +1,14 @@
+{
+  "_source": "ETS GRE Mathematics Subject Test — published percentile→scaled-score interpretation (cite exact edition in scoring.md). Values are anchors; interpolate linearly between them. If an exact anchor cannot be sourced, mark it estimated and note in the PR.",
+  "scale_min": 200,
+  "scale_max": 990,
+  "anchors": [
+    {"raw_frac": 0.05, "scaled": 430, "percentile": 3},
+    {"raw_frac": 0.20, "scaled": 540, "percentile": 12},
+    {"raw_frac": 0.40, "scaled": 650, "percentile": 40},
+    {"raw_frac": 0.55, "scaled": 720, "percentile": 61},
+    {"raw_frac": 0.70, "scaled": 800, "percentile": 82},
+    {"raw_frac": 0.85, "scaled": 860, "percentile": 93},
+    {"raw_frac": 0.95, "scaled": 910, "percentile": 98}
+  ]
+}
