@@ -150,64 +150,73 @@ def _gen_differential_multi(rng):
 
 
 def _gen_integral_multi(rng):
-    c1 = _nonzero(rng, 1, 4)
-    c2 = rng.randint(0, 3)
-    c3 = rng.randint(0, 3)
-    px = rng.randint(0, 2)
-    py = rng.randint(0, 2)
+    c1 = _nonzero(rng, 1, 6)
+    c2 = rng.randint(0, 5)
+    c3 = rng.randint(0, 5)
+    px = rng.randint(0, 3)
+    py = rng.randint(0, 3)
     g = sp.expand(c1 * x ** px * y ** py + c2 * x + c3 * y)
-    a = rng.randint(1, 3)
-    b = rng.randint(1, 3)
+    a = rng.randint(1, 4)
+    b = rng.randint(1, 4)
     inner = sp.integrate(g, (x, 0, a))
     value = sp.integrate(inner, (y, 0, b))
-    front = (
-        "Evaluate the double integral over the rectangle "
-        "R = [0, {}] \u00d7 [0, {}]:\n\n\u222c_R ({}) dA".format(a, b, _s(g))
-    )
+    front = ("Evaluate the double integral over R = [0, {}] \u00d7 [0, {}]:\n\n"
+             "\u222c_R ({}) dA".format(a, b, _s(g)))
     back = "\u222c_R ({}) dA = {}".format(_s(g), _s(value))
     return front, back
 
 
 def _gen_differential_equations(rng):
-    kind = rng.choice(["separable_poly", "exponential"])
+    kind = rng.choice(["separable_poly", "separable_poly", "exponential", "trig", "power"])
     if kind == "separable_poly":
-        f = _poly(rng, x, 1, 3)
+        f = _poly(rng, x, 1, 4)
         sol = sp.integrate(f, x)
-        front = "Solve the differential equation (find the general solution):\n\ny'(x) = {}".format(
-            _s(f)
-        )
+        front = "Solve the differential equation (general solution):\n\ny'(x) = {}".format(_s(f))
         back = "y(x) = {} + C".format(_s(sol))
-    else:
-        k = _nonzero(rng, -5, 5)
-        front = "Solve the differential equation (find the general solution):\n\ny'(x) = {}*y(x)".format(
-            k
-        )
+    elif kind == "exponential":
+        k = _nonzero(rng, -9, 9)
+        front = "Solve the differential equation (general solution):\n\ny'(x) = {}*y(x)".format(k)
         back = "y(x) = C*exp({}*x)".format(k)
+    elif kind == "trig":
+        a = _nonzero(rng, -6, 6)
+        k = rng.randint(2, 6)
+        f = a * sp.sin(k * x)
+        sol = sp.integrate(f, x)
+        front = "Solve the differential equation (general solution):\n\ny'(x) = {}".format(_s(f))
+        back = "y(x) = {} + C".format(_s(sol))
+    else:  # power
+        n = rng.randint(2, 7)
+        a = _nonzero(rng, -6, 6)
+        f = a * x ** n
+        sol = sp.integrate(f, x)
+        front = "Solve the differential equation (general solution):\n\ny'(x) = {}".format(_s(f))
+        back = "y(x) = {} + C".format(_s(sol))
     return front, back
 
 
 def _gen_applications(rng):
-    kind = rng.choice(["tangent_slope", "area"])
+    kind = rng.choice(["tangent_slope", "area", "average_value"])
     if kind == "tangent_slope":
-        f = _poly(rng, x, 2, 3)
-        a = rng.randint(-3, 3)
+        f = _poly(rng, x, 2, 4)
+        a = rng.randint(-6, 6)
         slope = sp.diff(f, x).subs(x, a)
-        front = "Find the slope of the tangent line to the curve\n\nf(x) = {}\n\nat the point where x = {}.".format(
-            _s(f), a
-        )
+        front = ("Find the slope of the tangent line to\n\nf(x) = {}\n\n"
+                 "at x = {}.".format(_s(f), a))
         back = "slope = f'({}) = {}".format(a, _s(slope))
-    else:
-        # non-negative integrand on [a, b] so the "area" reading is honest
-        c2 = rng.randint(1, 4)
-        c1 = rng.randint(1, 4)
+    elif kind == "area":
+        c1 = rng.randint(1, 6); c2 = rng.randint(1, 6)
         f = sp.expand(c1 * x ** 2 + c2)
-        a = rng.randint(0, 2)
-        b = a + rng.randint(1, 3)
+        a = rng.randint(0, 3); b = a + rng.randint(1, 4)
         area = sp.integrate(f, (x, a, b))
-        front = "Find the area under the curve\n\nf(x) = {}\n\nfrom x = {} to x = {}.".format(
-            _s(f), a, b
-        )
-        back = "area = \u222b from {} to {} = {}".format(a, b, _s(area))
+        front = ("Find the area under\n\nf(x) = {}\n\nfrom x = {} to x = {}.".format(_s(f), a, b))
+        back = "area = {}".format(_s(area))
+    else:  # average_value
+        c1 = rng.randint(1, 6); c2 = rng.randint(-6, 6)
+        f = sp.expand(c1 * x + c2)
+        a = rng.randint(0, 3); b = a + rng.randint(1, 5)
+        avg = sp.integrate(f, (x, a, b)) / (b - a)
+        front = ("Find the average value of\n\nf(x) = {}\n\non [{}, {}].".format(_s(f), a, b))
+        back = "average value = {}".format(_s(avg))
     return front, back
 
 
