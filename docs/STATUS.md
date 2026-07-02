@@ -100,15 +100,20 @@ _Last updated: 2026-07-01 (Wed) — W4 sync foundation._
   guard still forbids a fabricated readiness number. `check:svelte` + 8 vitest green; GUI smoke via a
   faithful headless render (light + dark). anki fork → `f60c2fe`. Ships the shared `CalibrationStrip`
   the Thursday scoring layer renders Performance/Readiness through.
+- **PR #21** (merged) — **exam-mode core (B-1)** (fast lane): vendored, engine-free GRE-exam form
+  assembly + rights-only scoring — `anki/qt/aqt/gre/exam.py` (deterministic blueprint-matched 50/25/25
+  form at the official 2.58 min/item pace; presets 66/33/22/11; per-leaf/bucket breakdown + Wilson CI +
+  attempts record) + `exam_items.json` (vendored 80-item eval bank, firewalled + drift-guarded).
+  `test_gre_exam.py` (check:pytest:aqt green) + outer `test_exam_items_sync.py`. Vendored because the
+  app can't read the outer `eval/bank/` at runtime. anki fork → `a22bafc`. Webview shell is B-2.
 
 ## In flight
 
-- **Exam Mode — core (B-1)** (`agent/exam-mode`, fast lane) — vendored, engine-free GRE-exam form
-  assembly + rights-only scoring: `anki/qt/aqt/gre/exam.py` (deterministic blueprint-matched 50/25/25
-  form at the official 2.58 min/item pace; presets 66/33/22/11; per-leaf/bucket breakdown + Wilson CI +
-  attempts record) + `exam_items.json` (vendored eval bank, drift-guarded). `test_gre_exam.py` +
-  outer `test_exam_items_sync.py`. The SvelteKit exam shell + endpoints + dialog + mastery gate are
-  B-2. Vendored into the fork (the app can't read the outer `eval/bank/` at runtime).
+- **Exam Mode — webview shell (B-2)** (next) — SvelteKit `gre-exam` route (item · countdown ·
+  navigator · review · results, reusing the dashboard's `CalibrationStrip` + `tokens.css`) + read-only
+  `mediasrv` endpoints (`greExamForm`/`greExamSubmit`) + `gre_exam.py` dialog + Tools-menu action +
+  mastery gate, on the B-1 core. Includes the partition-reservation decision (which eval partition
+  feeds mocks vs. the scoring folds).
 
 ## Next (per execution-plan)
 
