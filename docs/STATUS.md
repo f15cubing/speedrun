@@ -106,14 +106,19 @@ _Last updated: 2026-07-01 (Wed) — W4 sync foundation._
   attempts record) + `exam_items.json` (vendored 80-item eval bank, firewalled + drift-guarded).
   `test_gre_exam.py` (check:pytest:aqt green) + outer `test_exam_items_sync.py`. Vendored because the
   app can't read the outer `eval/bank/` at runtime. anki fork → `a22bafc`. Webview shell is B-2.
+- **PR #22** (merged) — **exam-mode webview (B-2)** (fast lane): the faithful GRE Math Subject Test
+  shell on the B-1 core — SvelteKit `gre-exam` route (`+page` session state machine + one global
+  countdown, `ItemView` 5×A–E, `Navigator` review grid, `Results` reusing `CalibrationStrip`) + Tools
+  ▸ GRE exam mode dialog. One clock · one item · Mark + free Back/Next · Review screen · **no
+  calculator · no pause · auto-submit at 0:00 · no per-item feedback**; presets 66/33/22/11 at the
+  official 2.58 min/item. Read-only `greExamForm`/`greExamSubmit` (server-side rights-only scoring;
+  keys withheld from the client mid-exam; attempts to a profile side-file, never the collection).
+  Firewalled to the vendored eval items (p0). `check:svelte` + `check:pytest:aqt` + vitest green;
+  headless GUI smoke of setup/exam/review/results. anki fork → `484f66b`.
 
 ## In flight
 
-- **Exam Mode — webview shell (B-2)** (next) — SvelteKit `gre-exam` route (item · countdown ·
-  navigator · review · results, reusing the dashboard's `CalibrationStrip` + `tokens.css`) + read-only
-  `mediasrv` endpoints (`greExamForm`/`greExamSubmit`) + `gre_exam.py` dialog + Tools-menu action +
-  mastery gate, on the B-1 core. Includes the partition-reservation decision (which eval partition
-  feeds mocks vs. the scoring folds).
+- _Nothing in flight — dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) shipped._
 
 ## Next (per execution-plan)
 
