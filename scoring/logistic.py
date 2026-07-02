@@ -44,9 +44,12 @@ class LogisticModel:
                 self.weights[j] -= lr * (grad_w[j] / n + l2 * self.weights[j])
             self.bias -= lr * (grad_b / n)
 
+    def decision(self, x) -> float:
+        """Raw linear predictor (logit) — the score Platt calibration consumes."""
+        return self.bias + sum(w * xi for w, xi in zip(self.weights, x))
+
     def predict_proba_one(self, x) -> float:
-        z = self.bias + sum(w * xi for w, xi in zip(self.weights, x))
-        return sigmoid(z)
+        return sigmoid(self.decision(x))
 
 
 def platt_fit(scores, y, *, lr: float = 0.1, epochs: int = 2000, seed: int = 0) -> tuple[float, float]:

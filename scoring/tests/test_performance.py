@@ -17,9 +17,21 @@ def test_performance_predicts_higher_for_easier_low_difficulty():
     assert easy > hard
 
 
-def test_bootstrap_interval_brackets_point():
+def test_single_item_interval_is_nondegenerate_and_brackets_point():
+    # The key n≈1 case: a SINGLE new item must still get a real, non-zero width
+    # (analytic Fisher-information SE) — not the degenerate width-0 of a naive
+    # prediction-bootstrap.
     at = simulate_attempts(_ITEMS, n_students=120, seed=2)
     model = fit_performance(at, lambda sid: student_mastery(at, sid), coverage=1.0)
-    feats = [{"leaf_tag": "topic::calculus::integral_single", "difficulty": 3, "mastery": 0.5, "coverage": 1.0}]
-    mean, lo, hi = model.predict_interval(feats, b=200, seed=0)
-    assert lo <= mean <= hi
+    item = {"leaf_tag": "topic::calculus::integral_single", "difficulty": 3}
+    point, lo, hi = model.predict_interval(item, mastery=0.5, coverage=1.0)
+    assert 0.0 <= lo <= point <= hi <= 1.0
+    assert hi - lo > 1e-3, "single-item interval must have real width"
+
+
+def test_predict_is_platt_calibrated_probability():
+    at = simulate_attempts(_ITEMS, n_students=120, seed=5)
+    model = fit_performance(at, lambda sid: student_mastery(at, sid), coverage=1.0)
+    p = model.predict({"leaf_tag": "topic::calculus::integral_single", "difficulty": 3},
+                      mastery=0.5, coverage=1.0)
+    assert 0.0 <= p <= 1.0

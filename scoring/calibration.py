@@ -29,6 +29,8 @@ def ece(probs, y, n_bins: int = 10) -> float:
 
 
 def append_log(path, entry) -> None:
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    parent = os.path.dirname(path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     with open(path, "a", encoding="utf-8") as fh:
         fh.write(json.dumps(entry, sort_keys=True) + "\n")
