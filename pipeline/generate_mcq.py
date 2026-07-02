@@ -22,10 +22,10 @@ from generate_deck import DEFAULT_SEED, _leaf_rng, _nonzero, _poly, _s, x
 # Cards per MCQ leaf. Two calculus + two algebra leaves keeps the merged deck's
 # calculus weight comfortably >= 50% (see coverage_report).
 MCQ_COUNTS = {
-    "differential_single": 4,
-    "integral_single": 4,
-    "linear": 4,
-    "number_theory": 4,
+    "differential_single": 125,
+    "integral_single": 125,
+    "linear": 125,
+    "number_theory": 125,
 }
 
 

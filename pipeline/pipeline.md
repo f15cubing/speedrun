@@ -21,7 +21,11 @@ coverage map, readiness gate, and interleaving all build on.
   - Gate thresholds: `MIN_LEAF_COVERAGE = 0.50`, `MIN_CALCULUS_CARD_WEIGHT = 0.50`.
 - `generate_deck.py` — `generate_cards(seed=42)` → ordered `list` of card dicts
   `{"front", "back", "leaf_tag"}` for the templatable leaves. `GENERATED_COUNTS`
-  maps leaf → card count. SymPy both builds the problem and computes the answer.
+  maps leaf → card count (scale: `differential_single`/`integral_single` = 825,
+  `differential_multi` = 700, `differential_equations`/`integral_multi`/`applications` = 500,
+  `linear` = 375, `elementary` = 250, `probability_stats`/`numerical` = 250,
+  `number_theory` = 370, `abstract`/`real_analysis`/`discrete`/`topology`/`geometry`/`complex` = 8).
+  SymPy both builds the problem and computes the answer.
 - `distractors.py` — `make_options(rng, correct, wrong_exprs, n_options=5)` →
   `(options: list[str], correct_index)`; `generic_variants(expr)`;
   `InsufficientDistractors`. Deterministic MCQ option assembly (SymPy equality
@@ -67,6 +71,12 @@ coverage map, readiness gate, and interleaving all build on.
   adding MCQ never perturbs flashcard determinism. Model id, deck id, and note
   GUIDs are content-derived (not random), and the package is written with a fixed
   timestamp. `tests/test_determinism.py`.
+- **Scale & capacity.** The generator is template-based: per-leaf counts are
+  controlled by `GENERATED_COUNTS` (flashcards) and `MCQ_COUNTS` (MCQ). At the
+  current scale (~5,400 cards, seed 42) all problems are unique within each leaf
+  (enforced by `tests/test_template_capacity.py`). If a leaf's count approaches
+  the combinatorial limit of its SymPy template, the capacity test will catch it
+  before any duplicates ship.
 - **Verification gate (PRD §12a).** Conceptual cards must be `status: verified`
   with non-empty `verified_by`/`verified_on`/`source`. The dev build skips drafts
   with a warning; `assert_all_verified` (run by the coverage CLI) hard-fails on any
@@ -91,6 +101,8 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_mcq_generation.py` — MCQ determinism, well-formedness, correct-key integrity.
 - `pipeline/tests/test_conceptual_gate.py` — verification gate (verified-only load, hard-fails, MCQ records).
 - `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash).
+- `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
+- `pipeline/tests/test_scale.py` — total card count ≥ 5 000 and per-leaf minimums for the high-volume leaves.
 
 ---
-Last verified against: agent/pipeline-mcq-content (built on main 3b224e2) — MCQ surface + verification gate
+Last verified against: agent/deck-scale

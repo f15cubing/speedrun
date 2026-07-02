@@ -98,6 +98,11 @@ def test_production_yaml_is_fully_verified():
     build_deck.assert_all_verified()
 
 
+def test_conceptual_set_is_expanded():
+    cards = build_deck.load_conceptual_cards()
+    assert len(cards) >= 55
+
+
 def test_conceptual_mcq_records_load_wellformed():
     cards = build_deck.load_conceptual_cards()
     mcq = [c for c in cards if c.get("format") == "mcq"]
