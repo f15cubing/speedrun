@@ -103,8 +103,12 @@ _Last updated: 2026-07-01 (Wed) — W4 sync foundation._
 
 ## In flight
 
-- _Nothing in flight — dashboard redesign (PR #20) merged; next is Exam Mode (`agent/exam-mode`, Part B
-  of the redesign spec) + the Thursday scoring layer._
+- **Exam Mode — core (B-1)** (`agent/exam-mode`, fast lane) — vendored, engine-free GRE-exam form
+  assembly + rights-only scoring: `anki/qt/aqt/gre/exam.py` (deterministic blueprint-matched 50/25/25
+  form at the official 2.58 min/item pace; presets 66/33/22/11; per-leaf/bucket breakdown + Wilson CI +
+  attempts record) + `exam_items.json` (vendored eval bank, drift-guarded). `test_gre_exam.py` +
+  outer `test_exam_items_sync.py`. The SvelteKit exam shell + endpoints + dialog + mastery gate are
+  B-2. Vendored into the fork (the app can't read the outer `eval/bank/` at runtime).
 
 ## Next (per execution-plan)
 
