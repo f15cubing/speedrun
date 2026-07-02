@@ -638,7 +638,7 @@ def test_give_up_conditions():
 
 def test_project_gated_off_hides_number():
     probs = [0.5] * 10
-    out = project(probs, _TABLE, residuals=[0.0], max_width=1)  # impossible width -> gated
+    out = project(probs, _TABLE, residuals=[1.0], max_width=1)  # wide residual -> interval too wide -> gated
     assert out["shown"] is False and out["estimate"] is None
 ```
 

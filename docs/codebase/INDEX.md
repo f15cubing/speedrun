@@ -20,6 +20,7 @@
 | Deck auto-incorporation (bundled first-run import, both apps) | `docs/superpowers/specs/2026-07-02-deck-auto-incorporation-design.md` | desktop `anki/qt/aqt/gre/deck_autoimport.py` + `data/gre-study-deck.apkg` (hook in `qt/aqt/main.py`); AnkiDroid `GreDeckAutoImport.kt` + `assets/gre-study-deck.apkg` (DeckPicker hook); root `Makefile` (`deck-asset`/`deck-asset-check`) | `f15cubing/anki@277f12e`, `f15cubing/Anki-Android@a141c11` |
 | AI gold-set (eval) | `eval/goldset/goldset.md` | `eval/goldset/` | `6941192` |
 | Authored eval bank (P0 held-out + P3 paraphrase, Thu) | `eval/bank/eval_bank.md` | `eval/bank/` (`loader.py`, `generate_eval.py`, `items.yaml`) | `agent/eval-bank` (on `3b224e2`) |
+| Scoring layer — Performance + Readiness (Thu, pure-Python package) | `scoring/scoring.md` | `scoring/` (`logistic.py`, `poisson_binomial.py`, `features.py`, `simulate.py`, `performance.py`, `readiness.py`, `calibration.py`, `scorecard.py`, `eval_cli.py`); `make score-eval`. Desktop adapter + AnkiDroid panel are separate engine-lane PRs. | `agent/thu-scoring-layer` (on `8698b1a`) |
 | Study-deck + tagging pipeline (~5,400 cards: flashcards + MCQ + 57 verified conceptual; scale-up + capacity/uniqueness tests) | `pipeline/pipeline.md` | `pipeline/` (`generate_deck.py`, `distractors.py`, `generate_mcq.py`, `build_deck.py` incl. "GRE MCQ" note type, `conceptual_cards.yaml`, `coverage_report.py`) | `agent/deck-scale` |
 
 ## Planned areas (designed in the PRD, not built yet)
