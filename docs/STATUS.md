@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-01 (Wed) — W4 sync foundation._
+_Last updated: 2026-07-02 (Thu) — deck auto-incorporation (bundled first-run import)._
 
 ## Done
 
@@ -116,9 +116,20 @@ _Last updated: 2026-07-01 (Wed) — W4 sync foundation._
   Firewalled to the vendored eval items (p0). `check:svelte` + `check:pytest:aqt` + vitest green;
   headless GUI smoke of setup/exam/review/results. anki fork → `484f66b`.
 
+- **Deck auto-incorporation** (engine-lane, 3 PRs) — the ~5,400-card study deck now **ships inside both
+  apps** and **auto-imports on first run** (no manual File→Import), version-gated + history-preserving
+  (add/update via content GUIDs, `with_scheduling=false`), sync-safe (`gre_deck_version` in `col.conf`).
+  Desktop importer merged (`f15cubing/anki#1`, hook `collection_did_load`); AnkiDroid importer merged
+  (`f15cubing/Anki-Android#1`, DeckPicker hook). Validated: desktop unit 3/3 + GUI smoke; AnkiDroid
+  unit 2/2 against the real custom rsdroid + **emulator smoke** (fresh install auto-imports 5,435 cards,
+  idempotent on relaunch). anki fork reconciled with the exam-mode line (importer + exam + dashboard
+  hooks coexist). `make deck-asset` keeps the bundled asset in sync with `pipeline/`. Evidence in
+  `docs/evidence/deck-auto/`.
+
 ## In flight
 
-- _Nothing in flight — dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) shipped._
+- _Nothing in flight — dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck
+  auto-incorporation shipped._
 
 ## Next (per execution-plan)
 
