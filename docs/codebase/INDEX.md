@@ -19,7 +19,7 @@
 | Sync foundation (self-hosted server + conflict rule, W4) | `docs/codebase/sync.md` | `sync/run-sync-server.sh`, `sync/roundtrip_smoke.py`, root `Makefile` (`sync-server`/`sync-smoke`); server engine `anki@ea3acae` | `f15cubing/anki@ea3acae` |
 | AI gold-set (eval) | `eval/goldset/goldset.md` | `eval/goldset/` | `6941192` |
 | Authored eval bank (P0 held-out + P3 paraphrase, Thu) | `eval/bank/eval_bank.md` | `eval/bank/` (`loader.py`, `generate_eval.py`, `items.yaml`) | `agent/eval-bank` (on `3b224e2`) |
-| Study-deck + tagging pipeline (flashcards + MCQ surface + verification gate) | `pipeline/pipeline.md` | `pipeline/` (`generate_deck.py`, `distractors.py`, `generate_mcq.py`, `build_deck.py` incl. "GRE MCQ" note type, `conceptual_cards.yaml`, `coverage_report.py`) | `agent/pipeline-mcq-content` (on `3b224e2`) |
+| Study-deck + tagging pipeline (~5,400 cards: flashcards + MCQ + 57 verified conceptual; scale-up + capacity/uniqueness tests) | `pipeline/pipeline.md` | `pipeline/` (`generate_deck.py`, `distractors.py`, `generate_mcq.py`, `build_deck.py` incl. "GRE MCQ" note type, `conceptual_cards.yaml`, `coverage_report.py`) | `agent/deck-scale` |
 
 ## Planned areas (designed in the PRD, not built yet)
 

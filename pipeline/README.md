@@ -27,11 +27,17 @@ This writes `pipeline/dist/gre-study-deck.apkg`, prints the coverage report, and
   (the 17-leaf taxonomy from PRD Appendix A; see `taxonomy.py`).
 - The deck covers **all 17** taxonomy leaves (gate requires ≥ 9 = ≥ 50%).
 - **≥ 50 % of cards are calculus-tagged**, reflecting the ETS ~50% calculus weight.
+- **~5,370 cards total** (≈ 4,880 flashcards + ≈ 490 MCQ, seed 42 build). Heavy
+  calculus leaves (`differential_single`, `integral_single`) each generate 825
+  cards; `differential_multi` 700; other calculus leaves 500; algebra/additional
+  leaves scaled to match exam-weight targets.
 - Two card formats: **basic flashcards** (the Memory surface) and **MCQ** cards
   (the Performance surface, §8a) via a new **"GRE MCQ"** note type. Computational
   MCQ are generated for `differential_single`, `integral_single`, `linear`,
-  `number_theory` with SymPy-templated distractors; a couple of conceptual MCQ are
+  `number_theory` with SymPy-templated distractors; conceptual MCQ are
   hand-authored. All MCQ review through the same FSRS loop — no engine change.
+- **~57 conceptual cards** are reference-sourced originals (hand-authored for the
+  conceptual leaves; every entry carries `status: verified` + full attribution).
 - **Conceptual cards are gated:** only `status: verified` (with attribution) cards
   ship; drafts are skipped by the dev build and rejected by the production gate.
 
