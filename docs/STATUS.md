@@ -187,6 +187,19 @@ _Last updated: 2026-07-03 (Fri) — Exam-Mode LaTeX merged (PR #27); scoring lay
   host; the change is a same-style date constant). **Android APK build + ktlint + emulator smoke of
   first-run re-import remain the one deferred manual gate.**
 
+- **Pre-uid dedup migration + on-device Android smoke** (engine lane; `anki`@`a58831e`,
+  `Anki-Android`@`ed7ef0a`, outer pins bumped) — an **emulator smoke** of the `gre_deck_version` bump
+  caught a real bug: upgrading an install whose bundled deck predated the stable-uid GUID scheme
+  **duplicated** it (content-hash GUIDs can't be matched by the new package → 5.4k → 10.8k cards). Fix
+  (both apps): stamp `gre_deck_guid_scheme`; on re-import, if it isn't the uid scheme, remove the
+  previously-bundled notes (our two note types) once, then import — fresh installs and future uid→uid
+  re-imports are unaffected (history preserved). **Verified on the `anki_test` emulator**: a pre-uid
+  dup'd collection (10,842 notes) → after launch **5,407 LaTeX notes, 0 ASCII, no duplicates**, scheme
+  stamped. Desktop `test_gre_autoimport` 6/6 (adds pre-uid-no-dup + uid-in-place + scheme-stamp);
+  AnkiDroid ktlint clean; APK built with our rsdroid + installed on the emulator. (Also corrected the
+  earlier "no Java" note — the full Android toolchain, incl. JDK 21, was present.) Different-agent review
+  pending.
+
 ## In flight
 
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
