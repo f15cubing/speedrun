@@ -204,7 +204,7 @@ _Last updated: 2026-07-03 (Fri) — Exam-Mode LaTeX merged (PR #27); scoring lay
   (10,842) healed to **5,411 LaTeX notes, no dup**. (`f15cubing/speedrun#31`.)
 
 - **AnkiDroid read-only score card panel (Task 7)** (engine lane; `Anki-Android` fork
-  `agent/scoring-android` → `0bb017f1`, outer pin bumped) — the desktop-written `gre_scorecard` (Task 6)
+  `agent/scoring-android` → `78989b9e`, outer pin bumped) — the desktop-written `gre_scorecard` (Task 6)
   now renders **read-only** on the phone: DeckPicker overflow → "GRE readiness" opens `GreScorecardFragment`
   (hosted by `SingleFragmentActivity`), which reads the synced `col.conf` value via `withCol { config… }`,
   parses it with a kotlinx.serialization model (`GreScorecard.kt`, `ignoreUnknownKeys`), and shows the three

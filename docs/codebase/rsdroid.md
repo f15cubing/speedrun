@@ -161,6 +161,6 @@ scoring math on device.
   `tests/libanki/`, `tests/CollectionTest.kt`).
 
 ---
-Last verified against: `f15cubing/Anki-Android@0bb017f1` (fork of `v2.24.0` `ebcf8e0`; + mastery binding +
+Last verified against: `f15cubing/Anki-Android@78989b9e` (fork of `v2.24.0` `ebcf8e0`; + mastery binding +
 deck auto-import + LaTeX rebundle + read-only GRE score card panel); rsdroid
 `f15cubing/Anki-Android-Backend@3dc30c2` (built locally, bundles `f15cubing/anki@ea3acae`)
