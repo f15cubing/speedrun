@@ -131,8 +131,8 @@ _Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readine
   residuals, **Bayesian normal-posterior cross-check**), gated by the 3-condition give-up rule
   (≥200 reviews · ≥50% coverage · width ≤ 120). 32/32 tests; `make score-eval` green (Readiness shows
   e.g. 711 [678–748]). Honest n≈1 labels throughout; difficulty firewalled; stdlib-only. Opus math
-  review CHANGES-REQUIRED items all fixed. The desktop adapter (writes the synced `gre_scorecard`) and
-  AnkiDroid read-only 3-score panel are separate engine-lane PRs.
+  review CHANGES-REQUIRED items all fixed. The desktop adapter (writes the synced `gre_scorecard`) is
+  **shipped** (Task 6, `anki@7c4836c5`); the AnkiDroid read-only 3-score panel is Task 7.
 
 - **PR #25** (merged) — **LaTeX math rendering** (fast lane): all study-deck math now renders as real
   LaTeX via MathJax (Anki reviewer + AnkiDroid already typeset `\(...\)`/`\[...\]`; no new dep, no
@@ -157,12 +157,22 @@ _Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readine
   converted via SymPy (round-trip-verified); prose hand-mapped. Different-agent review pending.
   Design: `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md`.
 
+- **Desktop scoring adapter (Task 6)** (engine lane; `anki` fork `agent/scoring-desktop` → `7c4836c5`
+  restacked on Exam-Mode LaTeX, outer pin bumped) — on GRE dashboard open, `qt/aqt/gre/scoring_adapter.py`
+  gathers the W1 mastery rows + coverage (W2 view-model) and writes the synced three-score `gre_scorecard`
+  to `col.conf` (rides W4 sync → unblocks the AnkiDroid panel, Task 7). Memory = FSRS Wilson range;
+  Performance = not-available; **Readiness gated off** with reasons + evidence panel (never derived from
+  Memory; never a bare number). Read-only except the one `set_config` (`undoable=False`, undo preserved);
+  no Rust/schema change. 3 adapter/trigger tests + 32 GRE aqt tests green; `ruff`/`mypy` clean; headless
+  round-trip smoke (scorecard persists, no corruption). Different-agent review **APPROVED**
+  (`f15cubing/anki#2` + `f15cubing/speedrun#28`).
+
 ## In flight
 
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX shipped. **Deferred:** bundled `.apkg` rebundle +
   `gre_deck_version` bump (needs the `Anki-Android` fork submodule + Android build). Scoring `scoring/`
-  package (Tasks 1–5) done + math-reviewed; desktop + AnkiDroid scoring UI (Tasks 6–7) pending._
+  package (Tasks 1–5) done + math-reviewed; desktop scoring adapter (Task 6) shipped; AnkiDroid read-only panel (Task 7) pending._
 
 ## Next (per execution-plan)
 

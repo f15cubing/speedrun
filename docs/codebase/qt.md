@@ -64,7 +64,7 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
 - `anki/qt/aqt/gre/__init__.py` — package init
 - `anki/qt/aqt/gre/taxonomy.json` — frozen 17-leaf / 3-bucket / 50/25/25 taxonomy
 - `anki/qt/aqt/gre/dashboard_data.py` — pure view-model: taxonomy loader, Wilson interval, `headline()` (50/25/25 rollup with n=0 renorm), coverage/next-best-topic, `build_view_model()`
-- `anki/qt/aqt/gre_dashboard.py` — `GreDashboard` QDialog + `setup_gre_dashboard_menu()` Tools-menu action
+- `anki/qt/aqt/gre_dashboard.py` — `GreDashboard` QDialog + `setup_gre_dashboard_menu()` Tools-menu action; on open, `_write_scorecard(mw)` computes + persists the synced `gre_scorecard` (see "GRE scoring adapter" below)
 - `anki/ts/routes/gre-dashboard/+page.svelte` — SvelteKit page root (fetches `greDashboardData` on mount); 3-zone layout (masthead · Memory · the two other slots · coverage)
 - `anki/ts/routes/gre-dashboard/MemoryPanel.svelte` — memory range headline + per-bucket/per-leaf ranges
 - `anki/ts/routes/gre-dashboard/CoverageMap.svelte` — 17-leaf coverage, each studied leaf as a compact calibration strip; best-next leaf ringed
@@ -125,6 +125,42 @@ Outer drift guard: `tests/test_exam_items_sync.py`.
 (server re-assembles deterministically from the echoed seed, scores rights-only, persists attempts,
 returns the revealed result). No `OpChanges`; attempts go to a profile side-file, never the collection.
 
+## GRE scoring adapter — synced 3-score card (Task 6 — implemented)
+
+Desktop-authoritative scoring: on dashboard open, compute the three-score
+`gre_scorecard` and write it to `col.conf` so it rides W4 collection sync to AnkiDroid
+(rendered read-only there — Task 7).
+
+**New file:**
+- `anki/qt/aqt/gre/scoring_adapter.py` — `compute_and_write_scorecard(col)`: gathers the
+  W1 mastery rows (`col.mastery_query(query_topics())`) + coverage via the W2
+  `dashboard_data.build_view_model()`, calls the pure-stdlib **outer-repo** `scoring/`
+  package (importable via a `sys.path` bridge to the repo root — four levels up from
+  `qt/aqt/gre/`), and writes `col.set_config("gre_scorecard", …)` (`undoable=False`, so
+  undo history is preserved). Read-only w.r.t. study data; that one config write is the
+  only mutation.
+
+**Modified file:**
+- `anki/qt/aqt/gre_dashboard.py` — `_write_scorecard(mw)` called in `GreDashboard.__init__`
+  (guarded: never blocks opening the dialog if scoring raises).
+
+**Score card** (`gre_scorecard` col.conf JSON, spec §6): `{version, updated_at, source,
+memory{estimate,low,high,coverage_pct}, performance{…,state},
+readiness{shown,estimate,low,high,reasons,coverage_pct,confidence,best_next_topic}}`. The
+three scores stay **separate** — never blended.
+
+**Honesty ceilings:** Memory is the FSRS-mastery Wilson range (`None` at n=0); Performance
+is `not_available` (no desktop attempt bank yet — arrives with the MCQ surface);
+**Readiness is gated OFF** (`shown=false`) with reasons + the evidence panel — desktop has
+no P(correct) model without attempts, and we deliberately do **not** derive Readiness from
+Memory (firewall / no-blend). Never a bare number.
+
+**Tests:** `anki/qt/tests/test_scoring_adapter.py` (3: schema/persist/gated on a fresh
+collection · evidence panel present when gated · the dashboard-open hook writes the card).
+Run the aqt suite with `PYTHONPATH=pylib:out/pylib:out/qt ANKI_TEST_MODE=1
+out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pylib` alone is
+**insufficient** for aqt tests: the generated `_aqt` package lives in `out/qt`.
+
 ## Add-ons & hooks
 - `anki/qt/aqt/addons.py` — `AddonManager` imports enabled add-ons.
 - `anki/qt/aqt/gui_hooks.py` re-exports hooks; the source of truth is `anki/qt/tools/genhooks_gui.py`
@@ -152,4 +188,4 @@ returns the revealed result). No `OpChanges`; attempts go to a profile side-file
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@484f66b` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode)
+Last verified against: `f15cubing/anki@7c4836c5` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter)

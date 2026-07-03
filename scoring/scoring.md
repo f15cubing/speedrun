@@ -90,8 +90,9 @@ Run: `. .venv-scoring/bin/activate && python -m pytest scoring/tests -q`; end-to
 
 ## Deferred (documented follow-ups)
 
-- The desktop adapter (Task 6) + AnkiDroid read-only panel (Task 7) that wire the score card into the
-  apps (engine-lane PRs).
+- The desktop adapter (Task 6) is **shipped** (`anki/qt/aqt/gre/scoring_adapter.py` computes + writes
+  the synced `gre_scorecard` on dashboard open; see `docs/codebase/qt.md` § scoring adapter). The
+  AnkiDroid read-only panel (Task 7) that renders the synced card remains deferred (engine-lane PR).
 - Replacing the ETS anchor placeholders with the exact published table.
 - The polished calibration-chart artifact + written paraphrase-gap results (Saturday).
 
