@@ -195,10 +195,13 @@ _Last updated: 2026-07-03 (Fri) — Exam-Mode LaTeX merged (PR #27); scoring lay
   previously-bundled notes (our two note types) once, then import — fresh installs and future uid→uid
   re-imports are unaffected (history preserved). **Verified on the `anki_test` emulator**: a pre-uid
   dup'd collection (10,842 notes) → after launch **5,407 LaTeX notes, 0 ASCII, no duplicates**, scheme
-  stamped. Desktop `test_gre_autoimport` 6/6 (adds pre-uid-no-dup + uid-in-place + scheme-stamp);
-  AnkiDroid ktlint clean; APK built with our rsdroid + installed on the emulator. (Also corrected the
-  earlier "no Java" note — the full Android toolchain, incl. JDK 21, was present.) Different-agent review
-  pending.
+  stamped. Desktop `test_gre_autoimport` 7/7 (pre-uid-no-dup + uid-in-place + scheme-stamp + stale-scheme
+  repair); AnkiDroid ktlint clean; APK built with our rsdroid + installed on the emulator. (Also corrected
+  the earlier "no Java" note — the full Android toolchain, incl. JDK 21, was present.) Different-agent
+  review **APPROVED**; per its one caveat, the import guard now checks **both** the version and the GUID
+  scheme (so an install already at the current version but with a stale scheme — the theoretical
+  double-import case — self-repairs). Re-smoked on the emulator: a version-matched dup'd collection
+  (10,842) healed to **5,411 LaTeX notes, no dup**. (`f15cubing/speedrun#31`.)
 
 ## In flight
 
