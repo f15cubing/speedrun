@@ -428,8 +428,17 @@ def generate_cards(seed=DEFAULT_SEED):
             front, back, meta = generator(rng)
             if front in seen:
                 continue
+            # Stable, rendering-independent note identity: the per-leaf ordinal in
+            # the deterministic generation sequence. It does NOT depend on the
+            # rendered front/back, so re-rendering (e.g. ASCII -> LaTeX) keeps the
+            # same GUID and the auto-importer updates cards in place (no dupes).
+            card = {
+                "front": front,
+                "back": back,
+                "leaf_tag": tag,
+                "uid": "{}::flashcard::{}".format(tag, len(seen)),
+            }
             seen.add(front)
-            card = {"front": front, "back": back, "leaf_tag": tag}
             if meta:
                 card["_expr"] = meta
             cards.append(card)

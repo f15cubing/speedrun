@@ -133,7 +133,6 @@ def generate_mcq_cards(seed=DEFAULT_SEED):
                 options, correct_index = distractors.make_options(rng, correct, wrongs)
             except distractors.InsufficientDistractors:
                 continue
-            seen.add(stem)
             cards.append(
                 {
                     "leaf_tag": tag,
@@ -142,11 +141,15 @@ def generate_mcq_cards(seed=DEFAULT_SEED):
                     "options": options,
                     "correct_index": correct_index,
                     "explanation": explanation,
+                    # Stable, rendering-independent note identity (per-leaf ordinal
+                    # in the deterministic sequence) so re-rendering keeps the GUID.
+                    "uid": "{}::mcq::{}".format(tag, len(seen)),
                     # Ground-truth key for the correctness test; never written to
                     # the note (mcq_note_for/_card_identity ignore extra keys).
                     "_correct_expr": correct,
                 }
             )
+            seen.add(stem)
     return cards
 
 

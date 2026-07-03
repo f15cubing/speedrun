@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readiness)._
+_Last updated: 2026-07-03 (Fri) — Exam-Mode LaTeX merged (PR #27); scoring layer package (Performance + Readiness)._
 
 ## Done
 
@@ -147,14 +147,14 @@ _Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readine
   **with** the vendored `anki/qt/aqt/gre/exam_items.json` (together, to keep `test_exam_items_sync` green),
   wire MathJax into the `gre-exam` webview, and `make deck-asset` re-sync + `gre_deck_version` bump.
 
-- **Exam-Mode LaTeX** (engine lane; `anki` fork `agent/gre-exam-latex` → `a631ec3`, outer pin bumped) —
-  the eval bank (`eval/bank/items.yaml`, 80 items) migrated to delimited LaTeX **together with** its
-  vendored copy `anki/qt/aqt/gre/exam_items.json` (so `test_exam_items_sync` stays green as a unit), and
-  MathJax wired into the `gre-exam` webview (`mathjax.ts` config+dynamic-import → offline code-split
-  chunk; `ItemView`/`Results` typeset; `+page` keys items). Verified: eval-bank suite + exam-items sync
-  green; `check:svelte`/`check:eslint`/format clean; SvelteKit bundle builds and the exam page dynamically
-  imports the local MathJax chunk. Live GUI smoke is the one remaining manual gate. Computational strings
-  converted via SymPy (round-trip-verified); prose hand-mapped. Different-agent review pending.
+- **PR #27** (merged) — **Exam-Mode LaTeX** (engine lane; `anki` fork `agent/gre-exam-latex` → `a631ec3`,
+  outer pin bumped) — the eval bank (`eval/bank/items.yaml`, 80 items) migrated to delimited LaTeX
+  **together with** its vendored copy `anki/qt/aqt/gre/exam_items.json` (so `test_exam_items_sync` stays
+  green as a unit), and MathJax wired into the `gre-exam` webview (`mathjax.ts` config+dynamic-import →
+  offline code-split chunk; `ItemView`/`Results` typeset; `+page` keys items). Verified: eval-bank suite +
+  exam-items sync green; `check:svelte`/`check:eslint`/format clean; SvelteKit bundle builds and the exam
+  page dynamically imports the local MathJax chunk. Computational strings converted via SymPy
+  (round-trip-verified); prose hand-mapped. Different-agent review passed.
   Design: `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md`.
 
 - **Desktop scoring adapter (Task 6)** (engine lane; `anki` fork `agent/scoring-desktop` → `7c4836c5`
@@ -166,6 +166,19 @@ _Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readine
   no Rust/schema change. 3 adapter/trigger tests + 32 GRE aqt tests green; `ruff`/`mypy` clean; headless
   round-trip smoke (scorecard persists, no corruption). Different-agent review **APPROVED**
   (`f15cubing/anki#2` + `f15cubing/speedrun#28`).
+- **LaTeX study-deck rebundle + stable GUIDs** (engine lane; `anki`@`2b01ca9` (rebundle on the scoring
+  adapter), `Anki-Android`@`e55b0ba`, outer pins bumped) — the bundled study-deck `.apkg` in **both apps**
+  is re-bundled from the LaTeX pipeline so first-run auto-import ships real math. Two supporting pipeline
+  changes: (1) note GUIDs now derive from a **stable, rendering-independent `uid`**
+  (`<leaf>::<format>::<ordinal>`), so re-rendering (ASCII→LaTeX, and future edits) updates cards **in
+  place** instead of duplicating on re-import; (2) `build_deck` re-zips the `.apkg` deterministically
+  (fixed 1980 timestamps) so it's byte-reproducible and `make deck-asset-check` passes. Verified: 50
+  pipeline tests green (incl. `test_stable_guids`); `make deck-asset` + `deck-asset-check` byte-match
+  across both app assets; desktop `test_gre_autoimport` 3/3; rebundled asset confirmed LaTeX.
+  **`gre_deck_version` intentionally NOT bumped** (the key syncs across apps, so the bump must land in
+  both together on a Java-equipped machine): fresh installs get LaTeX now; existing installs are
+  unaffected until that coordinated bump. Android build + emulator smoke also deferred (no Android
+  toolchain here). Different-agent review **APPROVED** (`f15cubing/speedrun#29`).
 
 ## In flight
 
