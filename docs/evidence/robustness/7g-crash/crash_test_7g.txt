@@ -1,0 +1,34 @@
+================================================================================
+GRE fork — 7g crash-durability proof (SIGKILL mid-review, one evolving collection)
+engine   : anki 25.09.4  (buildhash d52ca669)
+iters    : 20   seed cards: 60
+workdir  : /var/folders/00/stdf_fbd7vq6w3wyxr_bkmb00000gn/T/crash7g-98wbjn8v
+started  : 2026-07-03 13:57:45 CDT
+================================================================================
+seed     : cards=60 quick_check=ok
+[01/20] reviewing_at_kill= True hb_at_kill=  833 wal_at_kill= 4144752B reviews_committed=833 revlog_total=833 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[02/20] reviewing_at_kill= True hb_at_kill= 2937 wal_at_kill= 4148872B reviews_committed=2937 revlog_total=3770 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[03/20] reviewing_at_kill= True hb_at_kill= 2150 wal_at_kill= 4148872B reviews_committed=2150 revlog_total=5920 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[04/20] reviewing_at_kill= True hb_at_kill= 2685 wal_at_kill= 4152992B reviews_committed=2685 revlog_total=8605 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[05/20] reviewing_at_kill= True hb_at_kill=  930 wal_at_kill= 4148872B reviews_committed=930 revlog_total=9535 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[06/20] reviewing_at_kill= True hb_at_kill= 2401 wal_at_kill= 4161232B reviews_committed=2401 revlog_total=11936 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[07/20] reviewing_at_kill= True hb_at_kill=  908 wal_at_kill= 4144752B reviews_committed=909 revlog_total=12845 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[08/20] reviewing_at_kill= True hb_at_kill=  617 wal_at_kill= 4157112B reviews_committed=617 revlog_total=13462 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[09/20] reviewing_at_kill= True hb_at_kill= 1482 wal_at_kill= 4148872B reviews_committed=1483 revlog_total=14945 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[10/20] reviewing_at_kill= True hb_at_kill= 2095 wal_at_kill= 4161232B reviews_committed=2095 revlog_total=17040 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[11/20] reviewing_at_kill= True hb_at_kill= 3201 wal_at_kill= 4152992B reviews_committed=3201 revlog_total=20241 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[12/20] reviewing_at_kill= True hb_at_kill=    0 wal_at_kill= 4152992B reviews_committed=1495 revlog_total=21736 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[13/20] reviewing_at_kill= True hb_at_kill= 1229 wal_at_kill= 4148872B reviews_committed=1229 revlog_total=22965 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[14/20] reviewing_at_kill= True hb_at_kill=  707 wal_at_kill= 4148872B reviews_committed=707 revlog_total=23672 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[15/20] reviewing_at_kill= True hb_at_kill= 1139 wal_at_kill= 4144752B reviews_committed=1139 revlog_total=24811 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[16/20] reviewing_at_kill= True hb_at_kill=  816 wal_at_kill= 4136512B reviews_committed=816 revlog_total=25627 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[17/20] reviewing_at_kill= True hb_at_kill= 1783 wal_at_kill= 4161232B reviews_committed=1783 revlog_total=27410 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[18/20] reviewing_at_kill= True hb_at_kill=  865 wal_at_kill= 4148872B reviews_committed=865 revlog_total=28275 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[19/20] reviewing_at_kill= True hb_at_kill= 1033 wal_at_kill= 4144752B reviews_committed=1033 revlog_total=29308 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+[20/20] reviewing_at_kill= True hb_at_kill= 2096 wal_at_kill= 4148872B reviews_committed=2097 revlog_total=31405 quick_check=ok integrity_check=ok cards=60 -> CLEAN
+================================================================================
+7g RESULT: 20/20 collections CLEAN after mid-review SIGKILL (quick_check=ok AND integrity_check=ok AND no revlog loss)
+  kills confirmed mid-review (reviews committing at kill time): 20/20
+  total committed reviews survived across all crashes: 31405
+  finished : 2026-07-03 13:57:54 CDT
+================================================================================

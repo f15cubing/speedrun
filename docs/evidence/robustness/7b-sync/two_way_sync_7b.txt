@@ -1,0 +1,39 @@
+==================================================================================
+GRE fork — 7b two-way sync proof (10+10 no-loss  +  same-card conflict / LWW)
+engine   : anki 25.09.4  (buildhash d52ca669)
+server   : http://127.0.0.1:8090/   account: greuser
+started  : 2026-07-03 14:35:04 CDT
+==================================================================================
+SETUP    : A seeded 30 cards; graduated conflict card C=1783107304660 (baseline revlog=4, C revlog=4)
+
+
+         : A publish=FULL_UPLOAD  B pull=FULL_DOWNLOAD
+         : peer A (desktop): path=A_desktop.anki2 crt=1783069200
+         : peer B (phone)  : path=B_phone.anki2 crt=1783069200
+
+PHASE 1  : A reviewed 10 cards offline; B reviewed 10 *different* cards offline (both disconnected)
+         : local before reconnect  A revlog=14 B revlog=14  (baseline 4 + 10 each)
+
+
+
+         : reconnect syncs = A:NO_CHANGES  B:NO_CHANGES  A:NO_CHANGES
+         : reviews landed on A=20/20  on B=20/20  | revlog A=24 B=24 (baseline 4+20=24)
+         : quick_check A=ok B=ok
+PHASE 1  : PASS — all 20 offline reviews landed on both peers, no corruption
+
+PHASE 2  : same card C=1783107304660 reviewed on BOTH peers offline (pure review divergence)
+         : A(Good)  mod=1783107310  -> type=2, queue=2, due=330, ivl=330, factor=2950, reps=5, lapses=0, left=0, odue=0, mod=1783107310
+         : B(Again) mod=1783107311  -> type=3, queue=1, due=1783107951, ivl=1, factor=2750, reps=5, lapses=1, left=1, odue=0, mod=1783107311
+
+
+
+         : reconnect syncs (A,then B,then A) = NO_CHANGES, NO_CHANGES, NO_CHANGES
+         : converged C on A -> type=3, queue=1, due=1783107951, ivl=1, factor=2750, reps=5, lapses=1, left=1, odue=0, mod=1783107311
+         : converged C on B -> type=3, queue=1, due=1783107951, ivl=1, factor=2750, reps=5, lapses=1, left=1, odue=0, mod=1783107311
+         : C revlog A=6 B=6 (baseline 4 + 2 = 6)
+         : quick_check A=ok B=ok
+PHASE 2  : PASS — revlog union (+2 on both) AND scheduling LWW → B won (lapses=1); A's schedule overwritten; no corruption
+==================================================================================
+7b RESULT: PASS  |  10+10 no-loss: all 20 landed  |  same-card conflict: revlog union + scheduling LWW (later-mod peer B won)
+  finished : 2026-07-03 14:35:14 CDT
+==================================================================================

@@ -13,7 +13,7 @@ FORK_ANKI := $(if $(FORK_ANKI),$(FORK_ANKI),/Users/felipecaicedo/Desktop/alpha/s
 BENCH_CARDS := 50000
 BENCH_ITERS := 300
 
-.PHONY: sync-server sync-smoke deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs
+.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -22,6 +22,22 @@ sync-smoke: ## Headless desktop-collection sync round-trip (server must already 
 	@FORK_ANKI="$${FORK_ANKI:-/Users/felipecaicedo/Desktop/alpha/speedrun/anki}"; \
 	FORK_PY="$${FORK_PY:-$$FORK_ANKI/out/pyenv/bin/python}"; \
 	PYTHONPATH="$$FORK_ANKI/out/pylib$${PYTHONPATH:+:$$PYTHONPATH}" "$$FORK_PY" sync/roundtrip_smoke.py
+
+sync-server-7b: ## Start a self-hosted sync server on :8090 with a fresh 7b-only data dir (foreground; Ctrl-C to stop).
+	@rm -rf "$(CURDIR)/sync/.sync-data-7b"; \
+	FORK_ANKI="$${FORK_ANKI:-/Users/felipecaicedo/Desktop/alpha/speedrun/anki}" \
+	SYNC_PORT=8090 SYNC_BASE="$(CURDIR)/sync/.sync-data-7b" sync/run-sync-server.sh
+
+sync-7b: ## Two-way sync proof (7b): 10+10 no-loss + same-card conflict (server on :8090 must be running).
+	@FORK_ANKI="$${FORK_ANKI:-/Users/felipecaicedo/Desktop/alpha/speedrun/anki}"; \
+	FORK_PY="$${FORK_PY:-$$FORK_ANKI/out/pyenv/bin/python}"; \
+	SYNC_ENDPOINT="$${SYNC_ENDPOINT:-http://127.0.0.1:8090/}" \
+	PYTHONPATH="$$FORK_ANKI/out/pylib$${PYTHONPATH:+:$$PYTHONPATH}" "$$FORK_PY" sync/two_way_sync_7b.py
+
+crash-7g: ## Crash-durability proof (7g): SIGKILL mid-review x20 -> quick_check/integrity_check ok, no revlog loss.
+	@FORK_ANKI="$${FORK_ANKI:-/Users/felipecaicedo/Desktop/alpha/speedrun/anki}"; \
+	FORK_PY="$${FORK_PY:-$$FORK_ANKI/out/pyenv/bin/python}"; \
+	PYTHONPATH="$$FORK_ANKI/out/pylib$${PYTHONPATH:+:$$PYTHONPATH}" "$$FORK_PY" robustness/crash_test_7g.py
 
 deck-asset: ## Rebuild the study deck and refresh the bundled app assets (desktop + AnkiDroid).
 	python pipeline/build_deck.py --seed 42
