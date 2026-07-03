@@ -1,0 +1,4 @@
+7g SELF-TEST: the checker must reject a corrupted collection
+  pristine copy   -> quick_check=ok integrity_check=ok (expect ok/ok)
+  corrupted copy  -> quick_check=None integrity_check= error=open failed: DBError()
+  SELF-TEST PASS: pristine reads ok; corruption is caught.

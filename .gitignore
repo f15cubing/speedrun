@@ -57,8 +57,8 @@ pipeline/dist/
 # pipeline/aicards/aicards.md; the report itself is reproducible, not committed.
 pipeline/aicards/out/
 
-# W4 sync foundation — local server data + creds (never commit)
-sync/.sync-data/
+# W4 sync foundation + Block-C 7b proof — local server data + creds (never commit)
+sync/.sync-data*/
 sync/.env
 docs/evidence/w4-sync/*.tmp
 scoring/out/

@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — Block E docs: three one-page model descriptions (`docs/models/`) + README architecture overview & Rust-change note._
+_Last updated: 2026-07-03 (Fri) — compressed-Friday push merged: Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs (bench/calibration/paraphrase), and Block C robustness (7g crash-safety + 7b two-way sync)._
 
 ## Done
 
@@ -265,6 +265,19 @@ _Last updated: 2026-07-03 (Fri) — Block E docs: three one-page model descripti
   labeled "simulated (machinery check); validity unestablished at n≈1." `scoring/` stays pure-stdlib
   (charts in a separate `.venv-proofs`); 4 helper unit tests green. **Ablation run is CUT-FIRST**
   (Sat/Sun buffer — interleaving instrumentation not yet built; pre-registration stands).
+- **Block C robustness proofs — crash-safety (7g) + two-way sync (7b)** (fast lane; **evidence + tests,
+  no engine/collection change**) — headless on our engine (`f15cubing/anki@ea3acae`, `25.09.4`).
+  **7g:** one evolving collection **SIGKILLed mid-review ×20** → **20/20 CLEAN** (`quick_check` **and**
+  `integrity_check`=ok, no revlog loss; 31,405 committed reviews survived), plus a `--selftest` that
+  shows the gate rejects a byte-corrupted DB (non-vacuous). **7b:** two-way sync via a self-hosted
+  server on its own `:8090`/data-dir — **10+10 no-loss → all 20 reviews land on both peers**, and a
+  **same-card conflict** (pure review divergence) demonstrating the documented rule: **revlog union
+  (+2 on both) + scheduling LWW (later-`mod` peer wins; loser's schedule overwritten)** — `quick_check`
+  =ok throughout. Harnesses `robustness/crash_test_7g.py` + `sync/two_way_sync_7b.py`
+  (`make crash-7g` / `sync-server-7b` + `sync-7b`); docs `robustness/README.md` + `docs/codebase/sync.md`
+  (§ Block C proofs). **Android leg CUT** (shared `anki_test` emulator busy with the Task-7 subagent);
+  device side already covered by W3 (Check-DB "rebuilt and optimized" after a force-stop) + W4 (live
+  AnkiDroid↔desktop two-way sync). Evidence: `docs/evidence/robustness/`. (`f15cubing/speedrun#36`.)
 
 ## In flight
 
@@ -286,4 +299,6 @@ _Last updated: 2026-07-03 (Fri) — Block E docs: three one-page model descripti
     evidence is now captured (`docs/evidence/w3-android/`).
   - **W4 — Sync foundation:** ✅ **shipped.** Self-hosted `anki-sync-server` on our engine +
     `make sync-server`/`make sync-smoke` + live AnkiDroid↔desktop-peer round-trip (Check-DB clean);
-    conflict rule documented (`docs/codebase/sync.md`). 7b/7g deferred to Thursday.
+    conflict rule documented (`docs/codebase/sync.md`).
+- **Block C (Days 4+5) — 7b two-way sync + 7g crash-safety:** ✅ **proven headless** (desktop);
+  Android leg CUT (shared emulator). See the Done entry above + `docs/evidence/robustness/`.
