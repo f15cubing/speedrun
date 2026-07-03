@@ -248,6 +248,7 @@ day-by-day build order.
 | How the code fits together (+ diagrams) | `docs/codebase/architecture.md` |
 | The three scores (memory ≠ performance ≠ readiness), one page each | `docs/models/` |
 | The Rust engine change, in depth | `docs/progress-and-rust-change.md`, `docs/codebase/rslib.md` |
+| Packaging + submission runbook (both builds, hard-ceiling checklist, deliverables) | [`docs/submission-checklist.md`](docs/submission-checklist.md) |
 | Rules for changing code | `AGENTS.md` |
 
 ## The rsdroid backend (Android)
