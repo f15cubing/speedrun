@@ -32,3 +32,49 @@ def test_content_hash_is_stable_with_mcq():
     a = build_deck.load_all_cards(seed=42)
     b = build_deck.load_all_cards(seed=42)
     assert build_deck.cards_content_hash(a) == build_deck.cards_content_hash(b)
+
+
+def _mcq_qfmt():
+    return build_deck.MCQ_MODEL.templates[0]["qfmt"]
+
+
+def _mcq_afmt():
+    return build_deck.MCQ_MODEL.templates[0]["afmt"]
+
+
+def test_mcq_front_renders_five_tappable_options():
+    qfmt = _mcq_qfmt()
+    # each option field is wired to a tappable button carrying its index
+    for i, letter in enumerate("ABCDE"):
+        assert "{{Option%s}}" % letter in qfmt
+        assert 'data-i="%d"' % i in qfmt
+    assert qfmt.count('class="mcq-opt"') == 5
+
+
+def test_mcq_front_hides_correct_letter_behind_a_hook_not_in_the_prompt():
+    qfmt = _mcq_qfmt()
+    # the correct letter is present only inside the hidden hook the JS reads,
+    # so the visible prompt never announces the answer before a tap
+    assert 'id="mcq-correct"' in qfmt
+    assert ">{{CorrectOption}}<" in qfmt  # wrapped by the hidden hook element
+
+
+def test_mcq_front_has_interaction_js_and_explanation_reveal():
+    qfmt = _mcq_qfmt()
+    assert "addEventListener" in qfmt        # tap handler
+    assert "answered" in qfmt                # locks after first answer
+    assert "{{Explanation}}" in qfmt         # revealed on tap
+    assert "MathJax" in qfmt                 # re-typesets revealed LaTeX
+
+
+def test_mcq_back_reveals_key_and_explanation():
+    afmt = _mcq_afmt()
+    assert "{{FrontSide}}" in afmt
+    assert "{{CorrectOption}}" in afmt
+    assert "{{Explanation}}" in afmt
+
+
+def test_mcq_css_has_correct_and_wrong_states():
+    css = build_deck.MCQ_MODEL.css
+    assert ".mcq-opt" in css
+    assert ".correct" in css and ".wrong" in css

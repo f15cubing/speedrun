@@ -4,7 +4,18 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — demo prep: Friday shooting script (`docs/demo-plan-friday.md`) + AI-run how-to (`docs/ai-run-howto.md`, honest AI-off) + README doc-index/last-verified tidy; v0.2.0 release cut. Prior: compressed-Friday push merged (Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs, Block C robustness) + Sunday-prep docs bundle._
+_Last updated: 2026-07-03 (Fri) — interactive MCQ card template (tappable 5-option webview, FSRS-graded) + demo-script MCQ segment. Prior: demo prep (Friday shooting script + AI-run how-to + tidy, v0.2.0 release); compressed-Friday push merged (Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs, Block C robustness) + Sunday-prep docs bundle._
+
+- **Interactive MCQ card template** (fast lane; `pipeline/`) — the "GRE Math MCQ" note type is now an
+  **interactive webview**: five **tappable A–E options** → instant green/red feedback + correct-option
+  highlight + explanation reveal + MathJax typeset; grades on the normal **FSRS** ease path (manual for
+  now). Ships via the deck to **both** desktop + AnkiDroid (renders in the reviewer webview) — **no engine
+  change**. SymPy distractors unchanged. 9 `test_mcq_notetype.py` tests green (5 existing + 4 new interactive
+  assertions); deck rebuilds through the coverage gate; headless render verified (wrong→red, correct→green,
+  explanation shown). Spec: `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`.
+  **Follow-ups (engine-lane, Sunday):** re-bundle the `.apkg` into both app assets + bump `GRE_DECK_VERSION`
+  (so existing installs re-import the interactive template); the auto-grade reviewer hook (right→FSRS-schedule,
+  wrong→Again). (`f15cubing/speedrun#TBD`.)
 
 ## Done
 
