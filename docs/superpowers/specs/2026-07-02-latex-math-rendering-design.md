@@ -201,15 +201,25 @@ merge.
 - Deck rebuilds clean end-to-end (`build_deck.py --seed 42`): coverage + verification gates green.
 - Docs: `pipeline.md`, `eval_bank.md`, this spec, and the exam-mode redesign spec (KaTeX → MathJax).
 
-**Deferred to a submodule-enabled session (the `anki`/`Anki-Android` working tree here is checked out at
-`ea3acae`, which predates Exam Mode / the bundled-deck asset / the vendored eval copy):**
+**Shipped in the exam-mode session (`anki` fork branch `agent/gre-exam-latex` → `a631ec3`; outer pin
+bumped):**
 
-- `eval/bank/items.yaml` (80-item committed freeze) **+** `anki/qt/aqt/gre/exam_items.json` — migrate to
-  LaTeX **together** so `tests/test_exam_items_sync.py` stays green as a unit.
-- Wire MathJax into the `gre-exam` SvelteKit route (`ItemView`/`Navigator`/`Results`) + confirm offline
-  bundling; needs a TS build.
-- `make deck-asset` re-sync of the bundled `.apkg` into both apps + bump `gre_deck_version`; needs the
-  submodules and an Android build.
+- `eval/bank/items.yaml` (80-item freeze) migrated to LaTeX **together with** the vendored
+  `anki/qt/aqt/gre/exam_items.json` — `tests/test_exam_items_sync.py` + the eval-bank suite (loader,
+  firewall, P3 same-key) green. Computational strings converted via SymPy (round-trip-verified);
+  prose/conceptual hand-mapped with an exhaustive coverage check.
+- MathJax wired into the `gre-exam` SvelteKit route: `mathjax.ts` (sets config, dynamically imports the
+  engine → offline code-split chunk, `typesetMath()`); `ItemView`/`Results` typeset their content;
+  `+page` keys `ItemView` by item id (fresh DOM per item). Verified: `check:svelte`, `check:eslint`,
+  format, and a clean SvelteKit **bundle build** whose exam page dynamically imports the local MathJax
+  chunk (offline). **Live GUI smoke (open the app, run a mock, watch typeset) remains the one manual
+  gate** — not runnable headlessly here.
+
+**Still deferred (needs the `Anki-Android` fork submodule + an Android build):**
+
+- `make deck-asset` re-sync of the bundled `.apkg` into both apps + bump `gre_deck_version`, so first-run
+  auto-import ships the LaTeX study deck. The `Anki-Android` working tree is at upstream `v2.24.0`, not the
+  fork commit with the importer.
 
 ## 11. Out of scope
 
