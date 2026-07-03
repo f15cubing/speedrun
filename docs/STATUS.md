@@ -254,6 +254,17 @@ _Last updated: 2026-07-03 (Fri) — Block E docs: three one-page model descripti
   is a build-time content step, not a runtime dependency (static guard: `scoring/` never imports the
   generator or a model/network client). AI-off caveat: validates the **machinery**, not a live model.
   Docs: `pipeline/aicards/aicards.md`. No engine/submodule change.
+- **Block D — quantitative proofs** (fast lane; `agent/quant-proofs`) — three re-runnable, deterministic
+  proofs under `proofs/` + `docs/evidence/proofs/`: (1) **`make bench`** times the real
+  `col.mastery_query` RPC at **50k cards** through the built engine — **p50 650 ms · p95 667 ms · worst
+  709 ms** (20 topics/call; ≈32 ms/topic, consistent with the isolated ~19 ms Rust aggregate + 20×
+  hierarchical scans + FFI marshaling; honest sub-second dashboard refresh, batch/index noted as future
+  opt); (2) **memory calibration** (`make proofs`) — held-out student split, **Brier 0.219 · ECE 0.061**,
+  reliability curve hugs the diagonal (`calibration.png`); (3) **paraphrase** over the eval bank's 28 P3
+  groups — R1 0.630 [0.622,0.638] vs R2 0.624 [0.616,0.632], gap 0.006 → paraphrase-robust. Scoring proofs
+  labeled "simulated (machinery check); validity unestablished at n≈1." `scoring/` stays pure-stdlib
+  (charts in a separate `.venv-proofs`); 4 helper unit tests green. **Ablation run is CUT-FIRST**
+  (Sat/Sun buffer — interleaving instrumentation not yet built; pre-registration stands).
 
 ## In flight
 
