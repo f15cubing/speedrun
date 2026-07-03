@@ -190,4 +190,4 @@ turns generation off without touching review or scoring.
 (All accept `AI_PY=<python-with-sympy>`; seed 42; byte-reproducible.)
 
 ---
-Last verified against: agent/ai-pipeline
+Last verified against: `main` (merged as `f15cubing/speedrun#34`, commit `3f68a46`)
