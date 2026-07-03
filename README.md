@@ -10,6 +10,102 @@ Two apps over **one shared engine**: a desktop app (Anki/Qt) and an Android comp
 both driving the same Rust engine (`rslib`) and syncing between devices. The one real engine change
 is a read-only **Mastery Query** RPC (see `docs/PRD.md` §5).
 
+## Architecture overview
+
+The system is **two client apps over one shared Rust engine.**
+
+- **The engine** is Anki's `rslib` (Rust): FSRS scheduling, the due-card queue, SQLite storage,
+  collection sync, and undo/transactions. It is the single source of truth for card state, and every
+  capability is exposed as a **protobuf RPC**. Our one engine change lives here.
+- **Desktop** (`anki/`) is Qt + Python (`aqt`). Python reaches the engine through `pylib` and the
+  `rsbridge` PyO3 native module — a method call serialises a protobuf request, crosses into Rust, and
+  parses the protobuf response.
+- **Android** (`Anki-Android/`) is AnkiDroid (Kotlin). It reaches the **same** `rslib` through the
+  **`rsdroid`** AAR over JNI (again, protobuf in/out). Because our change is in `rslib`, it ships to
+  the phone for free once `rsdroid` is rebuilt from our fork.
+- **Sync** reconciles the two runtimes through a self-hosted `anki-sync-server` (revlog **unioned**,
+  card scheduling **last-writer-wins**).
+
+```
+           DESKTOP (Anki / Qt + Python)                ANDROID (AnkiDroid / Kotlin)
+           review · dashboard · scoring                review · read-only 3-score panel
+                   │ pylib + rsbridge (protobuf)               │ rsdroid AAR — JNI (protobuf)
+                   ▼                                           ▼
+      ┌──────────────────────────────────────────────────────────────────┐
+      │  SHARED ENGINE — Anki rslib (Rust), embedded in BOTH apps          │
+      │  FSRS · due queue · SQLite storage · sync · undo / transaction     │
+      │  + NEW: Mastery Query RPC  (read-only — never returns OpChanges)    │
+      └──────────────────────────────────────────────────────────────────┘
+                   ▲  two-way sync (revlog union + scheduling LWW)
+                   └──────────────►  anki-sync-server (self-hosted)  ◄───────
+
+   Scoring / AI / UX layers sit ABOVE the engine (switch-off-able):
+     Memory (FSRS R) → Performance (logistic + Platt) → Readiness (percentile + conformal)
+```
+
+*(Full mermaid diagrams — engine module map, RPC/FFI boundary, mastery-query data flow, three-score
+gate, sync conflict resolution — are in `docs/codebase/architecture.md`.)*
+
+**The three-score layer is desktop-authoritative.** Memory / Performance / Readiness are computed on
+the desktop (the pure-Python `scoring/` package + a thin Qt adapter), written to a small **synced
+`gre_scorecard`** JSON in `col.conf`, and rendered **read-only on the phone**. One source of truth,
+no model duplication: the phone shows the same three ranges the desktop computed, stamped "computed
+on desktop, last updated \<t\>." The three scores are **never blended**, and **Readiness is always a
+range with an evidence panel** that refuses to show a number without enough evidence (the give-up
+rule). One-page model descriptions:
+
+| Score | Measures | Math | Doc |
+|---|---|---|---|
+| **Memory** | P(recall a card now) | FSRS retrievability + **Wilson** interval | [`docs/models/memory.md`](docs/models/memory.md) |
+| **Performance** | P(correct on an unseen exam item) | **logistic + Platt**, Fisher-SE interval | [`docs/models/performance.md`](docs/models/performance.md) |
+| **Readiness** | projected GRE 200–990 (a range) | **Poisson-binomial → ETS percentile → conformal**, give-up gated | [`docs/models/readiness.md`](docs/models/readiness.md) |
+
+**Key principle:** the engine is shared and unmodified except for the additive, read-only mastery
+query. Everything score/AI/UX-related lives *above* the engine so it can be switched off (the AI-off
+requirement) without touching the review loop.
+
+## The Rust engine change — Mastery Query
+
+The single change inside Anki's Rust engine (PRD §5, D1) is a **read-only Mastery Query** RPC. Given
+a set of `topic::*` tags it returns, per topic, `{ total_cards, reviewed_count, mastered_count,
+avg_recall }` in **one indexed SQL pass**, reusing the scheduler's *own* FSRS retrievability helpers
+— so the dashboard's mastery numbers come from the same math that schedules reviews, not a lookalike.
+It powers the Memory score and feeds the Performance model's per-topic mastery feature.
+
+**Why Rust, not Python:** (1) per-topic mastery over 50k cards on every dashboard refresh is one
+indexed grouped aggregate *inside* the engine, vs. many protobuf round-trips + interpreter
+aggregation; (2) FSRS retrievability is computed by Rust SQL helpers not exposed to Python; (3)
+living in `rslib` means the change ships to desktop **and** Android from one place; (4) read-only +
+in-engine means it cannot drift from the engine's own notion of card state.
+
+**The hard invariant (the project's #1 ceiling):** a read must never look like a write. The RPC
+**never returns `OpChanges`**, **never calls `transact`**, adds **no undo step**, and leaves the
+study-queue counts byte-identical — enforced by a read-only-invariant test.
+
+### Files touched
+
+| File | Change |
+|---|---|
+| `anki/proto/anki/stats.proto` | +1 RPC (`MasteryQuery`) + 3 messages (`MasteryRequest`, `TopicMastery`, `MasteryResponse`) — additive |
+| `anki/rslib/src/stats/mastery.rs` | **new** — pure `aggregate_mastery` fold + `tag_matches` + `Collection::mastery_for_topics` + unit tests |
+| `anki/rslib/src/stats/mod.rs` | register the new module |
+| `anki/rslib/src/stats/service.rs` | wire the RPC to `mastery_for_topics` |
+| `anki/rslib/src/storage/card/mod.rs` | **new** read-only SQL helper (`all_card_tags_and_retrievability`) |
+| `anki/pylib/anki/collection.py` | Python binding `Collection.mastery_query(topics)` |
+
+**Tests:** 3 Rust unit tests (empty/zero · aggregation + hierarchy · **read-only invariant** —
+unchanged undo step + queue counts + `quick_check` clean) + an `#[ignore]`d 50k-card perf smoke
+(p50 ≈ 19 ms, < 50 ms target) + 2 Python integration tests (hierarchy + `add_note → mastery_query →
+undo` round-trip). It reaches Android too: `rsdroid` was rebuilt from our fork and a Kotlin
+`Collection.masteryQuery` binding is proven by a host-JVM test against the real compiled `rslib`.
+
+**Merge-difficulty assessment — LOW.** Every change is *additive* on Anki's most stable insertion
+points: a new proto message, a new read RPC on the existing read-only `StatsService`, a new SQL
+helper, a new binding. We touched **no** existing scheduler, storage-write, or undo logic, and
+deliberately avoided the version-volatile `scheduler/answering/` and `scheduler/fsrs/` interval math
+(PRD D1). A future rebase onto upstream Anki is therefore very unlikely to conflict. Full deep-dive:
+`docs/progress-and-rust-change.md`; engine doc: `docs/codebase/rslib.md` (§ Mastery Query).
+
 ## License & credits
 
 Licensed **AGPL-3.0-or-later** (`LICENSE`). This is a fork that builds on:
@@ -150,6 +246,8 @@ day-by-day build order.
 | The day-by-day plan | `docs/execution-plan.md` |
 | The assignment | `docs/project-spec.md` |
 | How the code fits together (+ diagrams) | `docs/codebase/architecture.md` |
+| The three scores (memory ≠ performance ≠ readiness), one page each | `docs/models/` |
+| The Rust engine change, in depth | `docs/progress-and-rust-change.md`, `docs/codebase/rslib.md` |
 | Rules for changing code | `AGENTS.md` |
 
 ## The rsdroid backend (Android)
