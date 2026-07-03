@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — interactive MCQ card template (tappable 5-option webview, FSRS-graded) + demo-script MCQ segment. Prior: demo prep (Friday shooting script + AI-run how-to + tidy, v0.2.0 release); compressed-Friday push merged (Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs, Block C robustness) + Sunday-prep docs bundle._
+_Last updated: 2026-07-03 (Fri) — demo-plan-friday MCQ segment refined into concrete step-by-step (rebuild+import to get the interactive template on screen today; tap wrong→red/correct→green→explanation→grade). Prior: interactive MCQ card template + MCQ re-bundle PR (#40, in review); demo prep + v0.2.0; compressed-Friday push merged._
 
 - **Interactive MCQ card template** (fast lane; `pipeline/`) — the "GRE Math MCQ" note type is now an
   **interactive webview**: five **tappable A–E options** → instant green/red feedback + correct-option
