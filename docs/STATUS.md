@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — Exam-Mode LaTeX merged (PR #27); scoring layer package (Performance + Readiness)._
+_Last updated: 2026-07-03 (Fri) — Block E docs: three one-page model descriptions (`docs/models/`) + README architecture overview & Rust-change note._
 
 ## Done
 
@@ -210,10 +210,20 @@ _Last updated: 2026-07-03 (Fri) — Exam-Mode LaTeX merged (PR #27); scoring lay
   parses it with a kotlinx.serialization model (`GreScorecard.kt`, `ignoreUnknownKeys`), and shows the three
   scores **separately** — Readiness only as a number when the desktop gate passed, else the evidence panel;
   never a bare number, no scoring math on device. Reuses the W3 local rsdroid (`local_backend=true`) — **no
-  rebuild** (config read only). 3 host-JVM parser tests + ktlint green; APK built + installed on the
+  rebuild** (config read only). 5 host-JVM parser tests + ktlint green; APK built + installed on the
   `anki_test` emulator and the panel opens via the menu (empty state until a card syncs; screenshots in
   `docs/evidence/task7-android/`). Full desktop→sync→populated-panel demo is the separable integration
-  (builds on W4 sync). Different-agent review pending.
+  (builds on W4 sync). Different-agent review **APPROVED** (`f15cubing/speedrun#32`).
+- **Block E docs — model descriptions + README architecture/Rust-change note** (fast lane, docs only) —
+  three grader-facing **one-page model descriptions** in `docs/models/` (`memory.md` = FSRS
+  retrievability + Wilson range; `performance.md` = logistic + Platt with an analytic Fisher-SE
+  interval; `readiness.md` = Poisson-binomial → ETS-percentile → split-conformal range, gated by the
+  D2 give-up rule: ≥200 reviews · ≥50% coverage · width ≤ 120, a bare readiness number is an auto-fail),
+  each covering inputs/features, the math, uncertainty-as-a-range, and the honesty labels; plus a new
+  **Architecture overview** (two clients over one shared `rslib`; rsdroid on Android; the read-only
+  mastery-query RPC; the desktop-authoritative synced `gre_scorecard`) and **Rust-change note**
+  (files touched + **merge-difficulty = LOW**) in `README.md`, with the three model docs linked. No
+  code/engine change. (`f15cubing/speedrun#33`.)
 
 ## In flight
 
