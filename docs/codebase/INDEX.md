@@ -23,6 +23,7 @@
 | LaTeX math rendering (study deck + eval bank + Exam Mode webview) | `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md`; `pipeline/pipeline.md`, `eval/bank/eval_bank.md` | `pipeline/mathfmt.py` + generators (stable `uid` GUIDs, deterministic `.apkg`); `eval/bank/items.yaml`; `anki/qt/aqt/gre/exam_items.json` + `data/gre-study-deck.apkg`; `anki/ts/routes/gre-exam/` (`mathjax.ts`, `ItemView.svelte`, `Results.svelte`, `+page.svelte`); `Anki-Android/.../assets/gre-study-deck.apkg` | `f15cubing/anki@444544c`, `f15cubing/Anki-Android@78989b9e` |
 | Scoring layer — Performance + Readiness (Thu, pure-Python package) | `scoring/scoring.md` | `scoring/` (`logistic.py`, `poisson_binomial.py`, `features.py`, `simulate.py`, `performance.py`, `readiness.py`, `calibration.py`, `scorecard.py`, `eval_cli.py`); `make score-eval`. Desktop adapter **shipped** (`anki/qt/aqt/gre/scoring_adapter.py` writes the synced `gre_scorecard`; see `qt.md` § scoring adapter); AnkiDroid read-only panel **shipped** (Task 7; `Anki-Android/.../GreScorecardFragment.kt` + `GreScorecard.kt` read the synced `gre_scorecard`; see `rsdroid.md` § score card panel). | `agent/thu-scoring-layer` (on `8698b1a`) |
 | Study-deck + tagging pipeline (~5,400 cards: flashcards + MCQ + 57 verified conceptual; scale-up + capacity/uniqueness tests) | `pipeline/pipeline.md` | `pipeline/` (`generate_deck.py`, `distractors.py`, `generate_mcq.py`, `build_deck.py` incl. "GRE MCQ" note type, `conceptual_cards.yaml`, `coverage_report.py`) | `agent/deck-scale` |
+| AI card pipeline + gold-set gate (RAG + non-nullable provenance + abstention + SymPy/NLI verify + pre-lodged gate w/ κ; AI-off / deterministic-stub-driven) | `pipeline/aicards/aicards.md` | `pipeline/aicards/` (`corpus.py`, `provenance.py`, `retriever.py`, `verify.py`, `cards.py`, `stub_model.py`, `orchestrator.py`, `goldset_gate.py`, `firewall.py`, `run_gate.py`, `sources/`); `make ai-gate` | `agent/ai-pipeline` |
 
 ## Planned areas (designed in the PRD, not built yet)
 
@@ -36,7 +37,6 @@ the PR that first builds each of these.
 | Our app additions — timed practice mode (exam-pressure simulator, mastery-gated) | `anki/ts/routes/`, `anki/qt/aqt/` | PRD §8/§8a — sequenced last, after interleaving + ordering algorithm |
 | Scoring models — memory / performance / readiness | Python sidecar (desktop-authoritative), location TBD | PRD §7, §9 (Step 1–3) |
 | Sync conflict rules — engine-level device-UUID tie-break (foundation shipped W4; the tie-break itself is deferred, Thursday) | builds on `anki/rslib/src/sync/` | PRD §10 / D3; `docs/codebase/sync.md`; `architecture.md` Diagram 6 |
-| AI card pipeline (RAG + provenance schema + CAS/SymPy verify) | desktop, AI-off-able, location TBD | PRD §9 |
 
 ---
 

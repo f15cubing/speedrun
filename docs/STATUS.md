@@ -224,6 +224,36 @@ _Last updated: 2026-07-03 (Fri) — Block E docs: three one-page model descripti
   mastery-query RPC; the desktop-authoritative synced `gre_scorecard`) and **Rust-change note**
   (files touched + **merge-difficulty = LOW**) in `README.md`, with the three model docs linked. No
   code/engine change. (`f15cubing/speedrun#33`.)
+- **Block A — AI card pipeline + gold-set gate** (fast lane, `pipeline/aicards/`; PR on
+  `agent/ai-pipeline`, **open for human review — do not auto-merge**) — the full PRD §9 machinery,
+  real and unit-tested (52 tests): RAG over an original single-variable-calculus source chapter →
+  **non-nullable verbatim-quote + anchor provenance** (drop/abstain if absent) → **in-pipeline
+  abstention** → **SymPy CAS** re-derivation for computational cards (a wrong answer cannot publish)
+  and **NLI-proxy + mandatory human-review** for conceptual cards → **pre-lodged gold-set gate**
+  (`FACT_PRECISION_MIN=0.98`, `USEFUL_YIELD_MIN=0.60`) scored by **2 raters with Cohen's κ**. One
+  command: `make ai-gate`. **AI access = AI-off (no live-model API key):** per the plan, the machinery
+  is driven by a transparent **deterministic stub** (live-model seam = `orchestrator.LlmBackend`,
+  fails loudly without a key). **Gate PASSED on the stub:** 50 generated → 35 published / 5 conceptual
+  drafts / 10 abstained; **fact-precision 1.000** (independent numeric-rater audit agrees),
+  **useful-yield 0.64**, **κ 0.938 @ 98% agreement**, safety-recall 1.0; **firewall PASS** (canary/
+  ETS/OCW-free, anchors all from the corpus, generation never reads the held-out store). Numbers
+  validate the *machinery*, not a live model — a real-LLM run is pending API access. Docs:
+  `pipeline/aicards/aicards.md`. No engine/submodule change.
+
+- **Block C proofs — beat-the-baseline + AI-off degradation** (fast lane, `pipeline/aicards/`;
+  folded into the same PR #34 branch `agent/ai-pipeline`, **open — do not auto-merge**) — the two
+  A-gated proofs, real + unit-tested (suite now **76 tests**). One command: `make ai-baseline`.
+  (1) **Beat-the-baseline (McNemar exact, pure stdlib):** AI-pipeline arm (RAG+provenance+CAS+abstain)
+  vs. a template/cloze **non-RAG, no-verify/abstain** baseline over the **same shared SymPy targets**
+  (only the pipeline differs), scored by the **same rater**. AI **fact-precision 1.000 / useful-yield
+  0.833** vs. baseline **0.600 / 0.400**; paired 2×2 a=20/b=30/c=4/d=6; **McNemar p = 6.165e-06**
+  favoring AI; useful-yield-diff 90% bootstrap CI [0.300, 0.567] (excludes 0). **AI beats the baseline
+  with the fact-precision ceiling intact**; honest-null language auto-triggers if a run misses α=0.05.
+  (2) **AI-off degradation:** no key → the live-model seam fails loudly and `run_pipeline_safe` aborts
+  cleanly (**0 cards, 0 unverified shipped**) while the study/review deck + `scoring/` still load — AI
+  is a build-time content step, not a runtime dependency (static guard: `scoring/` never imports the
+  generator or a model/network client). AI-off caveat: validates the **machinery**, not a live model.
+  Docs: `pipeline/aicards/aicards.md`. No engine/submodule change.
 
 ## In flight
 
