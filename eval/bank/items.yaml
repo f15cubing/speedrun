@@ -2,15 +2,15 @@ items:
 - id: eval-p0-0001
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: 'Give the antiderivative (omit + C):  ∫ (3*x + 4) dx'
+  question: 'Give the antiderivative (omit + C):  \(\int \left(3 x + 4\right)\,dx\)'
   options:
-  - '3'
-  - 3*x**2/2 + 4*x
-  - 3*x + 4
-  - -3*x**2/2 - 4*x
-  - 3*x**2 + 8*x
+  - \(3\)
+  - \(\frac{3 x^{2}}{2} + 4 x\)
+  - \(3 x + 4\)
+  - \(- \frac{3 x^{2}}{2} - 4 x\)
+  - \(3 x^{2} + 8 x\)
   correct_index: 1
-  explanation: F(x) = 3*x**2/2 + 4*x + C
+  explanation: \(F(x) = \frac{3 x^{2}}{2} + 4 x + C\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -23,15 +23,15 @@ items:
 - id: eval-p0-0002
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: 'Give the antiderivative (omit + C):  ∫ (3*x + 5) dx'
+  question: 'Give the antiderivative (omit + C):  \(\int \left(3 x + 5\right)\,dx\)'
   options:
-  - '3'
-  - 3*x + 5
-  - 3*x**2/2 + 5*x
-  - -3*x**2/2 - 5*x
-  - 3*x**2 + 10*x
+  - \(3\)
+  - \(3 x + 5\)
+  - \(\frac{3 x^{2}}{2} + 5 x\)
+  - \(- \frac{3 x^{2}}{2} - 5 x\)
+  - \(3 x^{2} + 10 x\)
   correct_index: 2
-  explanation: F(x) = 3*x**2/2 + 5*x + C
+  explanation: \(F(x) = \frac{3 x^{2}}{2} + 5 x + C\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -44,15 +44,15 @@ items:
 - id: eval-p0-0003
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: 'Give the antiderivative (omit + C):  ∫ (6*x + 1) dx'
+  question: 'Give the antiderivative (omit + C):  \(\int \left(6 x + 1\right)\,dx\)'
   options:
-  - '6'
-  - 3*x**2 + x
-  - 6*x + 1
-  - -3*x**2 - x
-  - 6*x**2 + 2*x
+  - \(6\)
+  - \(3 x^{2} + x\)
+  - \(6 x + 1\)
+  - \(- 3 x^{2} - x\)
+  - \(6 x^{2} + 2 x\)
   correct_index: 1
-  explanation: F(x) = 3*x**2 + x + C
+  explanation: \(F(x) = 3 x^{2} + x + C\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -65,15 +65,15 @@ items:
 - id: eval-p0-0004
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: 'Give the antiderivative (omit + C):  ∫ (4*x + 2) dx'
+  question: 'Give the antiderivative (omit + C):  \(\int \left(4 x + 2\right)\,dx\)'
   options:
-  - '4'
-  - 2*x**2 + 2*x
-  - 4*x + 2
-  - -2*x**2 - 2*x
-  - 4*x**2 + 4*x
+  - \(4\)
+  - \(2 x^{2} + 2 x\)
+  - \(4 x + 2\)
+  - \(- 2 x^{2} - 2 x\)
+  - \(4 x^{2} + 4 x\)
   correct_index: 1
-  explanation: F(x) = 2*x**2 + 2*x + C
+  explanation: \(F(x) = 2 x^{2} + 2 x + C\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -86,15 +86,15 @@ items:
 - id: eval-p0-0005
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: 'Differentiate:  f(x) = 5*x**2'
+  question: 'Differentiate:  \(f(x) = 5 x^{2}\)'
   options:
-  - 10*x
-  - 5*x**3/3
-  - '10'
-  - -10*x
-  - 20*x
+  - \(10 x\)
+  - \(\frac{5 x^{3}}{3}\)
+  - \(10\)
+  - \(- 10 x\)
+  - \(20 x\)
   correct_index: 0
-  explanation: f'(x) = 10*x
+  explanation: \(f'(x) = 10 x\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -107,15 +107,15 @@ items:
 - id: eval-p0-0006
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: 'Differentiate:  f(x) = 6*x**4'
+  question: 'Differentiate:  \(f(x) = 6 x^{4}\)'
   options:
-  - 6*x**5/5
-  - 72*x**2
-  - -24*x**3
-  - 48*x**3
-  - 24*x**3
+  - \(\frac{6 x^{5}}{5}\)
+  - \(72 x^{2}\)
+  - \(- 24 x^{3}\)
+  - \(48 x^{3}\)
+  - \(24 x^{3}\)
   correct_index: 4
-  explanation: f'(x) = 24*x**3
+  explanation: \(f'(x) = 24 x^{3}\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -128,15 +128,15 @@ items:
 - id: eval-p0-0007
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: 'Differentiate:  f(x) = 4*x**2'
+  question: 'Differentiate:  \(f(x) = 4 x^{2}\)'
   options:
-  - 4*x**3/3
-  - 8*x
-  - '8'
-  - -8*x
-  - 16*x
+  - \(\frac{4 x^{3}}{3}\)
+  - \(8 x\)
+  - \(8\)
+  - \(- 8 x\)
+  - \(16 x\)
   correct_index: 1
-  explanation: f'(x) = 8*x
+  explanation: \(f'(x) = 8 x\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -149,15 +149,15 @@ items:
 - id: eval-p0-0008
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: 'Differentiate:  f(x) = 6*x**3'
+  question: 'Differentiate:  \(f(x) = 6 x^{3}\)'
   options:
-  - 3*x**4/2
-  - 36*x
-  - -18*x**2
-  - 36*x**2
-  - 18*x**2
+  - \(\frac{3 x^{4}}{2}\)
+  - \(36 x\)
+  - \(- 18 x^{2}\)
+  - \(36 x^{2}\)
+  - \(18 x^{2}\)
   correct_index: 4
-  explanation: f'(x) = 18*x**2
+  explanation: \(f'(x) = 18 x^{2}\)
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -170,15 +170,15 @@ items:
 - id: eval-p0-0009
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: Determinant of [[-1, -5], [-3, 4]]?
+  question: Determinant of \(\left[\begin{matrix}-1 & -5\\-3 & 4\end{matrix}\right]\)?
   options:
-  - '11'
-  - '17'
-  - '19'
-  - '-38'
-  - '-19'
+  - \(11\)
+  - \(17\)
+  - \(19\)
+  - \(-38\)
+  - \(-19\)
   correct_index: 4
-  explanation: det = -19
+  explanation: \(\det = -19\)
   difficulty: 3
   partition: p0
   paraphrase_group: null
@@ -191,15 +191,15 @@ items:
 - id: eval-p0-0010
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: Determinant of [[-1, 3], [2, 1]]?
+  question: Determinant of \(\left[\begin{matrix}-1 & 3\\2 & 1\end{matrix}\right]\)?
   options:
-  - '5'
-  - '-7'
-  - '-5'
-  - '7'
-  - '-14'
+  - \(5\)
+  - \(-7\)
+  - \(-5\)
+  - \(7\)
+  - \(-14\)
   correct_index: 1
-  explanation: det = -7
+  explanation: \(\det = -7\)
   difficulty: 3
   partition: p0
   paraphrase_group: null
@@ -212,15 +212,15 @@ items:
 - id: eval-p0-0011
   leaf_tag: topic::algebra::number_theory
   format: mcq
-  question: Compute gcd(76, 21).
+  question: Compute \(\gcd(76, 21)\).
   options:
-  - '1596'
-  - '21'
-  - '-1'
-  - '2'
-  - '1'
+  - \(1596\)
+  - \(21\)
+  - \(-1\)
+  - \(2\)
+  - \(1\)
   correct_index: 4
-  explanation: gcd = 1
+  explanation: \(\gcd = 1\)
   difficulty: 3
   partition: p0
   paraphrase_group: null
@@ -233,15 +233,15 @@ items:
 - id: eval-p0-0012
   leaf_tag: topic::algebra::number_theory
   format: mcq
-  question: Compute gcd(33, 55).
+  question: Compute \(\gcd(33, 55)\).
   options:
-  - '165'
-  - '33'
-  - '11'
-  - '-11'
-  - '22'
+  - \(165\)
+  - \(33\)
+  - \(11\)
+  - \(-11\)
+  - \(22\)
   correct_index: 2
-  explanation: gcd = 11
+  explanation: \(\gcd = 11\)
   difficulty: 3
   partition: p0
   paraphrase_group: null
@@ -254,15 +254,15 @@ items:
 - id: eval-p0-0101
   leaf_tag: topic::additional::real_analysis
   format: mcq
-  question: Which sequence is Cauchy in R?
+  question: Which sequence is Cauchy in \(\mathbb{R}\)?
   options:
-  - a_n = 1/n
-  - a_n = (-1)^n
-  - a_n = n
-  - a_n = n^2
-  - a_n = (-1)^n * n
+  - \(a_n = 1/n\)
+  - \(a_n = (-1)^n\)
+  - \(a_n = n\)
+  - \(a_n = n^2\)
+  - \(a_n = (-1)^n n\)
   correct_index: 0
-  explanation: 1/n converges to 0, so it is Cauchy in the complete space R.
+  explanation: \(1/n\) converges to \(0\), so it is Cauchy in the complete space \(\mathbb{R}\).
   difficulty: 3
   partition: p0
   paraphrase_group: null
@@ -275,15 +275,15 @@ items:
 - id: eval-p0-0102
   leaf_tag: topic::additional::real_analysis
   format: mcq
-  question: Does the harmonic series sum 1/n converge?
+  question: Does the harmonic series \(\sum 1/n\) converge?
   options:
-  - Yes, to 1
+  - Yes, to \(1\)
   - No, it diverges
-  - Yes, to e
-  - Yes, to 2
-  - Yes, to pi
+  - Yes, to \(e\)
+  - Yes, to \(2\)
+  - Yes, to \(\pi\)
   correct_index: 1
-  explanation: The harmonic series diverges (compare with integral of 1/x).
+  explanation: The harmonic series diverges (compare with integral of \(1/x\)).
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -296,7 +296,7 @@ items:
 - id: eval-p0-0103
   leaf_tag: topic::additional::topology
   format: mcq
-  question: Is the interval [0, 1] compact in the standard topology on R?
+  question: Is the interval \([0, 1]\) compact in the standard topology on \(\mathbb{R}\)?
   options:
   - Yes, by Heine-Borel
   - No, it is open
@@ -304,7 +304,7 @@ items:
   - Only if the rationals are excluded
   - Only in the discrete topology
   correct_index: 0
-  explanation: '[0,1] is closed and bounded, hence compact (Heine-Borel).'
+  explanation: \([0,1]\) is closed and bounded, hence compact (Heine-Borel).
   difficulty: 3
   partition: p0
   paraphrase_group: null
@@ -338,15 +338,15 @@ items:
 - id: eval-p0-0105
   leaf_tag: topic::additional::complex
   format: mcq
-  question: What is the value of e^(i*pi)?
+  question: What is the value of \(e^{i\pi}\)?
   options:
-  - '-1'
-  - '1'
-  - i
-  - '0'
-  - -i
+  - \(-1\)
+  - \(1\)
+  - \(i\)
+  - \(0\)
+  - \(- i\)
   correct_index: 0
-  explanation: 'Euler''s identity: e^(i*pi) = -1.'
+  explanation: 'Euler''s identity: \(e^{i\pi} = -1\).'
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -359,15 +359,15 @@ items:
 - id: eval-p0-0106
   leaf_tag: topic::additional::complex
   format: mcq
-  question: What is the modulus |1 + i|?
+  question: What is the modulus \(|1 + i|\)?
   options:
-  - sqrt(2)
-  - '1'
-  - '2'
-  - sqrt(3)
-  - '0'
+  - \(\sqrt{2}\)
+  - \(1\)
+  - \(2\)
+  - \(\sqrt{3}\)
+  - \(0\)
   correct_index: 0
-  explanation: '|1+i| = sqrt(1^2 + 1^2) = sqrt(2).'
+  explanation: \(|1+i| = \sqrt{1^2 + 1^2} = \sqrt{2}\).
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -380,15 +380,15 @@ items:
 - id: eval-p0-0107
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: A finite set has n elements. How many subsets does it have in total?
+  question: A finite set has \(n\) elements. How many subsets does it have in total?
   options:
-  - 2^n
-  - n^2
-  - n!
-  - 2n
-  - n^n
+  - \(2^{n}\)
+  - \(n^{2}\)
+  - \(n!\)
+  - \(2n\)
+  - \(n^{n}\)
   correct_index: 0
-  explanation: 'Each element is in or out: 2^n.'
+  explanation: 'Each element is in or out: \(2^n\).'
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -401,15 +401,15 @@ items:
 - id: eval-p0-0108
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: 'If n > m items are placed in m boxes, then:'
+  question: 'If \(n > m\) items are placed in \(m\) boxes, then:'
   options:
-  - some box holds at least 2 items
-  - every box holds exactly 1
+  - some box holds at least \(2\) items
+  - every box holds exactly \(1\)
   - some box is empty
   - all boxes hold equal counts
-  - no box holds 2
+  - no box holds \(2\)
   correct_index: 0
-  explanation: 'Pigeonhole: with more items than boxes, some box holds >= 2.'
+  explanation: 'Pigeonhole: with more items than boxes, some box holds \(\geq 2\).'
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -422,15 +422,15 @@ items:
 - id: eval-p0-0109
   leaf_tag: topic::additional::geometry
   format: mcq
-  question: What is the area of a circle of radius r?
+  question: What is the area of a circle of radius \(r\)?
   options:
-  - pi*r^2
-  - 2*pi*r
-  - pi*r
-  - pi*d
-  - 2*pi*r^2
+  - \(\pi r^{2}\)
+  - \(2 \pi r\)
+  - \(\pi r\)
+  - \(\pi d\)
+  - \(2 \pi r^{2}\)
   correct_index: 0
-  explanation: Area = pi*r^2.
+  explanation: Area \(= \pi r^2\).
   difficulty: 1
   partition: p0
   paraphrase_group: null
@@ -443,13 +443,13 @@ items:
 - id: eval-p0-0110
   leaf_tag: topic::algebra::abstract
   format: mcq
-  question: 'Lagrange''s theorem: for a finite group G with subgroup H,'
+  question: 'Lagrange''s theorem: for a finite group \(G\) with subgroup \(H\),'
   options:
-  - '|H| divides |G|'
-  - '|G| divides |H|'
-  - '|H| = |G|'
-  - H must be normal in G
-  - G must be abelian
+  - \(|H|\) divides \(|G|\)
+  - \(|G|\) divides \(|H|\)
+  - \(|H| = |G|\)
+  - \(H\) must be normal in \(G\)
+  - \(G\) must be abelian
   correct_index: 0
   explanation: The order of a subgroup divides the order of the group.
   difficulty: 3
@@ -464,15 +464,15 @@ items:
 - id: eval-p0-0111
   leaf_tag: topic::algebra::abstract
   format: mcq
-  question: What is the order of the symmetric group S_3?
+  question: What is the order of the symmetric group \(S_3\)?
   options:
-  - '6'
-  - '3'
-  - '9'
-  - '2'
-  - '12'
+  - \(6\)
+  - \(3\)
+  - \(9\)
+  - \(2\)
+  - \(12\)
   correct_index: 0
-  explanation: '|S_3| = 3! = 6.'
+  explanation: \(|S_3| = 3! = 6\).
   difficulty: 2
   partition: p0
   paraphrase_group: null
@@ -487,13 +487,13 @@ items:
   format: mcq
   question: The field with the fewest elements has how many elements?
   options:
-  - '2'
-  - '0'
-  - '1'
-  - '3'
+  - \(2\)
+  - \(0\)
+  - \(1\)
+  - \(3\)
   - infinitely many
   correct_index: 0
-  explanation: GF(2) = {0,1} is the smallest field.
+  explanation: \(\mathrm{GF}(2) = \{0,1\}\) is the smallest field.
   difficulty: 3
   partition: p0
   paraphrase_group: null
@@ -506,15 +506,15 @@ items:
 - id: eval-p3-pg-0001-r1
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: 'Find the antiderivative (omit + C):  ∫ (3*x + 2) dx'
-  options: &id001
-  - '3'
-  - 3*x + 2
-  - 3*x**2/2 + 2*x
-  - -3*x**2/2 - 2*x
-  - 3*x**2 + 4*x
+  question: 'Find the antiderivative (omit + C):  \(\int \left(3 x + 2\right)\,dx\)'
+  options:
+  - \(3\)
+  - \(3 x + 2\)
+  - \(\frac{3 x^{2}}{2} + 2 x\)
+  - \(- \frac{3 x^{2}}{2} - 2 x\)
+  - \(3 x^{2} + 4 x\)
   correct_index: 2
-  explanation: F(x) = 3*x**2/2 + 2*x + C
+  explanation: \(F(x) = \frac{3 x^{2}}{2} + 2 x + C\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0001
@@ -527,11 +527,15 @@ items:
 - id: eval-p3-pg-0001-r2
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: A velocity is v(t) = 3*x + 2. Which is a position function s(t) (up to
-    a constant)?
-  options: *id001
+  question: A velocity is \(v(t) = 3 x + 2\). Which is a position function \(s(t)\) (up to a constant)?
+  options:
+  - \(3\)
+  - \(3 x + 2\)
+  - \(\frac{3 x^{2}}{2} + 2 x\)
+  - \(- \frac{3 x^{2}}{2} - 2 x\)
+  - \(3 x^{2} + 4 x\)
   correct_index: 2
-  explanation: F(x) = 3*x**2/2 + 2*x + C
+  explanation: \(F(x) = \frac{3 x^{2}}{2} + 2 x + C\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0001
@@ -544,15 +548,15 @@ items:
 - id: eval-p3-pg-0002-r1
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: 'Find the antiderivative (omit + C):  ∫ (6*x + 5) dx'
-  options: &id002
-  - '6'
-  - 6*x + 5
-  - -3*x**2 - 5*x
-  - 6*x**2 + 10*x
-  - 3*x**2 + 5*x
+  question: 'Find the antiderivative (omit + C):  \(\int \left(6 x + 5\right)\,dx\)'
+  options:
+  - \(6\)
+  - \(6 x + 5\)
+  - \(- 3 x^{2} - 5 x\)
+  - \(6 x^{2} + 10 x\)
+  - \(3 x^{2} + 5 x\)
   correct_index: 4
-  explanation: F(x) = 3*x**2 + 5*x + C
+  explanation: \(F(x) = 3 x^{2} + 5 x + C\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0002
@@ -565,11 +569,15 @@ items:
 - id: eval-p3-pg-0002-r2
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: A velocity is v(t) = 6*x + 5. Which is a position function s(t) (up to
-    a constant)?
-  options: *id002
+  question: A velocity is \(v(t) = 6 x + 5\). Which is a position function \(s(t)\) (up to a constant)?
+  options:
+  - \(6\)
+  - \(6 x + 5\)
+  - \(- 3 x^{2} - 5 x\)
+  - \(6 x^{2} + 10 x\)
+  - \(3 x^{2} + 5 x\)
   correct_index: 4
-  explanation: F(x) = 3*x**2 + 5*x + C
+  explanation: \(F(x) = 3 x^{2} + 5 x + C\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0002
@@ -582,15 +590,15 @@ items:
 - id: eval-p3-pg-0003-r1
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: 'Find the antiderivative (omit + C):  ∫ (4*x + 5) dx'
-  options: &id003
-  - '4'
-  - 4*x + 5
-  - 2*x**2 + 5*x
-  - -2*x**2 - 5*x
-  - 4*x**2 + 10*x
+  question: 'Find the antiderivative (omit + C):  \(\int \left(4 x + 5\right)\,dx\)'
+  options:
+  - \(4\)
+  - \(4 x + 5\)
+  - \(2 x^{2} + 5 x\)
+  - \(- 2 x^{2} - 5 x\)
+  - \(4 x^{2} + 10 x\)
   correct_index: 2
-  explanation: F(x) = 2*x**2 + 5*x + C
+  explanation: \(F(x) = 2 x^{2} + 5 x + C\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0003
@@ -603,11 +611,15 @@ items:
 - id: eval-p3-pg-0003-r2
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: A velocity is v(t) = 4*x + 5. Which is a position function s(t) (up to
-    a constant)?
-  options: *id003
+  question: A velocity is \(v(t) = 4 x + 5\). Which is a position function \(s(t)\) (up to a constant)?
+  options:
+  - \(4\)
+  - \(4 x + 5\)
+  - \(2 x^{2} + 5 x\)
+  - \(- 2 x^{2} - 5 x\)
+  - \(4 x^{2} + 10 x\)
   correct_index: 2
-  explanation: F(x) = 2*x**2 + 5*x + C
+  explanation: \(F(x) = 2 x^{2} + 5 x + C\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0003
@@ -620,15 +632,15 @@ items:
 - id: eval-p3-pg-0004-r1
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: 'Differentiate:  f(x) = 5*x**2'
-  options: &id004
-  - 10*x
-  - 5*x**3/3
-  - '10'
-  - -10*x
-  - 20*x
+  question: 'Differentiate:  \(f(x) = 5 x^{2}\)'
+  options:
+  - \(10 x\)
+  - \(\frac{5 x^{3}}{3}\)
+  - \(10\)
+  - \(- 10 x\)
+  - \(20 x\)
   correct_index: 0
-  explanation: f'(x) = 10*x
+  explanation: \(f'(x) = 10 x\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0004
@@ -641,10 +653,15 @@ items:
 - id: eval-p3-pg-0004-r2
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: Find the slope function f'(x) for f(x) = 5*x**2.
-  options: *id004
+  question: Find the slope function \(f'(x)\) for \(f(x) = 5 x^{2}\).
+  options:
+  - \(10 x\)
+  - \(\frac{5 x^{3}}{3}\)
+  - \(10\)
+  - \(- 10 x\)
+  - \(20 x\)
   correct_index: 0
-  explanation: f'(x) = 10*x
+  explanation: \(f'(x) = 10 x\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0004
@@ -657,15 +674,15 @@ items:
 - id: eval-p3-pg-0005-r1
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: 'Differentiate:  f(x) = 6*x**2'
-  options: &id005
-  - 2*x**3
-  - 12*x
-  - '12'
-  - -12*x
-  - 24*x
+  question: 'Differentiate:  \(f(x) = 6 x^{2}\)'
+  options:
+  - \(2 x^{3}\)
+  - \(12 x\)
+  - \(12\)
+  - \(- 12 x\)
+  - \(24 x\)
   correct_index: 1
-  explanation: f'(x) = 12*x
+  explanation: \(f'(x) = 12 x\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0005
@@ -678,10 +695,15 @@ items:
 - id: eval-p3-pg-0005-r2
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: Find the slope function f'(x) for f(x) = 6*x**2.
-  options: *id005
+  question: Find the slope function \(f'(x)\) for \(f(x) = 6 x^{2}\).
+  options:
+  - \(2 x^{3}\)
+  - \(12 x\)
+  - \(12\)
+  - \(- 12 x\)
+  - \(24 x\)
   correct_index: 1
-  explanation: f'(x) = 12*x
+  explanation: \(f'(x) = 12 x\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0005
@@ -694,15 +716,15 @@ items:
 - id: eval-p3-pg-0006-r1
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: 'Differentiate:  f(x) = 2*x**4'
-  options: &id006
-  - 2*x**5/5
-  - 24*x**2
-  - 8*x**3
-  - -8*x**3
-  - 16*x**3
+  question: 'Differentiate:  \(f(x) = 2 x^{4}\)'
+  options:
+  - \(\frac{2 x^{5}}{5}\)
+  - \(24 x^{2}\)
+  - \(8 x^{3}\)
+  - \(- 8 x^{3}\)
+  - \(16 x^{3}\)
   correct_index: 2
-  explanation: f'(x) = 8*x**3
+  explanation: \(f'(x) = 8 x^{3}\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0006
@@ -715,10 +737,15 @@ items:
 - id: eval-p3-pg-0006-r2
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: Find the slope function f'(x) for f(x) = 2*x**4.
-  options: *id006
+  question: Find the slope function \(f'(x)\) for \(f(x) = 2 x^{4}\).
+  options:
+  - \(\frac{2 x^{5}}{5}\)
+  - \(24 x^{2}\)
+  - \(8 x^{3}\)
+  - \(- 8 x^{3}\)
+  - \(16 x^{3}\)
   correct_index: 2
-  explanation: f'(x) = 8*x**3
+  explanation: \(f'(x) = 8 x^{3}\)
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0006
@@ -731,15 +758,15 @@ items:
 - id: eval-p3-pg-0007-r1
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: Determinant of [[5, 5], [1, 4]]?
-  options: &id007
-  - '15'
-  - '25'
-  - '21'
-  - '-15'
-  - '30'
+  question: Determinant of \(\left[\begin{matrix}5 & 5\\1 & 4\end{matrix}\right]\)?
+  options:
+  - \(15\)
+  - \(25\)
+  - \(21\)
+  - \(-15\)
+  - \(30\)
   correct_index: 0
-  explanation: det = 15
+  explanation: \(\det = 15\)
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0007
@@ -752,10 +779,15 @@ items:
 - id: eval-p3-pg-0007-r2
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: For M = [[5, 5], [1, 4]], compute det(M).
-  options: *id007
+  question: For \(M = \left[\begin{matrix}5 & 5\\1 & 4\end{matrix}\right]\), compute \(\det(M)\).
+  options:
+  - \(15\)
+  - \(25\)
+  - \(21\)
+  - \(-15\)
+  - \(30\)
   correct_index: 0
-  explanation: det = 15
+  explanation: \(\det = 15\)
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0007
@@ -768,15 +800,15 @@ items:
 - id: eval-p3-pg-0008-r1
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: Determinant of [[6, 6], [-1, 3]]?
-  options: &id008
-  - '12'
-  - '39'
-  - '-24'
-  - '24'
-  - '48'
+  question: Determinant of \(\left[\begin{matrix}6 & 6\\-1 & 3\end{matrix}\right]\)?
+  options:
+  - \(12\)
+  - \(39\)
+  - \(-24\)
+  - \(24\)
+  - \(48\)
   correct_index: 3
-  explanation: det = 24
+  explanation: \(\det = 24\)
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0008
@@ -789,10 +821,15 @@ items:
 - id: eval-p3-pg-0008-r2
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: For M = [[6, 6], [-1, 3]], compute det(M).
-  options: *id008
+  question: For \(M = \left[\begin{matrix}6 & 6\\-1 & 3\end{matrix}\right]\), compute \(\det(M)\).
+  options:
+  - \(12\)
+  - \(39\)
+  - \(-24\)
+  - \(24\)
+  - \(48\)
   correct_index: 3
-  explanation: det = 24
+  explanation: \(\det = 24\)
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0008
@@ -805,15 +842,15 @@ items:
 - id: eval-p3-pg-0101-r1
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: For a set of size n, how many subsets does it have?
+  question: For a set of size \(n\), how many subsets does it have?
   options:
-  - 2^n
-  - n^2
-  - n!
-  - 2n
-  - n-1
+  - \(2^{n}\)
+  - \(n^{2}\)
+  - \(n!\)
+  - \(2n\)
+  - \(n - 1\)
   correct_index: 0
-  explanation: 'Answer: 2^n.'
+  explanation: 'Answer: \(2^n\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0101
@@ -826,15 +863,15 @@ items:
 - id: eval-p3-pg-0101-r2
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: How many elements are in the power set of an n-element set?
+  question: How many elements are in the power set of an \(n\)-element set?
   options:
-  - n^2
-  - 2*n
-  - n+1
-  - 2^n
-  - n^n
+  - \(n^{2}\)
+  - \(2 n\)
+  - \(n + 1\)
+  - \(2^{n}\)
+  - \(n^{n}\)
   correct_index: 3
-  explanation: 'Answer: 2^n.'
+  explanation: 'Answer: \(2^n\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0101
@@ -847,15 +884,15 @@ items:
 - id: eval-p3-pg-0102-r1
   leaf_tag: topic::algebra::abstract
   format: mcq
-  question: What is the order of the symmetric group S_3?
+  question: What is the order of the symmetric group \(S_3\)?
   options:
-  - '3'
-  - '6'
-  - '9'
-  - '2'
-  - '12'
+  - \(3\)
+  - \(6\)
+  - \(9\)
+  - \(2\)
+  - \(12\)
   correct_index: 1
-  explanation: 'Answer: 6.'
+  explanation: 'Answer: \(6\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0102
@@ -868,15 +905,15 @@ items:
 - id: eval-p3-pg-0102-r2
   leaf_tag: topic::algebra::abstract
   format: mcq
-  question: How many elements does S_3 have?
+  question: How many elements does \(S_3\) have?
   options:
-  - '6'
-  - '3'
-  - '8'
-  - '4'
-  - '24'
+  - \(6\)
+  - \(3\)
+  - \(8\)
+  - \(4\)
+  - \(24\)
   correct_index: 0
-  explanation: 'Answer: 6.'
+  explanation: 'Answer: \(6\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0102
@@ -889,15 +926,15 @@ items:
 - id: eval-p3-pg-0103-r1
   leaf_tag: topic::additional::complex
   format: mcq
-  question: Evaluate e^(i*pi).
+  question: Evaluate \(e^{i\pi}\).
   options:
-  - '1'
-  - i
-  - '-1'
-  - '0'
-  - -i
+  - \(1\)
+  - \(i\)
+  - \(-1\)
+  - \(0\)
+  - \(- i\)
   correct_index: 2
-  explanation: 'Answer: -1.'
+  explanation: 'Answer: \(-1\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0103
@@ -910,15 +947,15 @@ items:
 - id: eval-p3-pg-0103-r2
   leaf_tag: topic::additional::complex
   format: mcq
-  question: By Euler's identity, e^(i*pi) equals what?
+  question: By Euler's identity, \(e^{i\pi}\) equals what?
   options:
-  - '-1'
-  - '1'
-  - -i
-  - i
-  - '2'
+  - \(-1\)
+  - \(1\)
+  - \(- i\)
+  - \(i\)
+  - \(2\)
   correct_index: 0
-  explanation: 'Answer: -1.'
+  explanation: 'Answer: \(-1\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0103
@@ -931,15 +968,15 @@ items:
 - id: eval-p3-pg-0104-r1
   leaf_tag: topic::additional::complex
   format: mcq
-  question: What is |1 + i|?
+  question: What is \(|1 + i|\)?
   options:
-  - sqrt(2)
-  - '1'
-  - '2'
-  - sqrt(3)
-  - '0'
+  - \(\sqrt{2}\)
+  - \(1\)
+  - \(2\)
+  - \(\sqrt{3}\)
+  - \(0\)
   correct_index: 0
-  explanation: 'Answer: sqrt(2).'
+  explanation: 'Answer: \(\sqrt{2}\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0104
@@ -952,15 +989,15 @@ items:
 - id: eval-p3-pg-0104-r2
   leaf_tag: topic::additional::complex
   format: mcq
-  question: Compute the modulus of the complex number 1 + i.
+  question: Compute the modulus of the complex number \(1 + i\).
   options:
-  - '1'
-  - '2'
-  - sqrt(5)
-  - sqrt(2)
-  - 1/sqrt(2)
+  - \(1\)
+  - \(2\)
+  - \(\sqrt{5}\)
+  - \(\sqrt{2}\)
+  - \(\frac{1}{\sqrt{2}}\)
   correct_index: 3
-  explanation: 'Answer: sqrt(2).'
+  explanation: 'Answer: \(\sqrt{2}\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0104
@@ -973,13 +1010,13 @@ items:
 - id: eval-p3-pg-0105-r1
   leaf_tag: topic::additional::real_analysis
   format: mcq
-  question: Does the harmonic series sum 1/n converge or diverge?
+  question: Does the harmonic series \(\sum 1/n\) converge or diverge?
   options:
-  - Diverges
-  - Converges to 1
-  - Converges to e
-  - Converges to 2
-  - Converges to ln 2
+  - \(Diverges\)
+  - Converges to \(1\)
+  - Converges to \(e\)
+  - Converges to \(2\)
+  - Converges to \(\ln 2\)
   correct_index: 0
   explanation: 'Answer: Diverges.'
   difficulty: 2
@@ -994,13 +1031,13 @@ items:
 - id: eval-p3-pg-0105-r2
   leaf_tag: topic::additional::real_analysis
   format: mcq
-  question: What is the behavior of the series sum_{n>=1} 1/n?
+  question: What is the behavior of the series \(\sum_{n\geq 1} 1/n\)?
   options:
-  - Converges to 1
+  - Converges to \(1\)
   - Converges conditionally
-  - Converges to pi^2/6
-  - Converges to 0
-  - Diverges
+  - Converges to \(\pi^2/6\)
+  - Converges to \(0\)
+  - \(Diverges\)
   correct_index: 4
   explanation: 'Answer: Diverges.'
   difficulty: 2
@@ -1015,15 +1052,15 @@ items:
 - id: eval-p3-pg-0106-r1
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: What is d/dx sin(x)?
+  question: What is \(\frac{d}{dx} \sin(x)\)?
   options:
-  - cos(x)
-  - -cos(x)
-  - -sin(x)
-  - sin(x)
-  - tan(x)
+  - \(\cos{\left(x \right)}\)
+  - \(- \cos{\left(x \right)}\)
+  - \(- \sin{\left(x \right)}\)
+  - \(\sin{\left(x \right)}\)
+  - \(\tan{\left(x \right)}\)
   correct_index: 0
-  explanation: 'Answer: cos(x).'
+  explanation: 'Answer: \(\cos(x)\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0106
@@ -1036,15 +1073,15 @@ items:
 - id: eval-p3-pg-0106-r2
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: Differentiate f(x) = sin(x).
+  question: Differentiate \(f(x) = \sin(x)\).
   options:
-  - -sin(x)
-  - cos(x) + 1
-  - cos(x)
-  - sec(x)
-  - -cos(x)
+  - \(- \sin{\left(x \right)}\)
+  - \(\cos{\left(x \right)} + 1\)
+  - \(\cos{\left(x \right)}\)
+  - \(\sec{\left(x \right)}\)
+  - \(- \cos{\left(x \right)}\)
   correct_index: 2
-  explanation: 'Answer: cos(x).'
+  explanation: 'Answer: \(\cos(x)\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0106
@@ -1057,15 +1094,15 @@ items:
 - id: eval-p3-pg-0107-r1
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: What is d/dx e^x?
+  question: What is \(\frac{d}{dx} e^x\)?
   options:
-  - e^x
-  - x*e^(x-1)
-  - e^x + 1
-  - x*e^x
-  - '1'
+  - \(e^{x}\)
+  - \(x e^{x-1}\)
+  - \(e^{x} + 1\)
+  - \(x e^x\)
+  - \(1\)
   correct_index: 0
-  explanation: 'Answer: e^x.'
+  explanation: 'Answer: \(e^x\).'
   difficulty: 1
   partition: p3
   paraphrase_group: pg-0107
@@ -1078,15 +1115,15 @@ items:
 - id: eval-p3-pg-0107-r2
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: Differentiate f(x) = e^x.
+  question: Differentiate \(f(x) = e^x\).
   options:
-  - e^(x-1)
-  - x*e^x
-  - '0'
-  - e^x
-  - e
+  - \(e^{x - 1}\)
+  - \(x e^x\)
+  - \(0\)
+  - \(e^{x}\)
+  - \(e\)
   correct_index: 3
-  explanation: 'Answer: e^x.'
+  explanation: 'Answer: \(e^x\).'
   difficulty: 1
   partition: p3
   paraphrase_group: pg-0107
@@ -1099,15 +1136,15 @@ items:
 - id: eval-p3-pg-0108-r1
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: Evaluate the integral of 1/x dx.
+  question: Evaluate the integral \(\int \frac{1}{x}\,dx\).
   options:
-  - ln|x| + C
-  - -1/x^2 + C
-  - x^(-2) + C
-  - 1/(2x^2) + C
-  - ln(x^2) + C
+  - \(\ln|x| + C\)
+  - \(-\frac{1}{x^2} + C\)
+  - \(x^{-2} + C\)
+  - \(\frac{1}{2x^2} + C\)
+  - \(\ln(x^2) + C\)
   correct_index: 0
-  explanation: 'Answer: ln|x| + C.'
+  explanation: 'Answer: \(\ln|x| + C\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0108
@@ -1120,15 +1157,15 @@ items:
 - id: eval-p3-pg-0108-r2
   leaf_tag: topic::calculus::integral_single
   format: mcq
-  question: What is the antiderivative of 1/x?
+  question: What is the antiderivative of \(1/x\)?
   options:
-  - -ln|x| + C
-  - 1/ln(x) + C
-  - x*ln(x) + C
-  - -1/x^2 + C
-  - ln|x| + C
+  - \(-\ln|x| + C\)
+  - \(\frac{1}{\ln(x)} + C\)
+  - \(x\ln(x) + C\)
+  - \(-\frac{1}{x^2} + C\)
+  - \(\ln|x| + C\)
   correct_index: 4
-  explanation: 'Answer: ln|x| + C.'
+  explanation: 'Answer: \(\ln|x| + C\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0108
@@ -1141,15 +1178,15 @@ items:
 - id: eval-p3-pg-0109-r1
   leaf_tag: topic::algebra::number_theory
   format: mcq
-  question: Compute gcd(12, 18).
+  question: Compute \(\gcd(12, 18)\).
   options:
-  - '12'
-  - '6'
-  - '3'
-  - '36'
-  - '2'
+  - \(12\)
+  - \(6\)
+  - \(3\)
+  - \(36\)
+  - \(2\)
   correct_index: 1
-  explanation: 'Answer: 6.'
+  explanation: 'Answer: \(6\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0109
@@ -1162,15 +1199,15 @@ items:
 - id: eval-p3-pg-0109-r2
   leaf_tag: topic::algebra::number_theory
   format: mcq
-  question: What is the greatest common divisor of 12 and 18?
+  question: What is the greatest common divisor of \(12\) and \(18\)?
   options:
-  - '6'
-  - '18'
-  - '3'
-  - '1'
-  - '9'
+  - \(6\)
+  - \(18\)
+  - \(3\)
+  - \(1\)
+  - \(9\)
   correct_index: 0
-  explanation: 'Answer: 6.'
+  explanation: 'Answer: \(6\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0109
@@ -1183,15 +1220,15 @@ items:
 - id: eval-p3-pg-0110-r1
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: What is the determinant of the 2x2 identity matrix?
+  question: What is the determinant of the \(2\times 2\) identity matrix?
   options:
-  - '1'
-  - '0'
-  - '2'
-  - '-1'
-  - '4'
+  - \(1\)
+  - \(0\)
+  - \(2\)
+  - \(-1\)
+  - \(4\)
   correct_index: 0
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0110
@@ -1204,15 +1241,15 @@ items:
 - id: eval-p3-pg-0110-r2
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: Compute det([[1,0],[0,1]]).
+  question: Compute \(\det \left[\begin{matrix}1 & 0\\0 & 1\end{matrix}\right]\).
   options:
-  - '0'
-  - '2'
-  - '-1'
-  - '1'
-  - 1/2
+  - \(0\)
+  - \(2\)
+  - \(-1\)
+  - \(1\)
+  - \(\frac{1}{2}\)
   correct_index: 3
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0110
@@ -1225,15 +1262,15 @@ items:
 - id: eval-p3-pg-0111-r1
   leaf_tag: topic::algebra::elementary
   format: mcq
-  question: What is the sum 1 + 2 + ... + n?
+  question: What is the sum \(1 + 2 + \cdots + n\)?
   options:
-  - n(n+1)/2
-  - n^2
-  - n(n-1)/2
-  - (n+1)^2/2
-  - n^2/2
+  - \(\frac{n{\left(n + 1 \right)}}{2}\)
+  - \(n^{2}\)
+  - \(\frac{n{\left(n - 1 \right)}}{2}\)
+  - \(\frac{\left(n + 1\right)^{2}}{2}\)
+  - \(\frac{n^{2}}{2}\)
   correct_index: 0
-  explanation: 'Answer: n(n+1)/2.'
+  explanation: 'Answer: \(\frac{n(n+1)}{2}\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0111
@@ -1246,15 +1283,15 @@ items:
 - id: eval-p3-pg-0111-r2
   leaf_tag: topic::algebra::elementary
   format: mcq
-  question: Give a closed form for the sum of the first n positive integers.
+  question: Give a closed form for the sum of the first \(n\) positive integers.
   options:
-  - n(n+1)
-  - n^2/2
-  - n(n+1)/2
-  - (n-1)n/2
-  - 2^n
+  - \(n{\left(n + 1 \right)}\)
+  - \(\frac{n^{2}}{2}\)
+  - \(\frac{n{\left(n + 1 \right)}}{2}\)
+  - \(\frac{(n-1)n}{2}\)
+  - \(2^{n}\)
   correct_index: 2
-  explanation: 'Answer: n(n+1)/2.'
+  explanation: 'Answer: \(\frac{n(n+1)}{2}\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0111
@@ -1267,15 +1304,15 @@ items:
 - id: eval-p3-pg-0112-r1
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: How many permutations are there of n distinct objects?
+  question: How many permutations are there of \(n\) distinct objects?
   options:
-  - n!
-  - 2^n
-  - n^2
-  - n(n-1)
-  - C(n,2)
+  - \(n!\)
+  - \(2^{n}\)
+  - \(n^{2}\)
+  - \(n{\left(n - 1 \right)}\)
+  - \(C{\left(n,2 \right)}\)
   correct_index: 0
-  explanation: 'Answer: n!.'
+  explanation: 'Answer: \(n!\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0112
@@ -1288,15 +1325,15 @@ items:
 - id: eval-p3-pg-0112-r2
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: In how many orders can n distinct items be arranged in a line?
+  question: In how many orders can \(n\) distinct items be arranged in a line?
   options:
-  - 2^n
-  - n^n
-  - n^2
-  - (n-1)!
-  - n!
+  - \(2^{n}\)
+  - \(n^{n}\)
+  - \(n^{2}\)
+  - \((n-1)!\)
+  - \(n!\)
   correct_index: 4
-  explanation: 'Answer: n!.'
+  explanation: 'Answer: \(n!\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0112
@@ -1309,15 +1346,15 @@ items:
 - id: eval-p3-pg-0113-r1
   leaf_tag: topic::additional::real_analysis
   format: mcq
-  question: Evaluate lim_{x->0} sin(x)/x.
+  question: Evaluate \(\lim_{x\to 0} \frac{\sin(x)}{x}\).
   options:
-  - '1'
-  - '0'
+  - \(1\)
+  - \(0\)
   - infinity
-  - 1/2
+  - \(\frac{1}{2}\)
   - does not exist
   correct_index: 0
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0113
@@ -1330,15 +1367,15 @@ items:
 - id: eval-p3-pg-0113-r2
   leaf_tag: topic::additional::real_analysis
   format: mcq
-  question: What is the limit of sin(x)/x as x approaches 0?
+  question: What is the limit of \(\sin(x)/x\) as \(x\) approaches \(0\)?
   options:
-  - '0'
-  - '-1'
-  - pi
-  - '1'
-  - '2'
+  - \(0\)
+  - \(-1\)
+  - \(\pi\)
+  - \(1\)
+  - \(2\)
   correct_index: 3
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0113
@@ -1351,15 +1388,15 @@ items:
 - id: eval-p3-pg-0114-r1
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: What is d/dx ln(x)?
+  question: What is \(\frac{d}{dx} \ln(x)\)?
   options:
-  - 1/x
-  - x
-  - ln(x)/x
-  - -1/x^2
-  - e^x
+  - \(\frac{1}{x}\)
+  - \(x\)
+  - \(\ln(x)/x\)
+  - \(- \frac{1}{x^{2}}\)
+  - \(e^{x}\)
   correct_index: 0
-  explanation: 'Answer: 1/x.'
+  explanation: 'Answer: \(1/x\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0114
@@ -1372,15 +1409,15 @@ items:
 - id: eval-p3-pg-0114-r2
   leaf_tag: topic::calculus::differential_single
   format: mcq
-  question: Differentiate f(x) = ln(x).
+  question: Differentiate \(f(x) = \ln(x)\).
   options:
-  - 1/(x*ln(x))
-  - x*ln(x)
-  - 1/x
-  - -1/x
-  - '1'
+  - \(\frac{1}{x\ln(x)}\)
+  - \(x\ln(x)\)
+  - \(\frac{1}{x}\)
+  - \(- \frac{1}{x}\)
+  - \(1\)
   correct_index: 2
-  explanation: 'Answer: 1/x.'
+  explanation: 'Answer: \(1/x\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0114
@@ -1393,15 +1430,15 @@ items:
 - id: eval-p3-pg-0115-r1
   leaf_tag: topic::additional::geometry
   format: mcq
-  question: What is the area of a circle of radius r?
+  question: What is the area of a circle of radius \(r\)?
   options:
-  - pi*r^2
-  - 2*pi*r
-  - pi*r
-  - pi*d
-  - 4/3*pi*r^3
+  - \(\pi r^{2}\)
+  - \(2 \pi r\)
+  - \(\pi r\)
+  - \(\pi d\)
+  - \(\frac{4}{3}\pi r^3\)
   correct_index: 0
-  explanation: 'Answer: pi*r^2.'
+  explanation: 'Answer: \(\pi r^2\).'
   difficulty: 1
   partition: p3
   paraphrase_group: pg-0115
@@ -1414,15 +1451,15 @@ items:
 - id: eval-p3-pg-0115-r2
   leaf_tag: topic::additional::geometry
   format: mcq
-  question: Give the area enclosed by a circle with radius r.
+  question: Give the area enclosed by a circle with radius \(r\).
   options:
-  - 2*pi*r
-  - (pi*r^2)/2
-  - pi*r^3
-  - pi*r^2
-  - 2*pi*r^2
+  - \(2 \pi r\)
+  - \(\frac{\pi r^2}{2}\)
+  - \(\pi r^{3}\)
+  - \(\pi r^{2}\)
+  - \(2 \pi r^{2}\)
   correct_index: 3
-  explanation: 'Answer: pi*r^2.'
+  explanation: 'Answer: \(\pi r^2\).'
   difficulty: 1
   partition: p3
   paraphrase_group: pg-0115
@@ -1435,15 +1472,15 @@ items:
 - id: eval-p3-pg-0116-r1
   leaf_tag: topic::additional::complex
   format: mcq
-  question: Evaluate e^(i*2*pi).
+  question: Evaluate \(e^{2\pi i}\).
   options:
-  - '1'
-  - '-1'
-  - '0'
-  - i
-  - 2*pi
+  - \(1\)
+  - \(-1\)
+  - \(0\)
+  - \(i\)
+  - \(2 \pi\)
   correct_index: 0
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0116
@@ -1456,15 +1493,15 @@ items:
 - id: eval-p3-pg-0116-r2
   leaf_tag: topic::additional::complex
   format: mcq
-  question: By Euler's formula, what is e^(2*pi*i)?
+  question: By Euler's formula, what is \(e^{2\pi i}\)?
   options:
-  - '-1'
-  - i
-  - -i
-  - e
-  - '1'
+  - \(-1\)
+  - \(i\)
+  - \(- i\)
+  - \(e\)
+  - \(1\)
   correct_index: 4
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0116
@@ -1477,15 +1514,15 @@ items:
 - id: eval-p3-pg-0117-r1
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: What is the rank of the 3x3 identity matrix?
+  question: What is the rank of the \(3\times 3\) identity matrix?
   options:
-  - '3'
-  - '1'
-  - '0'
-  - '9'
-  - '2'
+  - \(3\)
+  - \(1\)
+  - \(0\)
+  - \(9\)
+  - \(2\)
   correct_index: 0
-  explanation: 'Answer: 3.'
+  explanation: 'Answer: \(3\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0117
@@ -1498,15 +1535,15 @@ items:
 - id: eval-p3-pg-0117-r2
   leaf_tag: topic::algebra::linear
   format: mcq
-  question: Compute the rank of I_3 (the 3x3 identity matrix).
+  question: Compute the rank of \(I_3\) (the \(3\times 3\) identity matrix).
   options:
-  - '1'
-  - '6'
-  - '0'
-  - '3'
+  - \(1\)
+  - \(6\)
+  - \(0\)
+  - \(3\)
   - infinite
   correct_index: 3
-  explanation: 'Answer: 3.'
+  explanation: 'Answer: \(3\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0117
@@ -1519,15 +1556,15 @@ items:
 - id: eval-p3-pg-0118-r1
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: How many edges does the complete graph K_n have?
+  question: How many edges does the complete graph \(K_n\) have?
   options:
-  - n(n-1)/2
-  - n^2
-  - n(n+1)/2
-  - n-1
-  - 2^n
+  - \(\frac{n{\left(n - 1 \right)}}{2}\)
+  - \(n^{2}\)
+  - \(\frac{n{\left(n + 1 \right)}}{2}\)
+  - \(n - 1\)
+  - \(2^{n}\)
   correct_index: 0
-  explanation: 'Answer: n(n-1)/2.'
+  explanation: 'Answer: \(\frac{n(n-1)}{2}\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0118
@@ -1540,15 +1577,15 @@ items:
 - id: eval-p3-pg-0118-r2
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: Give the number of edges in K_n (complete graph on n vertices).
+  question: Give the number of edges in \(K_n\) (complete graph on \(n\) vertices).
   options:
-  - n^2
-  - n!
-  - n(n-1)
-  - (n-1)/2
-  - n(n-1)/2
+  - \(n^{2}\)
+  - \(n!\)
+  - \(n{\left(n - 1 \right)}\)
+  - \(\frac{n-1}{2}\)
+  - \(\frac{n{\left(n - 1 \right)}}{2}\)
   correct_index: 4
-  explanation: 'Answer: n(n-1)/2.'
+  explanation: 'Answer: \(\frac{n(n-1)}{2}\).'
   difficulty: 3
   partition: p3
   paraphrase_group: pg-0118
@@ -1563,18 +1600,17 @@ items:
   format: mcq
   question: How many elements are in the power set of the empty set?
   options:
-  - '1'
-  - '0'
-  - '2'
+  - \(1\)
+  - \(0\)
+  - \(2\)
   - infinite
   - undefined
   correct_index: 0
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0119
-  base_ref: 'topic::additional::discrete :: cardinality of the power set of the empty
-    set'
+  base_ref: 'topic::additional::discrete :: cardinality of the power set of the empty set'
   src: original
   gen: human
   status: verified
@@ -1583,20 +1619,19 @@ items:
 - id: eval-p3-pg-0119-r2
   leaf_tag: topic::additional::discrete
   format: mcq
-  question: What is |P(emptyset)|?
+  question: What is \(|P(\emptyset)|\)?
   options:
-  - '0'
-  - '2'
-  - '-1'
-  - '1'
-  - n
+  - \(0\)
+  - \(2\)
+  - \(-1\)
+  - \(1\)
+  - \(n\)
   correct_index: 3
-  explanation: 'Answer: 1.'
+  explanation: 'Answer: \(1\).'
   difficulty: 2
   partition: p3
   paraphrase_group: pg-0119
-  base_ref: 'topic::additional::discrete :: cardinality of the power set of the empty
-    set'
+  base_ref: 'topic::additional::discrete :: cardinality of the power set of the empty set'
   src: original
   gen: human
   status: verified
@@ -1605,15 +1640,15 @@ items:
 - id: eval-p3-pg-0120-r1
   leaf_tag: topic::algebra::elementary
   format: mcq
-  question: Compute 5! (5 factorial).
+  question: Compute \(5!\) (5 factorial).
   options:
-  - '120'
-  - '25'
-  - '20'
-  - '60'
-  - '720'
+  - \(120\)
+  - \(25\)
+  - \(20\)
+  - \(60\)
+  - \(720\)
   correct_index: 0
-  explanation: 'Answer: 120.'
+  explanation: 'Answer: \(120\).'
   difficulty: 1
   partition: p3
   paraphrase_group: pg-0120
@@ -1628,13 +1663,13 @@ items:
   format: mcq
   question: What is 5 factorial?
   options:
-  - '25'
-  - '24'
-  - '100'
-  - '720'
-  - '120'
+  - \(25\)
+  - \(24\)
+  - \(100\)
+  - \(720\)
+  - \(120\)
   correct_index: 4
-  explanation: 'Answer: 120.'
+  explanation: 'Answer: \(120\).'
   difficulty: 1
   partition: p3
   paraphrase_group: pg-0120
@@ -1644,4 +1679,3 @@ items:
   status: verified
   verified_by: fc
   verified_on: '2026-07-02'
-

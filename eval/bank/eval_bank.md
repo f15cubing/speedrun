@@ -66,13 +66,12 @@ source of truth.
 ## Composition (as frozen)
 80 items: **P0 = 24** (frozen held-out, taxonomy-weighted) + **P3 = 56** (28 paraphrase groups × 2 same-key rewordings). Calculus weight ≈ 0.35.
 
-## LaTeX migration status (2026-07-02)
-The authoring aid (`generate_eval.py`) now emits delimited LaTeX. The **committed `items.yaml` is still
-the original ASCII freeze** and is intentionally migrated **together with its vendored copy**
-`anki/qt/aqt/gre/exam_items.json` (the Exam Mode surface) in the submodule-enabled session, so
-`tests/test_exam_items_sync.py` stays green as a unit. Migrating `items.yaml` alone here would desync that
-guard, and the vendored copy lives at an `anki` submodule commit not checked out in the pipeline lane.
-See `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md` §5.
+## LaTeX rendering (2026-07-02)
+Math in `items.yaml` is **delimited LaTeX** (`\(...\)` / `\[...\]`), migrated together with the vendored
+`anki/qt/aqt/gre/exam_items.json` so `tests/test_exam_items_sync.py` stays green as a unit, and typeset by
+MathJax in the Exam Mode webview (`anki/ts/routes/gre-exam/`). The authoring aid (`generate_eval.py`) emits
+the same LaTeX. Computational strings were converted via SymPy (round-trip-verified); prose/conceptual
+strings were hand-mapped. See `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md` §5.
 
 ---
 Last verified against: `agent/pipeline-latex-math`

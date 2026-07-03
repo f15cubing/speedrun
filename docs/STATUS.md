@@ -147,11 +147,22 @@ _Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readine
   **with** the vendored `anki/qt/aqt/gre/exam_items.json` (together, to keep `test_exam_items_sync` green),
   wire MathJax into the `gre-exam` webview, and `make deck-asset` re-sync + `gre_deck_version` bump.
 
+- **Exam-Mode LaTeX** (engine lane; `anki` fork `agent/gre-exam-latex` → `a631ec3`, outer pin bumped) —
+  the eval bank (`eval/bank/items.yaml`, 80 items) migrated to delimited LaTeX **together with** its
+  vendored copy `anki/qt/aqt/gre/exam_items.json` (so `test_exam_items_sync` stays green as a unit), and
+  MathJax wired into the `gre-exam` webview (`mathjax.ts` config+dynamic-import → offline code-split
+  chunk; `ItemView`/`Results` typeset; `+page` keys items). Verified: eval-bank suite + exam-items sync
+  green; `check:svelte`/`check:eslint`/format clean; SvelteKit bundle builds and the exam page dynamically
+  imports the local MathJax chunk. Live GUI smoke is the one remaining manual gate. Computational strings
+  converted via SymPy (round-trip-verified); prose hand-mapped. Different-agent review pending.
+  Design: `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md`.
+
 ## In flight
 
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
-  LaTeX math rendering (PR #25) shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed;
-  desktop + AnkiDroid scoring UI (Tasks 6–7) pending._
+  LaTeX math rendering (PR #25) + Exam-Mode LaTeX shipped. **Deferred:** bundled `.apkg` rebundle +
+  `gre_deck_version` bump (needs the `Anki-Android` fork submodule + Android build). Scoring `scoring/`
+  package (Tasks 1–5) done + math-reviewed; desktop + AnkiDroid scoring UI (Tasks 6–7) pending._
 
 ## Next (per execution-plan)
 
