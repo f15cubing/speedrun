@@ -48,7 +48,21 @@ one-file change (`orchestrator.LlmBackend`); nothing downstream changes.
 - `orchestrator.py` — `run_pipeline(backend)` → ordered `Outcome`s with a `Decision`
   (`PUBLISH_VERIFIED` / `DRAFT_HUMAN_REVIEW` / `ABSTAIN_*`); `classify(card)`;
   `decision_counts`, `published`, `human_review_drafts`, `abstained`; the live-model
-  seam `LlmBackend` (raises `NoLiveModelError` when no key).
+  seam `LlmBackend` (raises `NoLiveModelError` when no key); `run_pipeline_safe(backend)
+  → AiOffResult` (the **AI-off degradation** wrapper: aborts cleanly with 0 cards when
+  no model).
+- `stub_model.make_computational_instance(op, rng) → CompInstance` — the **shared
+  generation core** (SymPy builds problem + answer) reused by both the AI arm and the
+  beat-baseline arm, so the comparison isolates the *pipeline*, not the templates.
+- `mcnemar.py` — pure-stdlib exact paired test: `mcnemar_exact(b, c) → McNemarResult`
+  (two-sided binomial p-value, `math.comb`, no scipy), `discordant_table(pairs)`,
+  `mcnemar_from_pairs`, `paired_bootstrap_ci(a_flags, b_flags, seed)` (deterministic
+  90% CI for the usable-rate difference).
+- `baseline.py` — the **beat-the-baseline** comparison: `build_targets(seed)` (shared
+  targets, declared `TARGET_COMPOSITION`), `ai_card`/`baseline_card`, `beat_baseline(seed)
+  → BaselineReport` (per-arm `ArmMetrics` fact-precision/useful-yield, the 2×2 table,
+  `McNemarResult`, `yield_diff_ci`, `ai_beats_baseline`), `summarize_pairs(...)`.
+- `run_gate.py` / `run_baseline.py` — the two one-command CLIs (below).
 - `goldset_gate.py` — **lodged cutoffs** `FACT_PRECISION_MIN=0.98`,
   `USEFUL_YIELD_MIN=0.60`; `rate_a`/`rate_b` (the two raters), `cohens_kappa`,
   `percent_agreement`, `run_gate(outcomes) → GateResult` (`.format_report()`,
@@ -57,6 +71,9 @@ one-file change (`orchestrator.LlmBackend`); nothing downstream changes.
   `scan_outputs`, `generation_modules_referencing_heldout`, `run_firewall(...)`.
 - `run_gate.py` — one-command CLI (`make ai-gate`): run pipeline → gate → firewall,
   print the report, write `out/gate_report.{json,md}`.
+- `run_baseline.py` — one-command CLI (`make ai-baseline`): the two A-gated proofs —
+  beat-the-baseline (McNemar) + AI-off degradation — printed + written to
+  `out/baseline_report.{json,md}`.
 
 ## Dependencies
 
@@ -106,6 +123,41 @@ Reproduce: `make ai-gate` (or `AI_PY=<python-with-sympy> make ai-gate`).
 - **Safety recall = 1.0** (every rater-flagged wrong computational card was abstained).
 - **Firewall: PASS** (all 8 checks). **GATE: PASSED.**
 
+## Proofs — beat-the-baseline + AI-off degradation (execution-plan Block C)
+
+Reproduce: `make ai-baseline` (deterministic; `out/baseline_report.{json,md}` byte-stable).
+
+### 1. Beat-the-baseline (McNemar exact test)
+The **AI-pipeline arm** (RAG + provenance + CAS + abstain) vs. a **baseline arm**
+(template/cloze, non-RAG, **no** verify/abstain), over the **same shared SymPy targets**
+(only the pipeline differs), scored by the **same rater** (`goldset_gate.rate_a`).
+Usable = published/emitted AND rated CORRECT.
+
+| arm | fact-precision | useful-yield |
+|---|---|---|
+| **AI-pipeline** (RAG+provenance+CAS+abstain) | **1.000** | **0.833** |
+| baseline (template/cloze, non-RAG, no verify) | 0.600 | 0.400 |
+
+Paired 2×2: a=20 (both usable) · **b=30** (AI-only wins) · **c=4** (baseline-only) ·
+d=6 (neither). **McNemar exact two-sided p = 6.165e-06**, favoring the AI arm; the
+useful-yield-difference 90% bootstrap CI (AI − baseline) = **[0.300, 0.567]** (excludes
+0). **The AI pipeline beats the baseline with the fact-precision ceiling intact (1.000
+≥ 0.98).** The baseline emits 24/60 wrong-fact cards (no CAS/abstention to stop them);
+the AI arm publishes 0 wrong. AI-off caveat: this validates the **machinery** (RAG +
+verify + abstention vs. naive), not a live model — the outcome categories are a declared
+fixture, but every card is really generated + scored and the McNemar math runs on real
+labels. Honest-null language triggers automatically if a run does not reach `alpha=0.05`.
+
+### 2. AI-off degradation (graceful with no model / no network)
+With no API key, `orchestrator.run_pipeline_safe(LlmBackend())` returns
+`ok=False`, **0 cards emitted, 0 unverified shipped**, and a clear message — the seam
+fails loudly and the pipeline aborts cleanly instead of emitting ungrounded content.
+The **study/review deck and the `scoring/` layer are unaffected**: they are build-time /
+read-time and never call a model or the network (asserted by `test_degrade.py`, incl. a
+static guard that `scoring/` never imports the generator or a model/network client). AI
+is a **build-time content pipeline, not a runtime dependency** — pulling the network
+turns generation off without touching review or scoring.
+
 ## Related tests
 
 - `tests/test_corpus.py` — passage anchoring; verbatim quote match across line-wrapping.
@@ -121,6 +173,21 @@ Reproduce: `make ai-gate` (or `AI_PY=<python-with-sympy> make ai-gate`).
   metrics + pass, and the gate FAILS on a wrong-fact / low-yield batch (it has teeth).
 - `tests/test_firewall.py` — canary/ETS/OCW-URL free; anchors all from the corpus;
   generation never references the held-out store.
+- `tests/test_mcnemar.py` — exact test math (sign test, known values, symmetry → p=1,
+  large discordant → tiny p, direction, p∈[0,1]); paired bootstrap CI determinism.
+- `tests/test_baseline.py` — declared target composition; AI arm never publishes a wrong
+  fact (precision 1.0); baseline leaks wrong facts (precision 0.60); per-arm yields;
+  b/c counts + McNemar favors AI; bootstrap CI excludes 0; same rater harness for both
+  arms; determinism; **honest-null** when the arms are equal.
+- `tests/test_degrade.py` — no key → seam raises; `run_pipeline_safe` aborts with 0
+  cards / 0 unverified + clear message; study deck + `scoring/` load with no model; a
+  static guard that review/scoring code never imports the generator or a model/network client.
+
+## `make` targets
+- `make ai-gate` — pipeline + gold-set gate + firewall (writes `out/gate_report.*`).
+- `make ai-baseline` — beat-the-baseline (McNemar) + AI-off degradation (writes `out/baseline_report.*`).
+- `make ai-gate-test` — the full `pipeline/aicards/tests` suite (76 tests).
+(All accept `AI_PY=<python-with-sympy>`; seed 42; byte-reproducible.)
 
 ---
 Last verified against: agent/ai-pipeline

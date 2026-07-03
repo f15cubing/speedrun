@@ -6,7 +6,7 @@ DECK_APKG := pipeline/dist/gre-study-deck.apkg
 DESKTOP_ASSET := anki/qt/aqt/gre/data/gre-study-deck.apkg
 ANDROID_ASSET := Anki-Android/AnkiDroid/src/main/assets/gre-study-deck.apkg
 
-.PHONY: sync-server sync-smoke deck-asset deck-asset-check score-eval ai-gate ai-gate-test
+.PHONY: sync-server sync-smoke deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -40,3 +40,6 @@ ai-gate: ## Run the AI card pipeline + gold-set gate (deterministic stub; AI-off
 
 ai-gate-test: ## Run the AI card pipeline test suite (fast; needs pipeline/requirements.txt).
 	@AI_PY="$${AI_PY:-python3}"; "$$AI_PY" -m pytest pipeline/aicards/tests -q
+
+ai-baseline: ## Beat-the-baseline (McNemar) + AI-off degradation proofs (deterministic, PRD §9).
+	@AI_PY="$${AI_PY:-python3}"; PYTHONPATH=pipeline:pipeline/aicards "$$AI_PY" pipeline/aicards/run_baseline.py --seed 42

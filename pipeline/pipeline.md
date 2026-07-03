@@ -13,9 +13,10 @@ coverage map, readiness gate, and interleaving all build on.
 
 > **AI card pipeline (PRD §9) lives in the `aicards/` subpackage** — RAG +
 > non-nullable provenance + in-pipeline abstention + SymPy/NLI verification + the
-> pre-lodged gold-set gate. It is separate from this deterministic study-deck
-> generator (which is deliberately AI-free) and has its own authoritative doc:
-> `pipeline/aicards/aicards.md`. Run it with `make ai-gate`.
+> pre-lodged gold-set gate, plus the **beat-the-baseline (McNemar)** and **AI-off
+> degradation** proofs. It is separate from this deterministic study-deck generator
+> (which is deliberately AI-free) and has its own authoritative doc:
+> `pipeline/aicards/aicards.md`. Run it with `make ai-gate` and `make ai-baseline`.
 
 ## Public interface
 - `mathfmt.py` — the single math-formatting contract. `tex(expr)` → raw

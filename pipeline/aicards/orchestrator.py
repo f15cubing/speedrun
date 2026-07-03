@@ -108,6 +108,36 @@ class NoLiveModelError(RuntimeError):
     """Raised when a live-model backend is used but no API key is configured."""
 
 
+AiOffResult = namedtuple("AiOffResult", ["ok", "outcomes", "published", "message"])
+
+
+def run_pipeline_safe(backend, retriever=None) -> AiOffResult:
+    """Run the pipeline but **degrade gracefully** when no live model is available.
+
+    This is the AI-off degradation contract (PRD §9): the AI card pipeline is a
+    *build-time content* step, never a runtime dependency. If generation cannot run
+    (no model / no network — `backend.plan()` raises :class:`NoLiveModelError`), the
+    pipeline **aborts cleanly**: it emits **zero** cards (never an unverified one) and
+    returns a clear message, rather than crashing or shipping ungrounded content. The
+    apps' study/review loop and the `scoring/` layer are unaffected because they never
+    call a model — they read the already-built, human-verified deck + the scorecard.
+    """
+    try:
+        outcomes = run_pipeline(backend, retriever=retriever)
+    except NoLiveModelError as exc:
+        return AiOffResult(
+            ok=False, outcomes=[], published=[],
+            message=("AI generation unavailable ({}). Degraded cleanly: 0 cards emitted, "
+                     "0 unverified cards shipped. Study/review + scoring are unaffected "
+                     "(AI is a build-time content step, not a runtime dependency).".format(exc)),
+        )
+    pub = published(outcomes)
+    return AiOffResult(
+        ok=True, outcomes=outcomes, published=pub,
+        message="generated {} candidates; {} published (verified).".format(len(outcomes), len(pub)),
+    )
+
+
 class LlmBackend:
     """Seam for a real LLM. Implements the same ``plan()`` + ``build()`` interface.
 

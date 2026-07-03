@@ -67,7 +67,7 @@ _COMP_LEAVES = (
     + [("differential_equations", "diffeq")] * 5
 )  # == 32
 
-_OP_QUERY = {
+OP_QUERY = {
     "diff": "differentiate derivative power rule x raised to the power n",
     "antideriv": "indefinite integral antiderivative power rule constant of integration",
     "deriv_at": "slope of the tangent line derivative evaluated at a point",
@@ -76,7 +76,15 @@ _OP_QUERY = {
 
 Request = namedtuple("Request", ["idx", "leaf_tag", "kind", "op", "variant", "query", "payload"])
 
-_FABRICATED_QUOTE = "The answer follows immediately from the usual rules, as is well known."
+# A plausible-sounding but ungrounded "quote" — not present verbatim in any source
+# passage, so provenance.check drops any card that carries it (models a hallucinated
+# citation / a fact the retriever could not ground).
+FABRICATED_QUOTE = "The answer follows immediately from the usual rules, as is well known."
+_FABRICATED_QUOTE = FABRICATED_QUOTE  # backwards-compatible alias
+
+# The shared computational generation core (used by BOTH the AI-pipeline arm and the
+# beat-baseline arm — only the *pipeline* around it differs).
+CompInstance = namedtuple("CompInstance", ["prompt", "correct", "check", "render", "wrong_delta"])
 
 _SENT_SPLIT = re.compile(r"(?<=\.)\s+")
 
@@ -100,6 +108,42 @@ def _poly(rng, min_deg=2, max_deg=3, lo=-4, hi=4):
             c = rng.choice([-2, 2, 3])
         expr += c * x ** power
     return sp.expand(expr)
+
+
+def make_computational_instance(op, rng):
+    """The shared computational generation core: return a :class:`CompInstance`.
+
+    SymPy builds both the problem and the correct answer (correct-by-construction).
+    This is the SAME core used by the AI-pipeline arm and the beat-baseline arm — so
+    the beat-baseline comparison isolates the *pipeline* (RAG + provenance + CAS +
+    abstention) from the generation templates, which are identical.
+    """
+    if op == "diff":
+        f = _poly(rng, 2, 3)
+        return CompInstance(
+            "Differentiate with respect to x: f(x) = {}.".format(sp.sstr(f)),
+            sp.diff(f, x), {"op": "diff", "f": f, "var": x},
+            lambda a: "f'(x) = {}".format(sp.sstr(a)), sp.Integer(1))
+    if op == "antideriv":
+        f = _poly(rng, 1, 3)
+        return CompInstance(
+            "Find an antiderivative (indefinite integral) of f(x) = {}.".format(sp.sstr(f)),
+            sp.integrate(f, x), {"op": "antideriv", "f": f, "var": x},
+            lambda a: "F(x) = {} + C".format(sp.sstr(a)), x)  # non-constant delta breaks equivalence
+    if op == "deriv_at":
+        f = _poly(rng, 2, 3)
+        at = rng.randint(-3, 3)
+        return CompInstance(
+            "Find the slope of the tangent line to f(x) = {} at x = {}.".format(sp.sstr(f), at),
+            sp.diff(f, x).subs(x, at), {"op": "deriv_at", "f": f, "var": x, "at": at},
+            lambda a: "slope = {}".format(sp.sstr(a)), sp.Integer(1))
+    if op == "diffeq":
+        f = _poly(rng, 1, 2)
+        return CompInstance(
+            "Solve the differential equation y'(x) = {} for the general solution y(x).".format(sp.sstr(f)),
+            sp.integrate(f, x), {"op": "antideriv", "f": f, "var": x},
+            lambda a: "y(x) = {} + C".format(sp.sstr(a)), x)
+    raise ValueError("unknown computational op {!r}".format(op))
 
 
 def _sentences(passage_text):
@@ -173,19 +217,19 @@ class StubBackend:
 
         # good computational, spread across leaves
         for leaf, op in _COMP_LEAVES:
-            add(leaf, COMPUTATIONAL, op, "good", _OP_QUERY[op])
+            add(leaf, COMPUTATIONAL, op, "good", OP_QUERY[op])
         # wrong computational
         for leaf, op in [("differential_single", "diff"), ("integral_single", "antideriv"),
                          ("applications", "deriv_at"), ("differential_equations", "diffeq")]:
-            add(leaf, COMPUTATIONAL, op, "wrong", _OP_QUERY[op])
+            add(leaf, COMPUTATIONAL, op, "wrong", OP_QUERY[op])
         # ungrounded (hallucinated quote) but correct answer
         for leaf, op in [("differential_single", "diff"), ("integral_single", "antideriv"),
                          ("applications", "deriv_at")]:
-            add(leaf, COMPUTATIONAL, op, "ungrounded", _OP_QUERY[op])
+            add(leaf, COMPUTATIONAL, op, "ungrounded", OP_QUERY[op])
         # bad-pedagogy (answer leaked into the prompt), correct + grounded
         for leaf, op in [("differential_single", "diff"), ("integral_single", "antideriv"),
                          ("applications", "deriv_at")]:
-            add(leaf, COMPUTATIONAL, op, "bad_ped", _OP_QUERY[op])
+            add(leaf, COMPUTATIONAL, op, "bad_ped", OP_QUERY[op])
         # good conceptual (grounded + entailed)
         concept_specs = [
             ("topic::additional::real_analysis", "harmonic series diverges reciprocals positive integers"),
@@ -217,51 +261,22 @@ class StubBackend:
 
     def _build_computational(self, request, top_passage):
         rng = _rng(self.seed, request.idx)
-        op = request.op
-        if op == "diff":
-            f = _poly(rng, 2, 3)
-            correct = sp.diff(f, x)
-            prompt = "Differentiate with respect to x: f(x) = {}.".format(sp.sstr(f))
-            render = lambda a: "f'(x) = {}".format(sp.sstr(a))
-            check = {"op": "diff", "f": f, "var": x}
-            wrong_delta = sp.Integer(1)
-        elif op == "antideriv":
-            f = _poly(rng, 1, 3)
-            correct = sp.integrate(f, x)
-            prompt = "Find an antiderivative (indefinite integral) of f(x) = {}.".format(sp.sstr(f))
-            render = lambda a: "F(x) = {} + C".format(sp.sstr(a))
-            check = {"op": "antideriv", "f": f, "var": x}
-            wrong_delta = x  # non-constant so the derivative-equivalence check fails
-        elif op == "deriv_at":
-            f = _poly(rng, 2, 3)
-            at = rng.randint(-3, 3)
-            correct = sp.diff(f, x).subs(x, at)
-            prompt = "Find the slope of the tangent line to f(x) = {} at x = {}.".format(sp.sstr(f), at)
-            render = lambda a: "slope = {}".format(sp.sstr(a))
-            check = {"op": "deriv_at", "f": f, "var": x, "at": at}
-            wrong_delta = sp.Integer(1)
-        elif op == "diffeq":
-            f = _poly(rng, 1, 2)
-            correct = sp.integrate(f, x)
-            prompt = "Solve the differential equation y'(x) = {} for the general solution y(x).".format(sp.sstr(f))
-            render = lambda a: "y(x) = {} + C".format(sp.sstr(a))
-            check = {"op": "antideriv", "f": f, "var": x}
-            wrong_delta = x
-        else:
-            raise ValueError("unknown computational op {!r}".format(op))
+        inst = make_computational_instance(request.op, rng)
+        correct = inst.correct
 
         claimed = correct
-        front = prompt
+        front = inst.prompt
         if request.variant == "wrong":
-            claimed = sp.expand(correct + wrong_delta)
+            claimed = sp.expand(correct + inst.wrong_delta)
         elif request.variant == "bad_ped":
             # Leak the fully-rendered answer into the prompt. The answer carries a
             # distinctive prefix ("f'(x) =", "slope =", ...) that never appears in a
             # well-posed prompt, so "answer text appears in the prompt" is a robust,
             # false-positive-free pedagogy signal.
-            front = prompt + " (Hint: {}.)".format(render(correct))
+            front = inst.prompt + " (Hint: {}.)".format(inst.render(correct))
 
-        back = render(claimed)
+        back = inst.render(claimed)
+        check = dict(inst.check)
         check["claimed"] = claimed
 
         if request.variant == "ungrounded":
