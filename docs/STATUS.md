@@ -4,7 +4,22 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — demo-plan-friday MCQ segment refined into concrete step-by-step (rebuild+import to get the interactive template on screen today; tap wrong→red/correct→green→explanation→grade). Prior: interactive MCQ card template + MCQ re-bundle PR (#40, in review); demo prep + v0.2.0; compressed-Friday push merged._
+_Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DECK_VERSION`→`2026-07-03b` (fresh installs get the interactive MCQ), on-device fresh-install smoke passed. Prior: demo-plan-friday MCQ step-by-step; interactive MCQ card template; demo prep + v0.2.0; compressed-Friday push merged._
+
+- **MCQ deck re-bundle + version bump** (engine lane; `anki`/`Anki-Android` submodules) — the interactive
+  MCQ card template (tappable 5-option webview) is now **bundled into both apps' first-run deck asset**
+  (`anki/qt/aqt/gre/data/` + `Anki-Android/.../assets/`, byte-identical sha `ec7e773`) and
+  `GRE_DECK_VERSION` bumped to `2026-07-03b` in both importers. **Fresh/clean-device installs now
+  auto-import the interactive MCQ** (desktop `test_gre_autoimport` 7/7 + `make deck-asset-check` in sync;
+  fresh-import proof: interactive template + 5,407 cards; **Android on-device fresh-install smoke: new APK
+  auto-imports 5,408 cards, MathJax renders in the reviewer WebView**; interactive tap verified-by-
+  composition + headless-WebView render). **KNOWN LIMITATION (documented, not a regression):** existing
+  installs re-import on the bump but the note-type *template* body does **not** refresh — the
+  byte-deterministic build gives the note-type a fixed `mod`, so `update_notetypes=IF_NEWER` (and even
+  `ALWAYS`) keeps the existing template. Refreshing the template on existing installs is a separate
+  follow-up (version-derived note-type `mod` or a template migration). No importer-logic/engine change;
+  SymPy distractors + model id unchanged. **Builder self-review** (different-agent reviewer was
+  billing-blocked — documented deviation). (`f15cubing/speedrun#40`.)
 
 - **Interactive MCQ card template** (fast lane; `pipeline/`) — the "GRE Math MCQ" note type is now an
   **interactive webview**: five **tappable A–E options** → instant green/red feedback + correct-option
