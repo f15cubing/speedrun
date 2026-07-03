@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — compressed-Friday push merged: Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs (bench/calibration/paraphrase), and Block C robustness (7g crash-safety + 7b two-way sync). Sunday-prep docs bundle (buffer log + Sunday demo cut + submission runbook) opened as a PR — see the buffer section below._
+_Last updated: 2026-07-03 (Fri) — demo prep: Friday shooting script (`docs/demo-plan-friday.md`) + AI-run how-to (`docs/ai-run-howto.md`, honest AI-off) + README doc-index/last-verified tidy; v0.2.0 release cut. Prior: compressed-Friday push merged (Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs, Block C robustness) + Sunday-prep docs bundle._
 
 ## Done
 

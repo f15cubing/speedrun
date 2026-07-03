@@ -249,6 +249,8 @@ day-by-day build order.
 | The three scores (memory ≠ performance ≠ readiness), one page each | `docs/models/` |
 | The Rust engine change, in depth | `docs/progress-and-rust-change.md`, `docs/codebase/rslib.md` |
 | Packaging + submission runbook (both builds, hard-ceiling checklist, deliverables) | [`docs/submission-checklist.md`](docs/submission-checklist.md) |
+| Demo shooting scripts (Friday cut / fuller Sunday cut) | [`docs/demo-plan-friday.md`](docs/demo-plan-friday.md), [`docs/demo-plan.md`](docs/demo-plan.md) |
+| How to run the AI card pipeline (the demo "AI run") | [`docs/ai-run-howto.md`](docs/ai-run-howto.md) |
 | Rules for changing code | `AGENTS.md` |
 
 ## The rsdroid backend (Android)
