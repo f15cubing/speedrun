@@ -1,0 +1,11 @@
+{
+  "cards": 50000,
+  "iters": 300,
+  "mean_ms": 650.479,
+  "p50_ms": 650.211,
+  "p95_ms": 666.504,
+  "seed": 42,
+  "seed_seconds": 4.92,
+  "topics_per_call": 20,
+  "worst_ms": 708.678
+}

@@ -1,0 +1,46 @@
+{
+  "brier": 0.2191,
+  "ece": 0.0612,
+  "n_test_attempts": 8640,
+  "n_train_attempts": 20160,
+  "note": "validated on simulated data (machinery check); real predictive validity unestablished at n\u22481",
+  "reliability_bins": [
+    {
+      "accuracy": 0.2232,
+      "confidence": 0.1505,
+      "hi": 0.2,
+      "lo": 0.1,
+      "n": 1680
+    },
+    {
+      "accuracy": 0.3839,
+      "confidence": 0.2928,
+      "hi": 0.3,
+      "lo": 0.2,
+      "n": 1680
+    },
+    {
+      "accuracy": 0.4952,
+      "confidence": 0.4917,
+      "hi": 0.5,
+      "lo": 0.4,
+      "n": 1680
+    },
+    {
+      "accuracy": 0.6361,
+      "confidence": 0.6932,
+      "hi": 0.7,
+      "lo": 0.6,
+      "n": 1800
+    },
+    {
+      "accuracy": 0.7606,
+      "confidence": 0.8408,
+      "hi": 0.9,
+      "lo": 0.8,
+      "n": 1800
+    }
+  ],
+  "seed": 42,
+  "students": 400
+}

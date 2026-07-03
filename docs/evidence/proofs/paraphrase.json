@@ -1,0 +1,21 @@
+{
+  "accuracy_gap": 0.0059,
+  "cohort": 500,
+  "groups": 28,
+  "mean_within_group_abs_gap": 0.0218,
+  "note": "simulated cohort (machinery check); real per-student paraphrase validity unestablished at n\u22481; descriptive",
+  "paraphrase_robust": true,
+  "rewording_1": {
+    "acc": 0.6301,
+    "high": 0.638,
+    "low": 0.622,
+    "n": 14000
+  },
+  "rewording_2": {
+    "acc": 0.6241,
+    "high": 0.6321,
+    "low": 0.6161,
+    "n": 14000
+  },
+  "seed": 42
+}
