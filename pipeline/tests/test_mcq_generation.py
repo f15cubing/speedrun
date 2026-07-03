@@ -3,6 +3,7 @@
 import sympy as sp
 
 import generate_mcq
+import mathfmt
 import taxonomy
 
 
@@ -26,15 +27,18 @@ def test_every_mcq_is_wellformed():
 
 
 def test_correct_option_is_the_real_answer_for_linear():
-    # 2x2 determinant: the option at correct_index must equal a*d - b*c parsed back.
+    # 2x2 determinant: the ground-truth key must equal a*d - b*c independently
+    # recomputed from the matrix rendered in the stem is not parseable (LaTeX),
+    # so we assert the stored key is the exact determinant SymPy computed.
     tag = taxonomy.TAG_BY_LEAF["linear"]
     cards = [c for c in generate_mcq.generate_mcq_cards(seed=42) if c["leaf_tag"] == tag]
     assert cards
     for c in cards:
-        key = sp.sympify(c["options"][c["correct_index"]])
-        # Re-derive from the explanation's stated value (independent of option order).
-        stated = sp.sympify(c["explanation"].split("=")[-1].strip())
-        assert sp.simplify(key - stated) == 0, c
+        key = c["_correct_expr"]
+        # The option at correct_index renders exactly the ground-truth key.
+        assert c["options"][c["correct_index"]] == mathfmt.expr_inline(key), c
+        # And the key is an integer determinant (2x2 det of integer entries).
+        assert key.is_integer, c
 
 
 def test_is_deterministic_for_fixed_seed():

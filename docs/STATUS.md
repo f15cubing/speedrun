@@ -136,9 +136,21 @@ _Last updated: 2026-07-02 (Thu) — scoring layer package (Performance + Readine
 
 ## In flight
 
-- _Nothing in flight — dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck
-  auto-incorporation shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop +
-  AnkiDroid scoring UI (Tasks 6–7) pending._
+- _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation shipped.
+  Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop + AnkiDroid scoring UI (Tasks 6–7)
+  pending._
+- **LaTeX math rendering** (fast lane, `agent/pipeline-latex-math`) — all study-deck math now renders as
+  real LaTeX via MathJax (Anki reviewer + AnkiDroid already typeset `\(...\)`/`\[...\]`; no new dep, no
+  `[latex]` image toolchain, offline-safe). Shipped in-repo + 64 tests green: new `pipeline/mathfmt.py`
+  contract; `generate_deck`/`generate_mcq`/`distractors` emit LaTeX (correctness now checked on
+  ground-truth SymPy via test-only `_expr`/`_correct_expr`, not markup); all ~57 `conceptual_cards.yaml`
+  records migrated as a re-verification pass; `build_deck` LaTeX/`html.escape` round-trip documented +
+  `test_latex_escaping.py`; `eval/bank/generate_eval.py` emits LaTeX. Deck rebuilds clean (coverage +
+  verification gates green). Design: `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md`.
+  **Deferred to a submodule-enabled session** (working tree `anki`@`ea3acae` predates Exam Mode/bundled
+  asset): migrate `eval/bank/items.yaml` **with** the vendored `anki/qt/aqt/gre/exam_items.json`
+  (together, to keep `test_exam_items_sync` green), wire MathJax into the `gre-exam` webview, and
+  `make deck-asset` re-sync + `gre_deck_version` bump._
 
 ## Next (per execution-plan)
 

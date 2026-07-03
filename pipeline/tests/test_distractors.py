@@ -5,6 +5,7 @@ import random
 import sympy as sp
 
 import distractors
+import mathfmt
 
 X = sp.Symbol("x")
 
@@ -16,7 +17,16 @@ def test_make_options_has_five_distinct_with_correct_at_index():
     options, idx = distractors.make_options(rng, correct, wrongs)
     assert len(options) == 5
     assert len(set(options)) == 5, options
-    assert options[idx] == sp.sstr(correct)
+    assert options[idx] == mathfmt.expr_inline(correct)
+
+
+def test_options_are_latex_delimited():
+    rng = random.Random(0)
+    correct = sp.sympify("x**2 + 3")
+    wrongs = [sp.sympify("x**2 - 3"), sp.sympify("2*x"), sp.sympify("x**3 + 3")]
+    options, _idx = distractors.make_options(rng, correct, wrongs)
+    for opt in options:
+        assert opt.startswith("\\(") and opt.endswith("\\)"), opt
 
 
 def test_make_options_is_deterministic_for_fixed_seed():
@@ -33,7 +43,7 @@ def test_make_options_drops_wrongs_equal_to_key():
     # First wrong equals the key (after simplify) and must be discarded.
     wrongs = [sp.sympify("1 + x"), sp.sympify("x - 1")]
     options, idx = distractors.make_options(rng, correct, wrongs)
-    assert options.count(sp.sstr(correct)) == 1
+    assert options.count(mathfmt.expr_inline(correct)) == 1
 
 
 def test_make_options_raises_when_too_few_distinct():

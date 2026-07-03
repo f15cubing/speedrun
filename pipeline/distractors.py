@@ -15,6 +15,8 @@ from __future__ import annotations
 
 import sympy as sp
 
+import mathfmt
+
 N_OPTIONS = 5
 
 
@@ -39,32 +41,36 @@ def make_options(rng, correct, wrong_exprs, n_options=N_OPTIONS):
     """Return ``(options, correct_index)``.
 
     ``correct`` and items of ``wrong_exprs`` are SymPy expressions. Options are
-    rendered with ``sympy.sstr`` (matching the deck's ``generate_deck._s``).
+    rendered as **inline LaTeX** (``\\(...\\)`` via :mod:`mathfmt`) so MathJax
+    typesets them. De-duplication and the "distinct from the key" check operate
+    on the canonical SymPy string (``sympy.sstr``), never on the rendered LaTeX,
+    so distractor integrity is independent of presentation.
     """
     needed = n_options - 1
-    correct_str = sp.sstr(correct)
+    correct_canon = sp.sstr(correct)
 
-    chosen_strs = []
-    seen = {correct_str}
+    chosen_exprs = []
+    seen = {correct_canon}
     for cand in list(wrong_exprs) + generic_variants(correct):
         if cand is None:
             continue
         if _equal(cand, correct):
             continue
-        cand_str = sp.sstr(cand)
-        if cand_str in seen:
+        cand_canon = sp.sstr(cand)
+        if cand_canon in seen:
             continue
-        seen.add(cand_str)
-        chosen_strs.append(cand_str)
-        if len(chosen_strs) == needed:
+        seen.add(cand_canon)
+        chosen_exprs.append(cand)
+        if len(chosen_exprs) == needed:
             break
 
-    if len(chosen_strs) < needed:
+    if len(chosen_exprs) < needed:
         raise InsufficientDistractors(
-            "only {} distinct distractors for key {!r}".format(len(chosen_strs), correct_str)
+            "only {} distinct distractors for key {!r}".format(len(chosen_exprs), correct_canon)
         )
 
-    options = list(chosen_strs)
+    exprs = list(chosen_exprs)
     correct_index = rng.randint(0, n_options - 1)
-    options.insert(correct_index, correct_str)
+    exprs.insert(correct_index, correct)
+    options = [mathfmt.expr_inline(e) for e in exprs]
     return options, correct_index

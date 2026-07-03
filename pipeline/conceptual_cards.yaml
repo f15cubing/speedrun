@@ -1,195 +1,200 @@
 # Hand-authored conceptual GRE-Math cards for the leaves that do not templatize.
 # Fully original, mathematically correct, GRE-appropriate. No AI/model calls.
 #
+# MATH RENDERING: every math span is delimited LaTeX (\( ... \)) so Anki's
+# MathJax typesets it on desktop and Android (see pipeline/mathfmt.py). Prose
+# stays prose; only the mathematics is wrapped.
+#
 # VERIFICATION GATE (PRD §12a): every card MUST carry status: verified with a
 # non-empty verified_by / verified_on / source, or the build hard-fails. Drafts
 # (status: draft) are skipped by the dev build and rejected by the production
 # gate (assert_all_verified). A human verifier is the only path to "verified".
+# The LaTeX migration was a re-verification pass (verified_on bumped 2026-07-02).
 #
 # Each card carries EXACTLY ONE valid leaf tag topic::<bucket>::<leaf>.
 cards:
   # --- algebra::abstract --------------------------------------------------
   - leaf_tag: "topic::algebra::abstract"
     front: "State Lagrange's theorem for finite groups, and give one immediate corollary about element orders."
-    back: "If G is a finite group and H is a subgroup of G, then |H| divides |G|. Corollary: the order of every element g divides |G| (since g generates a cyclic subgroup of that order)."
+    back: "If \\(G\\) is a finite group and \\(H\\) is a subgroup of \\(G\\), then \\(|H|\\) divides \\(|G|\\). Corollary: the order of every element \\(g\\) divides \\(|G|\\) (since \\(g\\) generates a cyclic subgroup of that order)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::algebra::abstract"
-    front: "What is the order of the symmetric group S_3, and what is the order of a 3-cycle such as (1 2 3) in it?"
-    back: "|S_3| = 3! = 6. A 3-cycle has order 3: applying (1 2 3) three times returns every element to its start."
+    front: "What is the order of the symmetric group \\(S_3\\), and what is the order of a 3-cycle such as \\((1\\,2\\,3)\\) in it?"
+    back: "\\(|S_3| = 3! = 6\\). A 3-cycle has order \\(3\\): applying \\((1\\,2\\,3)\\) three times returns every element to its start."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::algebra::abstract"
     front: "Define a field, and name the field with the fewest elements."
-    back: "A field is a commutative ring with multiplicative identity 1 != 0 in which every nonzero element has a multiplicative inverse. The smallest field is GF(2) = {0, 1}, i.e. the integers modulo 2."
+    back: "A field is a commutative ring with multiplicative identity \\(1 \\neq 0\\) in which every nonzero element has a multiplicative inverse. The smallest field is \\(\\mathrm{GF}(2) = \\{0, 1\\}\\), i.e. the integers modulo \\(2\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
 
   # --- additional::real_analysis -----------------------------------------
   - leaf_tag: "topic::additional::real_analysis"
     front: "Define a Cauchy sequence, and state why the concept is central to the real numbers."
-    back: "A sequence (a_n) is Cauchy if for every epsilon > 0 there is an N such that |a_m - a_n| < epsilon whenever m, n >= N. R is complete: every Cauchy sequence of reals converges to a real limit."
+    back: "A sequence \\((a_n)\\) is Cauchy if for every \\(\\varepsilon > 0\\) there is an \\(N\\) such that \\(|a_m - a_n| < \\varepsilon\\) whenever \\(m, n \\geq N\\). \\(\\mathbb{R}\\) is complete: every Cauchy sequence of reals converges to a real limit."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::real_analysis"
-    front: "Does the harmonic series sum_{n>=1} 1/n converge or diverge? Justify briefly."
-    back: "It diverges. Either compare with the integral of 1/x (which is ln x -> infinity), or group terms (1/3 + 1/4 > 1/2, 1/5+...+1/8 > 1/2, ...) to add more than 1/2 infinitely often."
+    front: "Does the harmonic series \\(\\sum_{n\\geq 1} 1/n\\) converge or diverge? Justify briefly."
+    back: "It diverges. Either compare with the integral of \\(1/x\\) (which is \\(\\ln x \\to \\infty\\)), or group terms (\\(1/3 + 1/4 > 1/2\\), \\(1/5 + \\cdots + 1/8 > 1/2\\), ...) to add more than \\(1/2\\) infinitely often."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::real_analysis"
-    front: "Give the epsilon-delta definition of continuity of a function f at a point c."
-    back: "f is continuous at c if for every epsilon > 0 there exists delta > 0 such that |x - c| < delta implies |f(x) - f(c)| < epsilon."
+    front: "Give the epsilon-delta definition of continuity of a function \\(f\\) at a point \\(c\\)."
+    back: "\\(f\\) is continuous at \\(c\\) if for every \\(\\varepsilon > 0\\) there exists \\(\\delta > 0\\) such that \\(|x - c| < \\delta\\) implies \\(|f(x) - f(c)| < \\varepsilon\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
 
   # --- additional::topology ----------------------------------------------
   - leaf_tag: "topic::additional::topology"
-    front: "Define a topology on a set X."
-    back: "A topology is a collection tau of subsets of X (the open sets) such that the empty set and X are in tau, tau is closed under arbitrary unions, and tau is closed under finite intersections."
+    front: "Define a topology on a set \\(X\\)."
+    back: "A topology is a collection \\(\\tau\\) of subsets of \\(X\\) (the open sets) such that \\(\\varnothing\\) and \\(X\\) are in \\(\\tau\\), \\(\\tau\\) is closed under arbitrary unions, and \\(\\tau\\) is closed under finite intersections."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::topology"
-    front: "Is the closed interval [0, 1] compact in the standard topology on R? State the theorem you use."
-    back: "Yes. By the Heine-Borel theorem, a subset of R^n is compact if and only if it is closed and bounded; [0, 1] is both, hence compact."
+    front: "Is the closed interval \\([0, 1]\\) compact in the standard topology on \\(\\mathbb{R}\\)? State the theorem you use."
+    back: "Yes. By the Heine-Borel theorem, a subset of \\(\\mathbb{R}^n\\) is compact if and only if it is closed and bounded; \\([0, 1]\\) is both, hence compact."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::topology"
     front: "What does it mean for a topological space to be Hausdorff (T2)?"
-    back: "Any two distinct points have disjoint open neighborhoods: for x != y there exist open sets U containing x and V containing y with U intersect V empty."
+    back: "Any two distinct points have disjoint open neighborhoods: for \\(x \\neq y\\) there exist open sets \\(U\\) containing \\(x\\) and \\(V\\) containing \\(y\\) with \\(U \\cap V = \\varnothing\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
 
   # --- additional::geometry ----------------------------------------------
   - leaf_tag: "topic::additional::geometry"
-    front: "For a circle of radius r, give its area and circumference."
-    back: "Area = pi * r^2; circumference = 2 * pi * r."
+    front: "For a circle of radius \\(r\\), give its area and circumference."
+    back: "Area \\(= \\pi r^2\\); circumference \\(= 2\\pi r\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::geometry"
     front: "State Thales' theorem about an angle inscribed in a semicircle."
-    back: "An angle inscribed in a semicircle is a right angle: if a triangle's vertices lie on a circle and one side is a diameter, the angle opposite that diameter is 90 degrees."
+    back: "An angle inscribed in a semicircle is a right angle: if a triangle's vertices lie on a circle and one side is a diameter, the angle opposite that diameter is \\(90^\\circ\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::geometry"
-    front: "Give the distance between points (x1, y1) and (x2, y2) in the Euclidean plane."
-    back: "distance = sqrt((x2 - x1)^2 + (y2 - y1)^2)."
+    front: "Give the distance between points \\((x_1, y_1)\\) and \\((x_2, y_2)\\) in the Euclidean plane."
+    back: "\\(\\text{distance} = \\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
 
   # --- additional::complex -----------------------------------------------
   - leaf_tag: "topic::additional::complex"
-    front: "State Euler's formula and use it to evaluate e^(i*pi)."
-    back: "Euler's formula: e^(i*theta) = cos(theta) + i*sin(theta). Therefore e^(i*pi) = cos(pi) + i*sin(pi) = -1."
+    front: "State Euler's formula and use it to evaluate \\(e^{i\\pi}\\)."
+    back: "Euler's formula: \\(e^{i\\theta} = \\cos\\theta + i\\sin\\theta\\). Therefore \\(e^{i\\pi} = \\cos\\pi + i\\sin\\pi = -1\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::complex"
-    front: "Find the modulus and a principal argument of z = 1 + i."
-    back: "|z| = sqrt(1^2 + 1^2) = sqrt(2); arg(z) = pi/4 (z lies on the line y = x in the first quadrant)."
+    front: "Find the modulus and a principal argument of \\(z = 1 + i\\)."
+    back: "\\(|z| = \\sqrt{1^2 + 1^2} = \\sqrt{2}\\); \\(\\arg(z) = \\pi/4\\) (\\(z\\) lies on the line \\(y = x\\) in the first quadrant)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::complex"
-    front: "State the Cauchy-Riemann equations for f = u + i*v to be holomorphic."
-    back: "With u, v having continuous first partials, the Cauchy-Riemann equations are u_x = v_y and u_y = -v_x."
+    front: "State the Cauchy-Riemann equations for \\(f = u + iv\\) to be holomorphic."
+    back: "With \\(u, v\\) having continuous first partials, the Cauchy-Riemann equations are \\(u_x = v_y\\) and \\(u_y = -v_x\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
 
   # --- additional::discrete ----------------------------------------------
   - leaf_tag: "topic::additional::discrete"
-    front: "How many subsets does a set with n elements have, and why?"
-    back: "2^n subsets: each element is independently either in or out of a subset, giving 2 choices for each of the n elements."
+    front: "How many subsets does a set with \\(n\\) elements have, and why?"
+    back: "\\(2^n\\) subsets: each element is independently either in or out of a subset, giving \\(2\\) choices for each of the \\(n\\) elements."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::discrete"
     front: "State the Pigeonhole Principle (general form)."
-    back: "If n objects are placed into m boxes, then at least one box contains at least ceil(n/m) objects. In particular, if n > m some box holds at least two."
+    back: "If \\(n\\) objects are placed into \\(m\\) boxes, then at least one box contains at least \\(\\lceil n/m \\rceil\\) objects. In particular, if \\(n > m\\) some box holds at least two."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
   - leaf_tag: "topic::additional::discrete"
     front: "State the Handshaking Lemma for a finite graph."
     back: "The sum of all vertex degrees equals twice the number of edges. Consequently the number of vertices of odd degree is even."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard textbook fact)"
 
   # --- conceptual MCQ (format: mcq) --------------------------------------
   - leaf_tag: "topic::additional::real_analysis"
     format: mcq
-    question: "Which statement about the harmonic series sum_{n>=1} 1/n is true?"
+    question: "Which statement about the harmonic series \\(\\sum_{n\\geq 1} 1/n\\) is true?"
     options:
       - "It diverges."
-      - "It converges to 1."
-      - "It converges to e."
-      - "It converges to a finite value greater than 2."
+      - "It converges to \\(1\\)."
+      - "It converges to \\(e\\)."
+      - "It converges to a finite value greater than \\(2\\)."
       - "It converges only in the Cesaro sense."
     correct_index: 0
-    explanation: "The harmonic series diverges (compare with the integral of 1/x = ln x -> infinity)."
+    explanation: "The harmonic series diverges (compare with the integral of \\(1/x = \\ln x \\to \\infty\\))."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard analysis fact)"
   - leaf_tag: "topic::additional::discrete"
     format: mcq
-    question: "How many subsets does a set with n elements have?"
+    question: "How many subsets does a set with \\(n\\) elements have?"
     options:
-      - "2^n"
-      - "n^2"
-      - "n!"
-      - "2n"
-      - "n^n"
+      - "\\(2^n\\)"
+      - "\\(n^2\\)"
+      - "\\(n!\\)"
+      - "\\(2n\\)"
+      - "\\(n^n\\)"
     correct_index: 0
-    explanation: "Each element is independently in or out of a subset: 2 choices for each of n elements -> 2^n."
+    explanation: "Each element is independently in or out of a subset: \\(2\\) choices for each of \\(n\\) elements \\(\\to 2^n\\)."
     status: verified
     verified_by: "fc"
-    verified_on: "2026-06-30"
+    verified_on: "2026-07-02"
     source: "original (standard combinatorics fact)"
 
   # --- algebra::linear (new conceptual block) --------------------------------
   - leaf_tag: "topic::algebra::linear"
     format: mcq
-    question: "A square matrix A is invertible if and only if:"
+    question: "A square matrix \\(A\\) is invertible if and only if:"
     options:
-      - "det(A) != 0"
-      - "A is symmetric"
-      - "A has a zero row"
-      - "trace(A) = 0"
-      - "A equals its transpose"
+      - "\\(\\det(A) \\neq 0\\)"
+      - "\\(A\\) is symmetric"
+      - "\\(A\\) has a zero row"
+      - "\\(\\operatorname{trace}(A) = 0\\)"
+      - "\\(A\\) equals its transpose"
     correct_index: 0
-    explanation: "A is invertible iff det(A) != 0 (equivalently, full rank / trivial null space)."
+    explanation: "\\(A\\) is invertible iff \\(\\det(A) \\neq 0\\) (equivalently, full rank / trivial null space)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -197,15 +202,15 @@ cards:
 
   - leaf_tag: "topic::algebra::linear"
     format: mcq
-    question: "The Rank-Nullity Theorem states that for an m x n matrix A:"
+    question: "The Rank-Nullity Theorem states that for an \\(m \\times n\\) matrix \\(A\\):"
     options:
-      - "rank(A) + nullity(A) = n"
-      - "rank(A) + nullity(A) = m"
-      - "rank(A) * nullity(A) = mn"
-      - "rank(A) = nullity(A)"
-      - "rank(A) - nullity(A) = n"
+      - "\\(\\operatorname{rank}(A) + \\operatorname{nullity}(A) = n\\)"
+      - "\\(\\operatorname{rank}(A) + \\operatorname{nullity}(A) = m\\)"
+      - "\\(\\operatorname{rank}(A) \\cdot \\operatorname{nullity}(A) = mn\\)"
+      - "\\(\\operatorname{rank}(A) = \\operatorname{nullity}(A)\\)"
+      - "\\(\\operatorname{rank}(A) - \\operatorname{nullity}(A) = n\\)"
     correct_index: 0
-    explanation: "rank(A) + nullity(A) = n, the number of columns (dimension of the domain)."
+    explanation: "\\(\\operatorname{rank}(A) + \\operatorname{nullity}(A) = n\\), the number of columns (dimension of the domain)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -213,23 +218,23 @@ cards:
 
   - leaf_tag: "topic::algebra::linear"
     format: mcq
-    question: "Which of the following is the definition of an eigenvalue lambda of matrix A?"
+    question: "Which of the following is the definition of an eigenvalue \\(\\lambda\\) of matrix \\(A\\)?"
     options:
-      - "There exists a nonzero vector v such that A*v = lambda*v"
-      - "A*v = 0 for every vector v"
-      - "det(A) = lambda"
-      - "A + lambda*I = 0"
-      - "trace(A) = lambda"
+      - "There exists a nonzero vector \\(v\\) such that \\(Av = \\lambda v\\)"
+      - "\\(Av = 0\\) for every vector \\(v\\)"
+      - "\\(\\det(A) = \\lambda\\)"
+      - "\\(A + \\lambda I = 0\\)"
+      - "\\(\\operatorname{trace}(A) = \\lambda\\)"
     correct_index: 0
-    explanation: "lambda is an eigenvalue of A if there is a nonzero eigenvector v satisfying A*v = lambda*v."
+    explanation: "\\(\\lambda\\) is an eigenvalue of \\(A\\) if there is a nonzero eigenvector \\(v\\) satisfying \\(Av = \\lambda v\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (eigenvalue definition — standard linear-algebra fact)"
 
   - leaf_tag: "topic::algebra::linear"
-    front: "State the four vector space axioms that govern addition in a vector space V over a field F."
-    back: "Addition must be: (1) closed (u+v in V), (2) commutative (u+v = v+u), (3) associative ((u+v)+w = u+(v+w)), and (4) have an identity element 0 in V with v+0 = v. Additionally every vector has an additive inverse."
+    front: "State the four vector space axioms that govern addition in a vector space \\(V\\) over a field \\(F\\)."
+    back: "Addition must be: (1) closed (\\(u+v \\in V\\)), (2) commutative (\\(u+v = v+u\\)), (3) associative (\\((u+v)+w = u+(v+w)\\)), and (4) have an identity element \\(0 \\in V\\) with \\(v+0 = v\\). Additionally every vector has an additive inverse."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -237,12 +242,12 @@ cards:
 
   - leaf_tag: "topic::algebra::linear"
     format: mcq
-    question: "A set of vectors {v_1, ..., v_k} in a vector space is linearly independent when:"
+    question: "A set of vectors \\(\\{v_1, \\ldots, v_k\\}\\) in a vector space is linearly independent when:"
     options:
-      - "c_1*v_1 + ... + c_k*v_k = 0 implies c_1 = ... = c_k = 0"
-      - "Every vector is a scalar multiple of v_1"
+      - "\\(c_1 v_1 + \\cdots + c_k v_k = 0\\) implies \\(c_1 = \\cdots = c_k = 0\\)"
+      - "Every vector is a scalar multiple of \\(v_1\\)"
       - "The set spans the whole space"
-      - "k equals the dimension of the space"
+      - "\\(k\\) equals the dimension of the space"
       - "No two vectors are equal"
     correct_index: 0
     explanation: "Linear independence means the only solution to the homogeneous combination equaling zero is the trivial one."
@@ -252,8 +257,8 @@ cards:
     source: "original (linear independence definition — standard linear-algebra fact)"
 
   - leaf_tag: "topic::algebra::linear"
-    front: "What is a basis of a vector space V, and how does it relate to dimension?"
-    back: "A basis is a linearly independent set that spans V. The dimension of V is the number of vectors in any basis (all bases of V have the same cardinality)."
+    front: "What is a basis of a vector space \\(V\\), and how does it relate to dimension?"
+    back: "A basis is a linearly independent set that spans \\(V\\). The dimension of \\(V\\) is the number of vectors in any basis (all bases of \\(V\\) have the same cardinality)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -261,15 +266,15 @@ cards:
 
   - leaf_tag: "topic::algebra::linear"
     format: mcq
-    question: "For real n x n matrix A, which sum equals the sum of the eigenvalues of A?"
+    question: "For real \\(n \\times n\\) matrix \\(A\\), which sum equals the sum of the eigenvalues of \\(A\\)?"
     options:
-      - "trace(A)"
-      - "det(A)"
-      - "rank(A)"
-      - "nullity(A)"
-      - "||A||_F"
+      - "\\(\\operatorname{trace}(A)\\)"
+      - "\\(\\det(A)\\)"
+      - "\\(\\operatorname{rank}(A)\\)"
+      - "\\(\\operatorname{nullity}(A)\\)"
+      - "\\(\\|A\\|_F\\)"
     correct_index: 0
-    explanation: "The trace of A equals the sum of the eigenvalues (with multiplicity); det(A) equals their product."
+    explanation: "The trace of \\(A\\) equals the sum of the eigenvalues (with multiplicity); \\(\\det(A)\\) equals their product."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -280,13 +285,13 @@ cards:
     format: mcq
     question: "What does the Bolzano-Weierstrass theorem state?"
     options:
-      - "Every bounded sequence in R^n has a convergent subsequence"
-      - "Every Cauchy sequence converges in R"
-      - "A continuous function on [a,b] attains its maximum"
+      - "Every bounded sequence in \\(\\mathbb{R}^n\\) has a convergent subsequence"
+      - "Every Cauchy sequence converges in \\(\\mathbb{R}\\)"
+      - "A continuous function on \\([a,b]\\) attains its maximum"
       - "Every monotone bounded sequence converges"
       - "Every convergent sequence is bounded"
     correct_index: 0
-    explanation: "Bolzano-Weierstrass: every bounded sequence in R^n has a convergent subsequence."
+    explanation: "Bolzano-Weierstrass: every bounded sequence in \\(\\mathbb{R}^n\\) has a convergent subsequence."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -296,13 +301,13 @@ cards:
     format: mcq
     question: "Which statement correctly distinguishes uniform continuity from pointwise continuity?"
     options:
-      - "Uniform continuity requires one delta that works for all x, while pointwise continuity allows delta to depend on x"
-      - "Pointwise continuity requires delta to be independent of x"
+      - "Uniform continuity requires one \\(\\delta\\) that works for all \\(x\\), while pointwise continuity allows \\(\\delta\\) to depend on \\(x\\)"
+      - "Pointwise continuity requires \\(\\delta\\) to be independent of \\(x\\)"
       - "Uniform continuity only applies on unbounded domains"
       - "They are equivalent for all functions"
       - "Pointwise continuity implies uniform continuity on any open interval"
     correct_index: 0
-    explanation: "Uniform continuity: for every epsilon>0 there is a single delta>0 working for all x simultaneously. Pointwise: delta may depend on the point x."
+    explanation: "Uniform continuity: for every \\(\\varepsilon > 0\\) there is a single \\(\\delta > 0\\) working for all \\(x\\) simultaneously. Pointwise: \\(\\delta\\) may depend on the point \\(x\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -318,23 +323,23 @@ cards:
 
   - leaf_tag: "topic::additional::real_analysis"
     format: mcq
-    question: "The Taylor series of e^x centered at 0 is:"
+    question: "The Taylor series of \\(e^x\\) centered at \\(0\\) is:"
     options:
-      - "sum_{n=0}^{inf} x^n / n!"
-      - "sum_{n=0}^{inf} x^n"
-      - "sum_{n=1}^{inf} x^n / n"
-      - "sum_{n=0}^{inf} (-1)^n x^n / n!"
-      - "sum_{n=0}^{inf} x^(2n) / (2n)!"
+      - "\\(\\sum_{n=0}^{\\infty} x^n / n!\\)"
+      - "\\(\\sum_{n=0}^{\\infty} x^n\\)"
+      - "\\(\\sum_{n=1}^{\\infty} x^n / n\\)"
+      - "\\(\\sum_{n=0}^{\\infty} (-1)^n x^n / n!\\)"
+      - "\\(\\sum_{n=0}^{\\infty} x^{2n} / (2n)!\\)"
     correct_index: 0
-    explanation: "e^x = sum x^n/n! for all x in R. The radius of convergence is infinite."
+    explanation: "\\(e^x = \\sum x^n/n!\\) for all \\(x \\in \\mathbb{R}\\). The radius of convergence is infinite."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (Taylor series of e^x — standard real-analysis fact)"
 
   - leaf_tag: "topic::additional::real_analysis"
-    front: "What is the supremum of a set S of real numbers, and when does it belong to S?"
-    back: "The supremum (least upper bound) of S is the smallest value that is >= every element of S. It belongs to S exactly when S has a maximum (the sup is attained). For example, sup(0,1) = 1 but 1 is not in (0,1)."
+    front: "What is the supremum of a set \\(S\\) of real numbers, and when does it belong to \\(S\\)?"
+    back: "The supremum (least upper bound) of \\(S\\) is the smallest value that is \\(\\geq\\) every element of \\(S\\). It belongs to \\(S\\) exactly when \\(S\\) has a maximum (the sup is attained). For example, \\(\\sup(0,1) = 1\\) but \\(1 \\notin (0,1)\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -342,15 +347,15 @@ cards:
 
   - leaf_tag: "topic::additional::real_analysis"
     format: mcq
-    question: "If f is differentiable at a point c, then f is:"
+    question: "If \\(f\\) is differentiable at a point \\(c\\), then \\(f\\) is:"
     options:
-      - "Continuous at c"
-      - "Uniformly continuous on R"
-      - "Monotone near c"
-      - "Analytic at c"
-      - "Bounded on R"
+      - "Continuous at \\(c\\)"
+      - "Uniformly continuous on \\(\\mathbb{R}\\)"
+      - "Monotone near \\(c\\)"
+      - "Analytic at \\(c\\)"
+      - "Bounded on \\(\\mathbb{R}\\)"
     correct_index: 0
-    explanation: "Differentiability at c implies continuity at c; the converse fails (e.g. |x| at 0)."
+    explanation: "Differentiability at \\(c\\) implies continuity at \\(c\\); the converse fails (e.g. \\(|x|\\) at \\(0\\))."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -359,15 +364,15 @@ cards:
   # --- additional::topology (expanded) ---------------------------------------
   - leaf_tag: "topic::additional::topology"
     format: mcq
-    question: "A subset K of a topological space is compact if and only if:"
+    question: "A subset \\(K\\) of a topological space is compact if and only if:"
     options:
-      - "Every open cover of K has a finite subcover"
-      - "K is closed and bounded"
-      - "Every sequence in K converges"
-      - "K contains all its limit points"
-      - "K has finitely many open subsets"
+      - "Every open cover of \\(K\\) has a finite subcover"
+      - "\\(K\\) is closed and bounded"
+      - "Every sequence in \\(K\\) converges"
+      - "\\(K\\) contains all its limit points"
+      - "\\(K\\) has finitely many open subsets"
     correct_index: 0
-    explanation: "The open-cover definition of compactness: every collection of open sets covering K has a finite subcollection that still covers K."
+    explanation: "The open-cover definition of compactness: every collection of open sets covering \\(K\\) has a finite subcollection that still covers \\(K\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -375,23 +380,23 @@ cards:
 
   - leaf_tag: "topic::additional::topology"
     format: mcq
-    question: "A function f : X -> Y between topological spaces is continuous if and only if:"
+    question: "A function \\(f : X \\to Y\\) between topological spaces is continuous if and only if:"
     options:
-      - "The preimage of every open set in Y is open in X"
-      - "The image of every open set in X is open in Y"
-      - "f is differentiable everywhere"
-      - "f maps closed sets to closed sets"
-      - "f is uniformly bounded"
+      - "The preimage of every open set in \\(Y\\) is open in \\(X\\)"
+      - "The image of every open set in \\(X\\) is open in \\(Y\\)"
+      - "\\(f\\) is differentiable everywhere"
+      - "\\(f\\) maps closed sets to closed sets"
+      - "\\(f\\) is uniformly bounded"
     correct_index: 0
-    explanation: "Topological continuity: f^{-1}(V) is open in X for every open V in Y. Note: f need not map open sets to open sets."
+    explanation: "Topological continuity: \\(f^{-1}(V)\\) is open in \\(X\\) for every open \\(V\\) in \\(Y\\). Note: \\(f\\) need not map open sets to open sets."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (continuity via preimages — standard topology fact)"
 
   - leaf_tag: "topic::additional::topology"
-    front: "What is the closure of a set A in a topological space, and what is its interior?"
-    back: "The closure cl(A) is the smallest closed set containing A (equivalently, A union all its limit points). The interior int(A) is the largest open set contained in A (the union of all open subsets of A)."
+    front: "What is the closure of a set \\(A\\) in a topological space, and what is its interior?"
+    back: "The closure \\(\\operatorname{cl}(A)\\) is the smallest closed set containing \\(A\\) (equivalently, \\(A\\) union all its limit points). The interior \\(\\operatorname{int}(A)\\) is the largest open set contained in \\(A\\) (the union of all open subsets of \\(A\\))."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -399,23 +404,23 @@ cards:
 
   - leaf_tag: "topic::additional::topology"
     format: mcq
-    question: "A topological space X is connected if:"
+    question: "A topological space \\(X\\) is connected if:"
     options:
-      - "X cannot be written as the union of two disjoint nonempty open sets"
+      - "\\(X\\) cannot be written as the union of two disjoint nonempty open sets"
       - "Every open cover has a finite subcover"
-      - "X is Hausdorff"
-      - "Every path between two points lies in X"
-      - "X has no isolated points"
+      - "\\(X\\) is Hausdorff"
+      - "Every path between two points lies in \\(X\\)"
+      - "\\(X\\) has no isolated points"
     correct_index: 0
-    explanation: "Connectedness: no partition of X into two disjoint nonempty open sets exists."
+    explanation: "Connectedness: no partition of \\(X\\) into two disjoint nonempty open sets exists."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (connectedness definition — standard topology fact)"
 
   - leaf_tag: "topic::additional::topology"
-    front: "Define a metric space and the open ball B(x, r) within it."
-    back: "A metric space is a set M with a distance function d: M x M -> R satisfying non-negativity, identity (d(x,y)=0 iff x=y), symmetry, and the triangle inequality. The open ball B(x,r) = {y in M : d(x,y) < r}."
+    front: "Define a metric space and the open ball \\(B(x, r)\\) within it."
+    back: "A metric space is a set \\(M\\) with a distance function \\(d: M \\times M \\to \\mathbb{R}\\) satisfying non-negativity, identity (\\(d(x,y)=0\\) iff \\(x=y\\)), symmetry, and the triangle inequality. The open ball \\(B(x,r) = \\{y \\in M : d(x,y) < r\\}\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -424,15 +429,15 @@ cards:
   # --- additional::complex (expanded) ----------------------------------------
   - leaf_tag: "topic::additional::complex"
     format: mcq
-    question: "The nth roots of unity are the solutions to z^n = 1. How many distinct complex nth roots of unity are there?"
+    question: "The \\(n\\)th roots of unity are the solutions to \\(z^n = 1\\). How many distinct complex \\(n\\)th roots of unity are there?"
     options:
-      - "n"
-      - "1"
-      - "2"
-      - "n^2"
+      - "\\(n\\)"
+      - "\\(1\\)"
+      - "\\(2\\)"
+      - "\\(n^2\\)"
       - "Infinitely many"
     correct_index: 0
-    explanation: "z^n = 1 has exactly n distinct solutions in C: z_k = e^{2*pi*i*k/n} for k = 0, 1, ..., n-1."
+    explanation: "\\(z^n = 1\\) has exactly \\(n\\) distinct solutions in \\(\\mathbb{C}\\): \\(z_k = e^{2\\pi i k/n}\\) for \\(k = 0, 1, \\ldots, n-1\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -440,23 +445,23 @@ cards:
 
   - leaf_tag: "topic::additional::complex"
     format: mcq
-    question: "What is the value of the contour integral of 1/z around a positively oriented simple closed curve encircling the origin?"
+    question: "What is the value of the contour integral of \\(1/z\\) around a positively oriented simple closed curve encircling the origin?"
     options:
-      - "2*pi*i"
-      - "0"
-      - "pi*i"
-      - "1"
-      - "2*pi"
+      - "\\(2\\pi i\\)"
+      - "\\(0\\)"
+      - "\\(\\pi i\\)"
+      - "\\(1\\)"
+      - "\\(2\\pi\\)"
     correct_index: 0
-    explanation: "By the residue theorem, the integral of 1/z around a simple closed curve winding once around 0 equals 2*pi*i (residue of 1/z at 0 is 1)."
+    explanation: "By the residue theorem, the integral of \\(1/z\\) around a simple closed curve winding once around \\(0\\) equals \\(2\\pi i\\) (residue of \\(1/z\\) at \\(0\\) is \\(1\\))."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (contour integral of 1/z — standard complex-analysis fact)"
 
   - leaf_tag: "topic::additional::complex"
-    front: "If f = u + iv is holomorphic, what does it mean for the component functions u and v?"
-    back: "Both u and v satisfy Laplace's equation (i.e. they are harmonic): u_xx + u_yy = 0 and v_xx + v_yy = 0. Furthermore u and v are harmonic conjugates of each other."
+    front: "If \\(f = u + iv\\) is holomorphic, what does it mean for the component functions \\(u\\) and \\(v\\)?"
+    back: "Both \\(u\\) and \\(v\\) satisfy Laplace's equation (i.e. they are harmonic): \\(u_{xx} + u_{yy} = 0\\) and \\(v_{xx} + v_{yy} = 0\\). Furthermore \\(u\\) and \\(v\\) are harmonic conjugates of each other."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -464,23 +469,23 @@ cards:
 
   - leaf_tag: "topic::additional::complex"
     format: mcq
-    question: "For all real theta, |e^{i*theta}| equals:"
+    question: "For all real \\(\\theta\\), \\(|e^{i\\theta}|\\) equals:"
     options:
-      - "1"
-      - "theta"
-      - "e^theta"
-      - "cos(theta)"
-      - "0"
+      - "\\(1\\)"
+      - "\\(\\theta\\)"
+      - "\\(e^{\\theta}\\)"
+      - "\\(\\cos\\theta\\)"
+      - "\\(0\\)"
     correct_index: 0
-    explanation: "|e^{i*theta}| = |cos(theta) + i*sin(theta)| = sqrt(cos^2(theta)+sin^2(theta)) = 1."
+    explanation: "\\(|e^{i\\theta}| = |\\cos\\theta + i\\sin\\theta| = \\sqrt{\\cos^2\\theta + \\sin^2\\theta} = 1\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
-    source: "original (|e^{i*theta}|=1 — standard complex-analysis fact)"
+    source: "original (|e^{i theta}|=1 — standard complex-analysis fact)"
 
   - leaf_tag: "topic::additional::complex"
-    front: "State the Residue Theorem for a meromorphic function f inside a simple closed contour C."
-    back: "If f is meromorphic inside and on a simple closed contour C (positively oriented) with isolated singularities z_1, ..., z_n inside C, then the integral of f around C equals 2*pi*i times the sum of the residues: integral_C f dz = 2*pi*i * sum Res(f, z_k)."
+    front: "State the Residue Theorem for a meromorphic function \\(f\\) inside a simple closed contour \\(C\\)."
+    back: "If \\(f\\) is meromorphic inside and on a simple closed contour \\(C\\) (positively oriented) with isolated singularities \\(z_1, \\ldots, z_n\\) inside \\(C\\), then the integral of \\(f\\) around \\(C\\) equals \\(2\\pi i\\) times the sum of the residues: \\(\\oint_C f\\,dz = 2\\pi i \\sum_k \\operatorname{Res}(f, z_k)\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -489,15 +494,15 @@ cards:
   # --- additional::geometry (expanded) ----------------------------------------
   - leaf_tag: "topic::additional::geometry"
     format: mcq
-    question: "The volume of a sphere of radius r is:"
+    question: "The volume of a sphere of radius \\(r\\) is:"
     options:
-      - "(4/3)*pi*r^3"
-      - "4*pi*r^2"
-      - "pi*r^3"
-      - "(2/3)*pi*r^3"
-      - "pi*r^2*h"
+      - "\\(\\tfrac{4}{3}\\pi r^3\\)"
+      - "\\(4\\pi r^2\\)"
+      - "\\(\\pi r^3\\)"
+      - "\\(\\tfrac{2}{3}\\pi r^3\\)"
+      - "\\(\\pi r^2 h\\)"
     correct_index: 0
-    explanation: "Volume of a sphere = (4/3)*pi*r^3; surface area = 4*pi*r^2."
+    explanation: "Volume of a sphere \\(= \\tfrac{4}{3}\\pi r^3\\); surface area \\(= 4\\pi r^2\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -505,23 +510,23 @@ cards:
 
   - leaf_tag: "topic::additional::geometry"
     format: mcq
-    question: "The Law of Cosines states that for a triangle with sides a, b, c and angle C opposite side c:"
+    question: "The Law of Cosines states that for a triangle with sides \\(a, b, c\\) and angle \\(C\\) opposite side \\(c\\):"
     options:
-      - "c^2 = a^2 + b^2 - 2*a*b*cos(C)"
-      - "c^2 = a^2 + b^2"
-      - "c = a + b - 2*cos(C)"
-      - "c^2 = a^2 + b^2 + 2*a*b*cos(C)"
-      - "cos(C) = (a^2 + b^2) / (2*a*b)"
+      - "\\(c^2 = a^2 + b^2 - 2ab\\cos C\\)"
+      - "\\(c^2 = a^2 + b^2\\)"
+      - "\\(c = a + b - 2\\cos C\\)"
+      - "\\(c^2 = a^2 + b^2 + 2ab\\cos C\\)"
+      - "\\(\\cos C = (a^2 + b^2) / (2ab)\\)"
     correct_index: 0
-    explanation: "c^2 = a^2 + b^2 - 2ab*cos(C). When C = 90 degrees this reduces to the Pythagorean theorem."
+    explanation: "\\(c^2 = a^2 + b^2 - 2ab\\cos C\\). When \\(C = 90^\\circ\\) this reduces to the Pythagorean theorem."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (law of cosines — standard geometry fact)"
 
   - leaf_tag: "topic::additional::geometry"
-    front: "Give the midpoint of the segment connecting (x1, y1) and (x2, y2)."
-    back: "Midpoint = ((x1+x2)/2, (y1+y2)/2)."
+    front: "Give the midpoint of the segment connecting \\((x_1, y_1)\\) and \\((x_2, y_2)\\)."
+    back: "\\(\\text{Midpoint} = \\left(\\tfrac{x_1+x_2}{2}, \\tfrac{y_1+y_2}{2}\\right)\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -545,7 +550,7 @@ cards:
 
   - leaf_tag: "topic::additional::geometry"
     front: "State the Pythagorean theorem and its converse."
-    back: "In a right triangle with legs a, b and hypotenuse c: a^2 + b^2 = c^2. Converse: if a^2 + b^2 = c^2 then the triangle is right-angled (the right angle is opposite the side of length c)."
+    back: "In a right triangle with legs \\(a, b\\) and hypotenuse \\(c\\): \\(a^2 + b^2 = c^2\\). Converse: if \\(a^2 + b^2 = c^2\\) then the triangle is right-angled (the right angle is opposite the side of length \\(c\\))."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -554,15 +559,15 @@ cards:
   # --- additional::discrete (expanded) ----------------------------------------
   - leaf_tag: "topic::additional::discrete"
     format: mcq
-    question: "The Inclusion-Exclusion Principle gives |A union B| as:"
+    question: "The Inclusion-Exclusion Principle gives \\(|A \\cup B|\\) as:"
     options:
-      - "|A| + |B| - |A intersect B|"
-      - "|A| + |B| + |A intersect B|"
-      - "|A| * |B|"
-      - "|A| - |B|"
-      - "|A intersect B|"
+      - "\\(|A| + |B| - |A \\cap B|\\)"
+      - "\\(|A| + |B| + |A \\cap B|\\)"
+      - "\\(|A| \\cdot |B|\\)"
+      - "\\(|A| - |B|\\)"
+      - "\\(|A \\cap B|\\)"
     correct_index: 0
-    explanation: "|A union B| = |A| + |B| - |A intersect B|. Elements in the intersection are counted twice in |A|+|B|, so we subtract once."
+    explanation: "\\(|A \\cup B| = |A| + |B| - |A \\cap B|\\). Elements in the intersection are counted twice in \\(|A|+|B|\\), so we subtract once."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -570,23 +575,23 @@ cards:
 
   - leaf_tag: "topic::additional::discrete"
     format: mcq
-    question: "The binomial coefficient C(n, k) satisfies Pascal's identity:"
+    question: "The binomial coefficient \\(\\binom{n}{k}\\) satisfies Pascal's identity:"
     options:
-      - "C(n, k) = C(n-1, k-1) + C(n-1, k)"
-      - "C(n, k) = C(n, k-1) + C(n, k+1)"
-      - "C(n, k) = n * C(n-1, k)"
-      - "C(n, k) = C(n-1, k) * C(n-1, k-1)"
-      - "C(n, k) = C(n+1, k) - C(n, k+1)"
+      - "\\(\\binom{n}{k} = \\binom{n-1}{k-1} + \\binom{n-1}{k}\\)"
+      - "\\(\\binom{n}{k} = \\binom{n}{k-1} + \\binom{n}{k+1}\\)"
+      - "\\(\\binom{n}{k} = n \\binom{n-1}{k}\\)"
+      - "\\(\\binom{n}{k} = \\binom{n-1}{k} \\binom{n-1}{k-1}\\)"
+      - "\\(\\binom{n}{k} = \\binom{n+1}{k} - \\binom{n}{k+1}\\)"
     correct_index: 0
-    explanation: "Pascal's identity: C(n,k) = C(n-1,k-1) + C(n-1,k). It underlies Pascal's triangle."
+    explanation: "Pascal's identity: \\(\\binom{n}{k} = \\binom{n-1}{k-1} + \\binom{n-1}{k}\\). It underlies Pascal's triangle."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (Pascal's identity — standard combinatorics fact)"
 
   - leaf_tag: "topic::additional::discrete"
-    front: "State De Morgan's laws for logical propositions P and Q."
-    back: "NOT(P AND Q) is logically equivalent to (NOT P) OR (NOT Q). NOT(P OR Q) is logically equivalent to (NOT P) AND (NOT Q)."
+    front: "State De Morgan's laws for logical propositions \\(P\\) and \\(Q\\)."
+    back: "\\(\\lnot(P \\land Q)\\) is logically equivalent to \\((\\lnot P) \\lor (\\lnot Q)\\). \\(\\lnot(P \\lor Q)\\) is logically equivalent to \\((\\lnot P) \\land (\\lnot Q)\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -594,15 +599,15 @@ cards:
 
   - leaf_tag: "topic::additional::discrete"
     format: mcq
-    question: "The set of rational numbers Q is:"
+    question: "The set of rational numbers \\(\\mathbb{Q}\\) is:"
     options:
       - "Countably infinite"
       - "Uncountably infinite"
       - "Finite"
-      - "Uncountable but smaller than R"
-      - "The same cardinality as the power set of N"
+      - "Uncountable but smaller than \\(\\mathbb{R}\\)"
+      - "The same cardinality as the power set of \\(\\mathbb{N}\\)"
     correct_index: 0
-    explanation: "Q is countably infinite: there is a bijection between Q and N (list fractions by diagonalization). R is uncountable."
+    explanation: "\\(\\mathbb{Q}\\) is countably infinite: there is a bijection between \\(\\mathbb{Q}\\) and \\(\\mathbb{N}\\) (list fractions by diagonalization). \\(\\mathbb{R}\\) is uncountable."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -611,15 +616,15 @@ cards:
   # --- algebra::abstract (expanded) ------------------------------------------
   - leaf_tag: "topic::algebra::abstract"
     format: mcq
-    question: "In a finite group G, by Lagrange's theorem the order of every element must:"
+    question: "In a finite group \\(G\\), by Lagrange's theorem the order of every element must:"
     options:
-      - "Divide |G|"
-      - "Equal |G|"
+      - "Divide \\(|G|\\)"
+      - "Equal \\(|G|\\)"
       - "Be a prime number"
       - "Be even"
-      - "Be at most sqrt(|G|)"
+      - "Be at most \\(\\sqrt{|G|}\\)"
     correct_index: 0
-    explanation: "Each element g generates a cyclic subgroup <g> of order equal to the order of g; by Lagrange this order divides |G|."
+    explanation: "Each element \\(g\\) generates a cyclic subgroup \\(\\langle g \\rangle\\) of order equal to the order of \\(g\\); by Lagrange this order divides \\(|G|\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -627,15 +632,15 @@ cards:
 
   - leaf_tag: "topic::algebra::abstract"
     format: mcq
-    question: "A group G is cyclic if and only if:"
+    question: "A group \\(G\\) is cyclic if and only if:"
     options:
-      - "G is generated by a single element"
-      - "Every subgroup of G is normal"
-      - "G has prime order"
-      - "G is abelian"
-      - "G is isomorphic to Z_2"
+      - "\\(G\\) is generated by a single element"
+      - "Every subgroup of \\(G\\) is normal"
+      - "\\(G\\) has prime order"
+      - "\\(G\\) is abelian"
+      - "\\(G\\) is isomorphic to \\(\\mathbb{Z}_2\\)"
     correct_index: 0
-    explanation: "G is cyclic iff G = <g> = {g^n : n in Z} for some g in G. (Prime order implies cyclic but is not necessary; Z_2xZ_2 is abelian but not cyclic; Z_2 is only one cyclic group.)"
+    explanation: "\\(G\\) is cyclic iff \\(G = \\langle g \\rangle = \\{g^n : n \\in \\mathbb{Z}\\}\\) for some \\(g \\in G\\). (Prime order implies cyclic but is not necessary; \\(\\mathbb{Z}_2 \\times \\mathbb{Z}_2\\) is abelian but not cyclic; \\(\\mathbb{Z}_2\\) is only one cyclic group.)"
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -643,7 +648,7 @@ cards:
 
   - leaf_tag: "topic::algebra::abstract"
     front: "Define a ring and give two examples: one commutative and one non-commutative."
-    back: "A ring is a set R with two operations (+, *) where (R, +) is an abelian group, multiplication is associative, and multiplication distributes over addition. Commutative example: Z (integers). Non-commutative example: M_2(R), the ring of 2x2 real matrices."
+    back: "A ring is a set \\(R\\) with two operations \\((+, \\cdot)\\) where \\((R, +)\\) is an abelian group, multiplication is associative, and multiplication distributes over addition. Commutative example: \\(\\mathbb{Z}\\) (integers). Non-commutative example: \\(M_2(\\mathbb{R})\\), the ring of \\(2 \\times 2\\) real matrices."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
@@ -651,23 +656,23 @@ cards:
 
   - leaf_tag: "topic::algebra::abstract"
     format: mcq
-    question: "The kernel of a group homomorphism phi: G -> H is:"
+    question: "The kernel of a group homomorphism \\(\\varphi: G \\to H\\) is:"
     options:
-      - "The set of elements of G that map to the identity of H"
-      - "The image of G under phi"
-      - "The set of elements of H not in the image of phi"
-      - "The center of G"
-      - "The set of generators of G"
+      - "The set of elements of \\(G\\) that map to the identity of \\(H\\)"
+      - "The image of \\(G\\) under \\(\\varphi\\)"
+      - "The set of elements of \\(H\\) not in the image of \\(\\varphi\\)"
+      - "The center of \\(G\\)"
+      - "The set of generators of \\(G\\)"
     correct_index: 0
-    explanation: "ker(phi) = {g in G : phi(g) = e_H}. It is always a normal subgroup of G."
+    explanation: "\\(\\ker(\\varphi) = \\{g \\in G : \\varphi(g) = e_H\\}\\). It is always a normal subgroup of \\(G\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"
     source: "original (kernel of homomorphism — standard abstract-algebra fact)"
 
   - leaf_tag: "topic::algebra::abstract"
-    front: "Define an ideal in a ring R, and state why ideals are important."
-    back: "A (two-sided) ideal I of R is a nonempty subset closed under addition and satisfying r*a in I and a*r in I for all r in R and a in I. Ideals are kernels of ring homomorphisms and allow the construction of quotient rings R/I."
+    front: "Define an ideal in a ring \\(R\\), and state why ideals are important."
+    back: "A (two-sided) ideal \\(I\\) of \\(R\\) is a nonempty subset closed under addition and satisfying \\(ra \\in I\\) and \\(ar \\in I\\) for all \\(r \\in R\\) and \\(a \\in I\\). Ideals are kernels of ring homomorphisms and allow the construction of quotient rings \\(R/I\\)."
     status: verified
     verified_by: "fc"
     verified_on: "2026-07-02"

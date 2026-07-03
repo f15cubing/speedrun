@@ -28,7 +28,8 @@ source of truth.
 - `eval/bank/generate_eval.py` — deterministic SymPy authoring aid: `gen_p0_items(seed)`,
   `gen_p3_pairs(seed)` (each P3 group = 2 same-key rewordings, guaranteed by a single
   `distractors.make_options` call), `emit_yaml(items)`, and a `__main__` that prints p0+p3 YAML to
-  freeze into `items.yaml`.
+  freeze into `items.yaml`. **Stems/options are delimited LaTeX** via `pipeline/mathfmt`; P3 surface
+  framings are functions (not `str.format` templates) so LaTeX braces don't collide with format fields.
 
 ## Dependencies
 - External (pinned in `pipeline/requirements.txt`): `PyYAML`, `sympy` (authoring aid), `pytest`.
@@ -65,5 +66,13 @@ source of truth.
 ## Composition (as frozen)
 80 items: **P0 = 24** (frozen held-out, taxonomy-weighted) + **P3 = 56** (28 paraphrase groups × 2 same-key rewordings). Calculus weight ≈ 0.35.
 
+## LaTeX migration status (2026-07-02)
+The authoring aid (`generate_eval.py`) now emits delimited LaTeX. The **committed `items.yaml` is still
+the original ASCII freeze** and is intentionally migrated **together with its vendored copy**
+`anki/qt/aqt/gre/exam_items.json` (the Exam Mode surface) in the submodule-enabled session, so
+`tests/test_exam_items_sync.py` stays green as a unit. Migrating `items.yaml` alone here would desync that
+guard, and the vendored copy lives at an `anki` submodule commit not checked out in the pipeline lane.
+See `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md` §5.
+
 ---
-Last verified against: `agent/eval-bank` (built on `f15cubing/anki` main `3b224e2`)
+Last verified against: `agent/pipeline-latex-math`

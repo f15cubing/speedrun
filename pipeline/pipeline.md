@@ -12,6 +12,11 @@ tree it stamps onto every card is the shared substrate the mastery query,
 coverage map, readiness gate, and interleaving all build on.
 
 ## Public interface
+- `mathfmt.py` — the single math-formatting contract. `tex(expr)` → raw
+  `sympy.latex`; `inline(s)`/`block(s)` wrap an already-LaTeX string in MathJax
+  delimiters (`\(...\)` / `\[...\]`); `expr_inline(expr)`/`expr_block(expr)`
+  compose the two. **All displayed math goes through this module**, so every
+  surface renders identically and Anki's MathJax typesets it on desktop + Android.
 - `taxonomy.py` — single source of truth for the 17-leaf taxonomy:
   - `BUCKETS`, `BUCKET_WEIGHTS` / `WEIGHTS`, `LEAVES_BY_BUCKET`, `LEAVES`
     (`namedtuple(bucket, leaf, tag)`), `LEAF_TAGS`, `TAG_BY_LEAF`.
@@ -28,8 +33,9 @@ coverage map, readiness gate, and interleaving all build on.
   SymPy both builds the problem and computes the answer.
 - `distractors.py` — `make_options(rng, correct, wrong_exprs, n_options=5)` →
   `(options: list[str], correct_index)`; `generic_variants(expr)`;
-  `InsufficientDistractors`. Deterministic MCQ option assembly (SymPy equality
-  dedupe, wrongs ≠ key, common-error top-up).
+  `InsufficientDistractors`. Deterministic MCQ option assembly; **options are
+  inline-LaTeX** (`mathfmt.expr_inline`) while dedupe / wrongs-≠-key checks run on
+  the canonical `sympy.sstr` string (presentation-independent integrity).
 - `generate_mcq.py` — `generate_mcq_cards(seed=42)` → ordered list of MCQ card
   dicts `{leaf_tag, format:"mcq", question, options[5], correct_index, explanation}`;
   `MCQ_COUNTS` maps leaf → count. Reuses `generate_deck` helpers; SymPy computes
@@ -61,6 +67,16 @@ coverage map, readiness gate, and interleaving all build on.
 - Nothing here touches `anki/` or `Anki-Android/`. Not an engine/Rust change.
 
 ## Gotchas & invariants
+- **Math is delimited LaTeX; truth stays a SymPy expression.** Card/MCQ text is
+  prose with math spans wrapped by `mathfmt` (`\(...\)` / `\[...\]`). Anki's
+  reviewer + AnkiDroid already load MathJax and typeset these — **no `[latex]`
+  image toolchain** (that would break offline / clean-device installs). Generators
+  keep the answer as a SymPy object and expose it to tests under a **test-only
+  `_expr` / `_correct_expr` key that is never written to the note** (so correctness
+  is checked on expressions, not markup).
+- **LaTeX survives field escaping.** `build_deck._to_html` HTML-escapes fields;
+  this is safe because the browser decodes `&amp;`/`&lt;` (matrix `&`, inequality
+  `<`) back in the text node before MathJax reads it (`tests/test_latex_escaping.py`).
 - **Exactly one leaf tag per card.** Every card dict has a single `leaf_tag`, and
   it must be a valid `topic::<bucket>::<leaf>` (`validate_leaf_tag`). The built
   genanki note carries exactly that one tag. Enforced by the coverage gate and
@@ -93,6 +109,8 @@ coverage map, readiness gate, and interleaving all build on.
   source of truth is the generator + `conceptual_cards.yaml`.
 
 ## Related tests
+- `pipeline/tests/test_mathfmt.py` — the LaTeX formatting contract (delimiters, composition, determinism).
+- `pipeline/tests/test_latex_escaping.py` — matrix `&` / inequality `<` survive field escaping for MathJax.
 - `pipeline/tests/test_tagging.py` — exactly one valid leaf tag per card / note.
 - `pipeline/tests/test_determinism.py` — same seed ⇒ identical card list.
 - `pipeline/tests/test_coverage.py` — coverage assertions hold (all 17 leaves, calc ≥ 50 %).
@@ -105,4 +123,4 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_scale.py` — total card count ≥ 5 000 and per-leaf minimums for the high-volume leaves.
 
 ---
-Last verified against: agent/deck-scale
+Last verified against: agent/pipeline-latex-math
