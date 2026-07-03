@@ -4,7 +4,7 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — compressed-Friday push merged: Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs (bench/calibration/paraphrase), and Block C robustness (7g crash-safety + 7b two-way sync)._
+_Last updated: 2026-07-03 (Fri) — compressed-Friday push merged: Task 7 phone panel, model docs, AI pipeline + gold-set gate, quant proofs (bench/calibration/paraphrase), and Block C robustness (7g crash-safety + 7b two-way sync). Sunday-prep docs bundle (buffer log + Sunday demo cut + submission runbook) opened as a PR — see the buffer section below._
 
 ## Done
 
@@ -278,6 +278,16 @@ _Last updated: 2026-07-03 (Fri) — compressed-Friday push merged: Task 7 phone 
   (§ Block C proofs). **Android leg CUT** (shared `anki_test` emulator busy with the Task-7 subagent);
   device side already covered by W3 (Check-DB "rebuilt and optimized" after a force-stop) + W4 (live
   AnkiDroid↔desktop two-way sync). Evidence: `docs/evidence/robustness/`. (`f15cubing/speedrun#36`.)
+- **Sunday-prep docs bundle** (fast lane, docs only; PR on `agent/sunday-prep`, **open for review — do
+  not merge**) — one cohesive Sunday-prep documentation PR: (1) a consolidated **Sat/Sun buffer
+  (CUT-FIRST spillover)** log (below) naming the four deferred items (ablation run · demo recording ·
+  AI live-model run · Block C Android leg) with why + what's ready + ceiling impact; (2) `execution-plan.md`
+  Days 4+5 COMPRESSED marked **done** (A #34 · B Task 7 #32 / Task 6 · C #34+#36 · D #35 · E #33) with
+  CUT-FIRST items pointed at the Sunday buffer; (3) `docs/demo-plan.md` rewritten into the **Sunday cut**
+  (live 3 scores on desktop + read-only phone panel, AI pipeline + gold-set gate framed AI-off, the four
+  proofs), Milestone-1 script preserved as an appendix; (4) a new **`docs/submission-checklist.md`**
+  (desktop installer + signed-APK steps, the hard-ceiling checklist, deliverables list; human-gated items
+  marked), linked from README. No code/engine change; honesty framing preserved throughout.
 
 ## In flight
 
@@ -286,6 +296,25 @@ _Last updated: 2026-07-03 (Fri) — compressed-Friday push merged: Task 7 phone 
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop
   scoring adapter (Task 6) + AnkiDroid read-only panel (Task 7) shipped — Milestone-1 scoring surfaces
   complete on both platforms. Nothing blocking in flight._
+
+## Sat/Sun buffer (CUT-FIRST spillover)
+
+> The self-imposed **Friday 7:00 PM CT** target banked the weekend as buffer. Everything below is a
+> **CUT-FIRST** item that slipped into the Sat/Sun buffer **without breaking a hard ceiling** — the
+> real submission deadline (**Sunday 2026-07-05, 10:59 PM CT**) is untouched. In every case the
+> machinery is built and re-runnable; what remains is either **human-gated** or blocked on a resource
+> we don't control in this environment. None of these is on the critical path to a passing submission.
+
+| Deferred item | Why deferred | What's already built / stands | Ceiling impact |
+|---|---|---|---|
+| **Ablation run** (interleaved vs. blocked vs. plain Anki) | Interleaving instrumentation (the interleaved↔blocked toggle + plain-Anki arm) is **not built yet**; a pre-registered "not yet run" is the honest state. | **Pre-registration stands** (PRD Appendix B, locked 2026-06-30): H1 + SESOI dz 0.3, three arms, within-subject Latin-square, delayed endpoint, **TOST + 90% CI + honest-null template**. Block D shipped the other three proofs (#35). | None. Study feature (15%) keeps its pre-reg + design; a documented null or honest "not run" scores — a post-hoc hypothesis would not. |
+| **Demo recording** (3–5 min Sunday cut) | Needs **a human at the keyboard** for live screen capture of the desktop app + Android emulator. | Full shot-by-shot **Sunday-cut script** in `docs/demo-plan.md`; every segment it shows is merged + reproducible from one command. | None. Deliverable is human-gated, not blocked on code. |
+| **AI live-model run** | Blocked **only on a live-model API key**; no key in this environment, so the pipeline runs **AI-off**. | Live-model **seam ready** (`orchestrator.LlmBackend`, fails loudly without a key) + **gate PASSED on the deterministic stub** — fact-precision **1.000**, useful-yield **0.64**, κ **0.938**, McNemar beat-baseline **p=6.2e-06**. One command: `make ai-gate`. | None. Machinery validated (not a live model); going live is a one-file change. Numbers validate the machinery, not a live model — **do not overclaim**. |
+| **Block C Android leg** (on-device crash/sync round) | The shared `anki_test` **emulator was busy** with the Task-7 subagent. | Desktop **7g 20/20 clean + 7b 10+10 + conflict** proven headless (#36); the Android device side is already covered by **W3** (Check-DB "rebuilt and optimized" after a force-stop) + **W4** (live AnkiDroid↔desktop two-way sync). | None. Both durability properties are demonstrated; the emulator round is a representative re-run, documented in `robustness/README.md`. |
+
+**Sunday still-to-do (human-gated, tracked in `docs/submission-checklist.md`):** record the demo,
+build + clean-machine-verify the desktop installer, build + **sign** the APK and record it on a clean
+device, then upload the deliverables (repo · demo video · three model descriptions · Brainlift).
 
 ## Next (per execution-plan)
 

@@ -2,6 +2,13 @@
 
 > Companion to `docs/PRD.md`. The PRD is the *what/why*; this is the *how/when*. Six working days, Tuesday → Sunday, three milestone gates (Wed / Fri / Sun).
 > **Deadline: Sunday 2026-07-05, 10:59 PM CT.**
+>
+> **⚡ Compression in effect (2026-07-03):** the original Friday (Milestone 2) + Saturday
+> (prove-everything + docs) were pulled into a single **compressed-Friday push finishing by a
+> self-imposed 7:00 PM CT** to bank the weekend as buffer. See **"Days 4+5 COMPRESSED"** below for the
+> P0/P1/CUT-FIRST breakdown; the merged blocks are marked **done** with their PR refs. The real
+> submission deadline is unchanged, and any CUT-FIRST item that slipped is logged in the **Sat/Sun
+> buffer** section of `docs/STATUS.md` and pointed at Sunday below.
 
 ---
 
@@ -89,45 +96,94 @@ Goal: every irreversible decision locked in writing, environments building, deck
 
 ---
 
-## Day 4 — Friday (✅ Milestone 2: AI on + sync proven + phone shows 3 scores)
+## Days 4+5 COMPRESSED — Friday 2026-07-03 (✅ merged; CUT-FIRST items → Sunday buffer)
 
-**Theme:** AI with safety, three scores on the phone, exam-pressure simulator.
+> **What changed.** The original Friday (Milestone 2: AI + phone 3 scores) *and* Saturday
+> (prove-everything + docs) were pulled into one push finishing by a self-imposed **7:00 PM CT**, so
+> this block was ruthlessly prioritized: **P0** = hard-ceiling / highest grade weight; **P1** = strong
+> grade lever; **CUT-FIRST** = slips into the Sat/Sun buffer without breaking a ceiling. **All P0/P1
+> blocks below merged** (refs inline); the CUT-FIRST items that slipped are logged in
+> `docs/STATUS.md` § *Sat/Sun buffer (CUT-FIRST spillover)* and pointed at **Sunday** below. The real
+> 10:59 PM CT Sunday deadline is untouched.
 
-- [ ] **AI card pipeline:** RAG + provenance schema (verbatim quote + anchor, non-nullable) + abstention-in-pipeline; CAS/SymPy verify for computational, NLI+human for conceptual.
-- [ ] **Gold-set gate (cutoff lodged BEFORE scoring):** generate 50 cards from the source; score correct/wrong/bad-pedagogy; require **fact-precision ≥0.98 & useful-yield ≥0.60** (or document the honest failure). ≥2 raters, κ + percent agreement.
-- [ ] **Beat the baseline:** vs. template/cloze + non-RAG; McNemar exact test.
-- [ ] **Phone shows all three scores** with ranges + give-up rule.
-- [ ] **Exam-pressure simulator (timed mode):** timed full-length (66 items / 2h50m / on-screen countdown / no pauses), justified on speededness. **Sequenced last and mastery-gated** — unlocks only after interleaving + the ordering algorithm ship and the student clears a per-topic mastery threshold (PRD §8a).
-- [ ] **AI-off degradation:** pull network → AI off cleanly; both apps keep working and still score.
-- [ ] **Crash test (7g):** kill each app mid-review ×20 → zero corrupted collections.
+### Block A — P0 · AI card pipeline + gold-set gate (15% + biggest unstarted risk) — ✅ **done (PR #34)**
+- [x] **AI card pipeline:** RAG + non-nullable verbatim-quote/anchor provenance + in-pipeline
+      abstention; **SymPy CAS** re-derivation for computational (a wrong answer cannot publish) +
+      NLI-proxy + **mandatory human review** for conceptual. `pipeline/aicards/`, `make ai-gate`.
+- [x] **Gold-set gate (cutoffs lodged BEFORE scoring):** 50 generated → 35 published / 5 conceptual
+      drafts / 10 abstained; **fact-precision 1.000** (≥0.98 ✓) · **useful-yield 0.64** (≥0.60 ✓) ·
+      2 raters, **Cohen's κ 0.938** @ 98% agreement; firewall PASS. **AI-off (no live API key):**
+      numbers validate the **machinery, not a live model** — the live-model run is **CUT-FIRST → Sunday
+      buffer** (blocked only on a key; seam `orchestrator.LlmBackend` ready, fails loudly without one).
 
-**Exit gate (Milestone 2):** AI passes (or honestly fails) the pre-set gate and beats baseline; phone shows three scores + syncs two-way; offline + crash safe.
+### Block B — PARALLEL (agent lane) · P0 · Phone shows all three scores (ceiling: engine on phone) — ✅ **done (Task 7, PR #32; Task 6 desktop adapter shipped)**
+- [x] **AnkiDroid read-only 3-score panel (Task 7):** `GreScorecardFragment` reads the synced
+      `gre_scorecard` (written desktop-side by the Task 6 adapter, rides W4 sync) and renders Memory /
+      Performance / Readiness **separately** with ranges — Readiness only a number when the desktop gate
+      passed, else the full evidence panel; **never a bare number, no scoring math on device.** Reuses
+      the W3 local rsdroid (config read only, **no rebuild**). Different-agent review **APPROVED**;
+      `Anki-Android` pinned `78989b9e`.
 
----
+### Block C — P1 · Beat baseline + robustness (AI credibility + ceilings) — ✅ **done (PR #34 + PR #36)**
+- [x] **Beat the baseline (McNemar exact):** AI arm (RAG+provenance+CAS+abstain) vs. template/cloze
+      non-RAG no-verify baseline over the same shared SymPy targets — AI **1.000 / 0.833** vs baseline
+      **0.600 / 0.400**; paired 2×2 a=20/b=30/c=4/d=6; **McNemar p = 6.165e-06** favoring AI; yield-diff
+      90% bootstrap CI [0.300, 0.567]. `make ai-baseline`. (PR #34.)
+- [x] **AI-off degradation:** no key → the live-model seam fails loudly, `run_pipeline_safe` aborts
+      cleanly (0 cards, 0 unverified) while the deck + `scoring/` still load — AI is a **build-time**
+      content step, never a review-time dependency. (PR #34.)
+- [x] **Crash test (7g):** one collection **SIGKILLed mid-review ×20 → 20/20 CLEAN** (`quick_check` +
+      `integrity_check`, no revlog loss; 31,405 reviews survived) + a non-vacuous `--selftest`.
+      `make crash-7g`. (PR #36.)
+- [x] **Two-way sync (7b):** 10 phone-offline + 10 desktop-offline → **all 20 land on both peers**;
+      same-card conflict = **revlog union + scheduling LWW** (documented rule). `make sync-7b`. (PR #36.)
+- [ ] **Android leg of 7g/7b (on-device round)** — **CUT-FIRST → Sunday buffer** (shared `anki_test`
+      emulator was busy with the Task-7 subagent). Device side already covered by **W3** (Check-DB
+      "rebuilt and optimized" after a force-stop) + **W4** (live AnkiDroid↔desktop two-way sync).
+- **Deferred from the original list — timed-mode / exam-pressure simulator:** ✅ already shipped earlier
+      (PR #21 core + #22 shell, mastery-gated) — see `STATUS.md`.
 
-## Day 5 — Saturday (Prove everything + documentation)
+### Block D — P1 · The proofs (turn machinery into evidence, 15% tests) — ✅ **done (PR #35)**
+- [x] **`make bench`:** real `col.mastery_query` @ 50k cards → **p50 650 ms · p95 667 ms · worst
+      709 ms** (20 topics/call; sub-second dashboard refresh; batch/index noted as future opt).
+- [x] **Memory calibration:** held-out student split → **Brier 0.219 · ECE 0.061**, reliability curve
+      hugs the diagonal (`docs/evidence/proofs/calibration.png`). Labeled "simulated machinery-check;
+      validity unestablished at n≈1."
+- [x] **Paraphrase results:** 28 eval-bank **P3** groups → R1 0.630 vs R2 0.624, **gap 0.006** (Wilson
+      CIs) → paraphrase-robust. Descriptive, simulated cohort.
+- [ ] **Run the ablation formally** (interleaved vs. blocked vs. plain Anki) — **CUT-FIRST → Sunday
+      buffer**: interleaving instrumentation isn't built yet; the **pre-registration stands** (Appendix
+      B, TOST + 90% CI + honest-null template), so a documented "not yet run" is honest.
 
-**Theme:** turn the machinery into evidence and write the docs.
+### Block E — P1 · Docs + demo (8% UX legibility + the artifact graders watch) — ✅ **done (PR #33)**
+- [x] **Model descriptions** (one page each): `docs/models/{memory,performance,readiness}.md` — incl.
+      the give-up rule.
+- [x] **Architecture overview + Rust-change note** (files touched + **merge-difficulty LOW**) in
+      `README.md`, linking the three model docs.
+- [ ] **Record the demo** (3–5 min) per `docs/demo-plan.md` — **CUT-FIRST → Sunday buffer**: needs a
+      human at the keyboard for live capture. The Sunday-cut script is written and every segment is
+      merged + reproducible.
 
-- [ ] **Run the ablation formally** (full interleaved vs. blocked vs. plain Anki); record honestly (null is fine) with TOST + 90% CIs + honest-null language.
-- [ ] **Memory calibration chart** (80% ⇒ ~80% on held-back reviews) — Step 1 proof.
-- [ ] **Paraphrase results:** recall-on-original vs. accuracy-on-reworded; report the gap honestly (Wilson CIs; descriptive, not powered).
-- [ ] **`make bench`:** 50,000-card deck → p50/p95/worst for button-ack, next-card, dashboard load/refresh, sync.
-- [ ] **Model descriptions** (one page each): memory, performance, readiness — including the give-up rule.
-- [ ] **Architecture overview + Rust change note** (files touched + merge difficulty) into README.
-- [ ] **Record the demo video** (3–5 min): review → Rust change → phone↔desktop sync → three scores with ranges → AI → test results.
-
-**Exit gate:** every claim has a chart/number behind it; all docs drafted; demo recorded.
+**Compressed exit gate (met):** AI passed the pre-set gate + beat the baseline; phone shows three
+scores; offline + crash safe; the proofs exist as charts/numbers; docs shipped. The CUT-FIRST items
+that slipped (ablation run · demo recording · AI live-model run · Block C Android leg) are logged as
+Sat/Sun buffer work in `docs/STATUS.md` — the true Sunday 10:59 PM CT deadline is untouched.
 
 ---
 
 ## Day 6 — Sunday (✅ Ship — deadline 10:59 PM CT)
 
-- [ ] Package **desktop installer** (clean-machine test, no manual setup).
-- [ ] Package **phone build** (signed APK).
+> First clear the **Sat/Sun buffer (CUT-FIRST spillover)** — see `docs/STATUS.md`: the ablation run,
+> the demo recording, the AI live-model run, and the Block C Android leg. Packaging + submission are
+> tracked step-by-step in **`docs/submission-checklist.md`** (human-gated items marked).
+
+- [ ] **Clear CUT-FIRST buffer:** demo recording · (optional) ablation run or documented "not run" ·
+      (optional) AI live-model run if a key lands · (optional) Block C Android emulator round.
+- [ ] Package **desktop installer** (`anki/tools/build` → wheels; clean-machine test, no manual setup).
+- [ ] Package **phone build** (**signed** APK; record it on a clean device).
 - [ ] **Final repo push:** public AGPL-3.0-or-later fork, exam stated up front, build instructions for both platforms, files touched, merge-difficulty assessment.
-- [ ] **Hard-ceiling checklist:** Rust change ✓ · phone sharing engine + syncing ✓ · held-out testing ✓ · no leaked data ✓ · readiness backed by evidence ✓ · both apps run on a clean device ✓.
-- [ ] **Upload deliverables:** repo link, demo video, three model descriptions, Brainlift.
+- [ ] **Hard-ceiling checklist** (see `docs/submission-checklist.md`): Rust change ✓ · phone sharing engine + syncing ✓ · held-out testing ✓ · no leaked data ✓ · readiness backed by evidence ✓ · both apps run on a clean device ✓.
+- [ ] **Upload deliverables:** repo link, demo video, three model descriptions, Brainlift (`research/brainlift.md`).
 - [ ] **Submit by 10:59 PM CT.**
 
 ---
@@ -155,9 +211,11 @@ Wed: Rust mastery query ──► desktop review + memory range + coverage map
 Thu: performance + readiness ──► eval bank + leakage + paraphrase infra
         │                        sync proven (no-loss + conflict)
         ▼
-Fri: AI gate + beat baseline ──► phone 3 scores + simulator + crash/offline
+Fri (COMPRESSED = old Fri + old Sat):
+     A AI gate (#34) ─► B phone 3 scores (Task 7, #32) ─► C beat-baseline + crash/sync (#34,#36)
+        └─► D proofs: bench/calibration/paraphrase (#35) ─► E docs: models + README (#33)
+        ▼  (CUT-FIRST → Sat/Sun buffer, logged in STATUS.md)
+Sat/Sun buffer: demo recording · ablation run · AI live-model run · Block C Android leg
         ▼
-Sat: ablation + calibration + paraphrase results + bench + docs + demo
-        ▼
-Sun: package installers + repo + deliverables + submit
+Sun: package installers + signed APK + repo + deliverables + submit
 ```
