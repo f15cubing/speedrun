@@ -116,10 +116,18 @@ MCQ_MODEL = genanki.Model(
 
 
 def _to_html(text):
-    """HTML-escape plain card text.
+    """HTML-escape plain card text (which now embeds delimited LaTeX).
 
     Newlines are preserved by the model's ``white-space: pre-wrap`` CSS, so no
     raw HTML is injected into note fields (keeps genanki's invalid-tag check quiet).
+
+    LaTeX/MathJax round-trip: escaping is **safe** for math. The MathJax
+    delimiters ``\\(`` / ``\\[`` and LaTeX control sequences use backslashes and
+    braces, which ``html.escape`` leaves untouched. The only characters it
+    changes are ``&`` (matrix ``&`` alignment -> ``&amp;``) and ``<``/``>``
+    (e.g. ``a < b`` -> ``a &lt; b``); the browser decodes those entities back to
+    ``&``/``<`` in the text node **before** MathJax scans it, so MathJax typesets
+    the intended LaTeX. See ``tests/test_latex_escaping.py``.
     """
     return html.escape(text)
 

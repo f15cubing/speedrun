@@ -4,16 +4,21 @@ Reuses pipeline/distractors + generate_deck helpers so keys and distractors are
 correct-by-construction. Output is meant to be FROZEN into eval/bank/items.yaml
 (the committed corpus is the source of truth; this module is the authoring aid).
 
-Design note: _det_problem returns raw params alongside the stem so P3 framings
-can be assembled directly from those params — no brittle text extraction needed.
+All displayed math is delimited LaTeX (via pipeline/mathfmt) so the exam webview
+and any regenerated bank typeset correctly. Design note: _det_problem returns the
+raw SymPy problem alongside the stem so P3 framings can be assembled directly from
+it — no brittle text extraction, and no str.format on LaTeX (whose braces would
+collide with format fields).
 """
 from __future__ import annotations
 
+import sympy as sp
 import yaml
 
 import distractors
+import mathfmt
 import taxonomy
-from generate_deck import _leaf_rng, _nonzero, _s, x
+from generate_deck import _leaf_rng, _nonzero, x
 
 _ATTR = {
     "src": "original",
@@ -55,35 +60,33 @@ _P0_SPEC = [
 def _det_problem(leaf, rng):
     """Return (question, correct_expr, wrong_exprs, explanation, params).
 
-    ``params`` is a dict of raw values used in the stem so callers can format
-    alternative surface framings without parsing the question string.
+    ``params`` carries the raw SymPy problem so callers can format alternative
+    surface framings (P3) without parsing the question string.
     """
-    import sympy as sp
     if leaf == "integral_single":
         a = _nonzero(rng, 2, 6)
         b = _nonzero(rng, 1, 6)
         f = a * x + b
         correct = sp.integrate(f, x)
-        fstr = _s(f)
         return (
-            "Give the antiderivative (omit + C):  \u222b ({}) dx".format(fstr),
+            "Give the antiderivative (omit + C):  "
+            + mathfmt.inline("\\int \\left(" + mathfmt.tex(f) + "\\right)\\,dx"),
             correct,
             [sp.diff(f, x), f],
-            "F(x) = {} + C".format(_s(correct)),
-            {"f": fstr},
+            mathfmt.inline("F(x) = " + mathfmt.tex(correct) + " + C"),
+            {"f_expr": f},
         )
     if leaf == "differential_single":
         a = _nonzero(rng, 2, 6)
         n = rng.randint(2, 4)
         f = a * x**n
         correct = sp.diff(f, x)
-        fstr = _s(f)
         return (
-            "Differentiate:  f(x) = {}".format(fstr),
+            "Differentiate:  " + mathfmt.inline("f(x) = " + mathfmt.tex(f)),
             correct,
             [sp.integrate(f, x), sp.diff(correct, x)],
-            "f'(x) = {}".format(_s(correct)),
-            {"f": fstr},
+            mathfmt.inline("f'(x) = " + mathfmt.tex(correct)),
+            {"f_expr": f},
         )
     if leaf == "linear":
         a = _nonzero(rng, -6, 6)
@@ -91,22 +94,23 @@ def _det_problem(leaf, rng):
         c = rng.randint(-6, 6)
         d = _nonzero(rng, -6, 6)
         correct = sp.Integer(a * d - b * c)
+        mat = sp.Matrix([[a, b], [c, d]])
         return (
-            "Determinant of [[{}, {}], [{}, {}]]?".format(a, b, c, d),
+            "Determinant of " + mathfmt.expr_inline(mat) + "?",
             correct,
             [sp.Integer(a * d + b * c), sp.Integer(a * b - c * d)],
-            "det = {}".format(_s(correct)),
-            {"a": a, "b": b, "c": c, "d": d},
+            mathfmt.inline("\\det = " + mathfmt.tex(correct)),
+            {"mat": mat},
         )
     if leaf == "number_theory":
         a = rng.randint(12, 90)
         b = rng.randint(12, 90)
         g = sp.igcd(a, b)
         return (
-            "Compute gcd({}, {}).".format(a, b),
+            "Compute " + mathfmt.inline("\\gcd({}, {})".format(a, b)) + ".",
             sp.Integer(g),
             [sp.Integer(a * b // g), sp.Integer(min(a, b))],
-            "gcd = {}".format(g),
+            mathfmt.inline("\\gcd = " + mathfmt.tex(sp.Integer(g))),
             {"a": a, "b": b},
         )
     raise ValueError("no generator for leaf " + leaf)
@@ -146,18 +150,26 @@ _P3_SPEC = [
 ]
 
 # Two surface framings per leaf that keep the SAME instance/key (true paraphrase).
+# Frames are functions (not str.format templates) because the stems contain LaTeX
+# braces, which str.format would misinterpret.
 _P3_FRAMES = {
     "integral_single": [
-        "Find the antiderivative (omit + C):  \u222b ({f}) dx",
-        "A velocity is v(t) = {f}. Which is a position function s(t) (up to a constant)?",
+        lambda p: "Find the antiderivative (omit + C):  "
+        + mathfmt.inline("\\int \\left(" + mathfmt.tex(p["f_expr"]) + "\\right)\\,dx"),
+        lambda p: "A velocity is "
+        + mathfmt.inline("v(t) = " + mathfmt.tex(p["f_expr"]))
+        + ". Which is a position function " + mathfmt.inline("s(t)")
+        + " (up to a constant)?",
     ],
     "differential_single": [
-        "Differentiate:  f(x) = {f}",
-        "Find the slope function f'(x) for f(x) = {f}.",
+        lambda p: "Differentiate:  " + mathfmt.inline("f(x) = " + mathfmt.tex(p["f_expr"])),
+        lambda p: "Find the slope function " + mathfmt.inline("f'(x)")
+        + " for " + mathfmt.inline("f(x) = " + mathfmt.tex(p["f_expr"])) + ".",
     ],
     "linear": [
-        "Determinant of [[{a}, {b}], [{c}, {d}]]?",
-        "For M = [[{a}, {b}], [{c}, {d}]], compute det(M).",
+        lambda p: "Determinant of " + mathfmt.expr_inline(p["mat"]) + "?",
+        lambda p: "For " + mathfmt.inline("M = " + mathfmt.tex(p["mat"]))
+        + ", compute " + mathfmt.inline("\\det(M)") + ".",
     ],
 }
 
@@ -172,7 +184,7 @@ def gen_p3_pairs(seed=42):
         seen = set()
         while made < n_groups:
             _q, correct, wrongs, expl, params = _det_problem(leaf, rng)
-            sig = _s(correct)
+            sig = sp.sstr(correct)
             if sig in seen:
                 continue
             try:
@@ -185,7 +197,7 @@ def gen_p3_pairs(seed=42):
             group = "pg-{:04d}".format(gi)
             base_ref = "{} :: {}".format(tag, expl)
             frames = _P3_FRAMES[leaf]
-            texts = [frame.format(**params) for frame in frames]
+            texts = [frame(params) for frame in frames]
             for r, text in enumerate(texts, start=1):
                 items.append(_record(
                     "eval-p3-{}-r{}".format(group, r), tag, text, options, ci,

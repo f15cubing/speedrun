@@ -16,8 +16,9 @@ from __future__ import annotations
 import sympy as sp
 
 import distractors
+import mathfmt
 import taxonomy
-from generate_deck import DEFAULT_SEED, _leaf_rng, _nonzero, _poly, _s, x
+from generate_deck import DEFAULT_SEED, _leaf_rng, _nonzero, _poly, x
 
 # Cards per MCQ leaf. Two calculus + two algebra leaves keeps the merged deck's
 # calculus weight comfortably >= 50% (see coverage_report).
@@ -36,8 +37,8 @@ def _mcq_differential_single(rng):
         sp.integrate(f, x),              # swapped operation (integrated)
         sp.diff(sp.diff(f, x), x),       # differentiated twice
     ]
-    stem = "Differentiate with respect to x:\n\nf(x) = {}".format(_s(f))
-    explanation = "f'(x) = {}".format(_s(correct))
+    stem = "Differentiate with respect to x:\n\n" + mathfmt.inline("f(x) = " + mathfmt.tex(f))
+    explanation = mathfmt.inline("f'(x) = " + mathfmt.tex(correct))
     return stem, correct, wrongs, explanation
 
 
@@ -50,9 +51,9 @@ def _mcq_integral_single(rng):
     ]
     stem = (
         "Evaluate the indefinite integral (give the antiderivative, omit + C):"
-        "\n\n\u222b ({}) dx".format(_s(f))
+        "\n\n" + mathfmt.inline("\\displaystyle\\int \\left(" + mathfmt.tex(f) + "\\right)\\,dx")
     )
-    explanation = "F(x) = {} + C".format(_s(correct))
+    explanation = mathfmt.inline("F(x) = " + mathfmt.tex(correct) + " + C")
     return stem, correct, wrongs, explanation
 
 
@@ -66,10 +67,14 @@ def _mcq_linear(rng):
         sp.Integer(a * d + b * c),       # added instead of subtracted
         sp.Integer(a * b - c * d),       # multiplied the wrong pairs
     ]
-    stem = "Compute the determinant of the 2x2 matrix:\n\n[[{}, {}], [{}, {}]]".format(
-        a, b, c, d
+    stem = "Compute the determinant of the matrix:\n\n" + mathfmt.expr_block(
+        sp.Matrix([[a, b], [c, d]])
     )
-    explanation = "det = ({})*({}) - ({})*({}) = {}".format(a, d, b, c, _s(correct))
+    explanation = mathfmt.inline(
+        "\\det = ({})({}) - ({})({}) = {}".format(
+            mathfmt.tex(a), mathfmt.tex(d), mathfmt.tex(b), mathfmt.tex(c), mathfmt.tex(correct)
+        )
+    )
     return stem, correct, wrongs, explanation
 
 
@@ -82,8 +87,10 @@ def _mcq_number_theory(rng):
         sp.Integer(a * b // g),          # lcm instead of gcd
         sp.Integer(min(a, b)),           # picked the smaller input
     ]
-    stem = "Compute the greatest common divisor:\n\ngcd({}, {})".format(a, b)
-    explanation = "gcd({}, {}) = {}".format(a, b, _s(correct))
+    stem = "Compute the greatest common divisor:\n\n" + mathfmt.inline(
+        "\\gcd({}, {})".format(a, b)
+    )
+    explanation = mathfmt.inline("\\gcd({}, {}) = {}".format(a, b, mathfmt.tex(correct)))
     return stem, correct, wrongs, explanation
 
 
@@ -135,6 +142,9 @@ def generate_mcq_cards(seed=DEFAULT_SEED):
                     "options": options,
                     "correct_index": correct_index,
                     "explanation": explanation,
+                    # Ground-truth key for the correctness test; never written to
+                    # the note (mcq_note_for/_card_identity ignore extra keys).
+                    "_correct_expr": correct,
                 }
             )
     return cards

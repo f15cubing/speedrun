@@ -13,7 +13,7 @@ def _distinct_stems(fn, n=300, seed=42):
     rng = random.Random(seed)
     seen = set()
     for _ in range(n * 8):
-        front, _back = fn(rng)
+        front, _back, _meta = fn(rng)
         seen.add(front)
         if len(seen) >= n:
             break
@@ -29,12 +29,12 @@ def test_thin_templates_have_capacity():
 def test_differential_equations_key_is_correct():
     rng = random.Random(1)
     for _ in range(50):
-        front, back = gd._gen_differential_equations(rng)
+        front, back, _meta = gd._gen_differential_equations(rng)
         assert "y(x) =" in back  # general solution stated
 
 
 def test_applications_key_is_correct():
     rng = random.Random(2)
     for _ in range(50):
-        front, back = gd._gen_applications(rng)
+        front, back, _meta = gd._gen_applications(rng)
         assert back  # non-empty, well-formed
