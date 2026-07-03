@@ -51,6 +51,11 @@ eval/goldset/data/
 # (.venv/ is already ignored above under the Python sidecars section.)
 pipeline/dist/
 
+# AI card pipeline + gold-set gate reports — regenerated artifacts (make ai-gate).
+# The numbers are locked by tests (pipeline/aicards/tests) + documented in
+# pipeline/aicards/aicards.md; the report itself is reproducible, not committed.
+pipeline/aicards/out/
+
 # W4 sync foundation — local server data + creds (never commit)
 sync/.sync-data/
 sync/.env

@@ -11,6 +11,12 @@ AI/model calls and without ever touching official ETS items. The `topic::*` tag
 tree it stamps onto every card is the shared substrate the mastery query,
 coverage map, readiness gate, and interleaving all build on.
 
+> **AI card pipeline (PRD §9) lives in the `aicards/` subpackage** — RAG +
+> non-nullable provenance + in-pipeline abstention + SymPy/NLI verification + the
+> pre-lodged gold-set gate. It is separate from this deterministic study-deck
+> generator (which is deliberately AI-free) and has its own authoritative doc:
+> `pipeline/aicards/aicards.md`. Run it with `make ai-gate`.
+
 ## Public interface
 - `mathfmt.py` — the single math-formatting contract. `tex(expr)` → raw
   `sympy.latex`; `inline(s)`/`block(s)` wrap an already-LaTeX string in MathJax
