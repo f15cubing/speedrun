@@ -84,9 +84,17 @@ coverage map, readiness gate, and interleaving all build on.
 - **Determinism.** Same `--seed` ⇒ identical ordered card list. Each leaf draws
   from its own RNG seeded by `sha256(seed:leaf_tag)`, so output is independent of
   iteration order. **MCQ uses a distinct RNG namespace** (`tag + "::mcq"`) so
-  adding MCQ never perturbs flashcard determinism. Model id, deck id, and note
-  GUIDs are content-derived (not random), and the package is written with a fixed
-  timestamp. `tests/test_determinism.py`.
+  adding MCQ never perturbs flashcard determinism. Model id + deck id are fixed.
+  The `.apkg` is **byte-reproducible**: `build_deck._rewrite_apkg_deterministically`
+  re-zips with a fixed 1980 timestamp + fixed perms (genanki otherwise stamps zip
+  entries with wall-clock time), so `make deck-asset-check` can byte-compare.
+  `tests/test_determinism.py`.
+- **Stable, rendering-independent note GUIDs.** Each card carries a `uid`
+  (`<leaf>::<format>::<ordinal>`, generated; `::c<ordinal>` for conceptual) and the
+  note GUID derives from it (`build_deck._guid_for`), **not** from the rendered
+  front/back. So re-rendering the deck (e.g. ASCII → LaTeX) keeps GUIDs stable and
+  the version-gated auto-importer updates cards **in place** (no duplicates).
+  `tests/test_stable_guids.py`.
 - **Scale & capacity.** The generator is template-based: per-leaf counts are
   controlled by `GENERATED_COUNTS` (flashcards) and `MCQ_COUNTS` (MCQ). At the
   current scale (~5,400 cards, seed 42) all problems are unique within each leaf
@@ -109,6 +117,7 @@ coverage map, readiness gate, and interleaving all build on.
   source of truth is the generator + `conceptual_cards.yaml`.
 
 ## Related tests
+- `pipeline/tests/test_stable_guids.py` — every card has a unique `uid`; note GUID derives from it and is stable across re-rendering.
 - `pipeline/tests/test_mathfmt.py` — the LaTeX formatting contract (delimiters, composition, determinism).
 - `pipeline/tests/test_latex_escaping.py` — matrix `&` / inequality `<` survive field escaping for MathJax.
 - `pipeline/tests/test_tagging.py` — exactly one valid leaf tag per card / note.

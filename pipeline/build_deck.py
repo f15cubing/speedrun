@@ -2,8 +2,11 @@
 
 Merges the seeded SymPy generator (``generate_deck``) with the hand-authored
 conceptual cards (``conceptual_cards.yaml``), packs them via ``genanki`` with
-**deterministic** model id, deck id, and per-note GUIDs (each GUID derives from a
-hash of the card content, so reruns are byte-stable), and then runs the coverage
+**deterministic** model id, deck id, and per-note GUIDs. Each GUID derives from a
+card's **stable, rendering-independent ``uid``** (per-leaf/format ordinal in the
+deterministic sequence), so reruns are byte-stable AND re-rendering the deck
+(e.g. ASCII -> LaTeX) keeps GUIDs stable — the version-gated auto-importer then
+updates cards in place instead of duplicating them. Finally it runs the coverage
 gate (``coverage_report.assert_coverage``) -- failing the build if it fails.
 
 One command::
@@ -115,6 +118,33 @@ MCQ_MODEL = genanki.Model(
 )
 
 
+def _rewrite_apkg_deterministically(path):
+    """Re-zip the .apkg with fixed entry metadata so the file is byte-reproducible.
+
+    genanki stamps each zip entry's ``date_time`` with the wall-clock build time,
+    so two builds of identical content produce different archive bytes (breaking
+    ``make deck-asset-check`` and re-runnability). The embedded ``collection.anki2``
+    and ``media`` payloads are already deterministic; here we only normalize the
+    zip container — sorted members, a fixed 1980-01-01 timestamp, fixed perms, and
+    deflate — which yields identical bytes for identical content and imports the
+    same as any other .apkg.
+    """
+    import zipfile as _zip
+
+    with _zip.ZipFile(path) as zf:
+        members = sorted(zf.namelist())
+        payloads = {name: zf.read(name) for name in members}
+
+    tmp = path + ".tmp"
+    with _zip.ZipFile(tmp, "w", _zip.ZIP_DEFLATED) as zf:
+        for name in members:
+            info = _zip.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = _zip.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            zf.writestr(info, payloads[name])
+    os.replace(tmp, path)
+
+
 def _to_html(text):
     """HTML-escape plain card text (which now embeds delimited LaTeX).
 
@@ -169,7 +199,15 @@ def load_conceptual_cards(path=CONCEPTUAL_YAML, strict=False):
 
     cards = []
     skipped = []
+    # Per-(leaf, format) ordinal over ALL raw entries (draft or not), so a stable
+    # note identity survives re-rendering AND a draft later becoming verified.
+    uid_counters = {}
     for index, entry in enumerate(raw):
+        leaf = str(entry["leaf_tag"])
+        fmt = str(entry.get("format", "flashcard"))
+        uid_key = (leaf, fmt)
+        ordinal = uid_counters.get(uid_key, 0)
+        uid_counters[uid_key] = ordinal + 1
         status = str(entry.get("status", "")).strip()
         if status not in _VALID_STATUSES:
             raise ValueError(
@@ -193,7 +231,11 @@ def load_conceptual_cards(path=CONCEPTUAL_YAML, strict=False):
                     index, ", ".join(missing)
                 )
             )
-        cards.append(_conceptual_entry_to_card(entry))
+        card = _conceptual_entry_to_card(entry)
+        # ``c``-prefixed ordinal keeps conceptual uids disjoint from the generated
+        # cards' numeric ordinals for the same leaf/format.
+        card["uid"] = "{}::{}::c{}".format(leaf, fmt, ordinal)
+        cards.append(card)
 
     if skipped:
         print(
@@ -241,11 +283,25 @@ def cards_content_hash(cards):
     return hasher.hexdigest()
 
 
+def _guid_for(card, *content_fallback):
+    """Stable note GUID.
+
+    Prefer the card's rendering-independent ``uid`` so re-rendering the deck
+    (e.g. ASCII -> LaTeX) keeps GUIDs stable and the auto-importer updates cards
+    in place instead of duplicating them. Ad-hoc cards without a ``uid`` (e.g. in
+    unit tests) fall back to their content.
+    """
+    uid = card.get("uid")
+    if uid:
+        return genanki.guid_for(uid)
+    return genanki.guid_for(*content_fallback)
+
+
 def note_for(card):
-    """Build a genanki Note (basic or MCQ) with a content-derived, stable GUID."""
+    """Build a genanki Note (basic or MCQ) with a stable, uid-derived GUID."""
     if card.get("format") == "mcq":
         return mcq_note_for(card)
-    guid = genanki.guid_for(card["front"], card["back"], card["leaf_tag"])
+    guid = _guid_for(card, card["front"], card["back"], card["leaf_tag"])
     return genanki.Note(
         model=MODEL,
         fields=[_to_html(card["front"]), _to_html(card["back"]), card["leaf_tag"]],
@@ -263,7 +319,7 @@ def mcq_note_for(card):
         + [_to_html(opt) for opt in options]
         + [correct_letter, _to_html(card.get("explanation", "")), card["leaf_tag"]]
     )
-    guid = genanki.guid_for(card["question"], *options, card["leaf_tag"])
+    guid = _guid_for(card, card["question"], *options, card["leaf_tag"])
     return genanki.Note(
         model=MCQ_MODEL,
         fields=fields,
@@ -286,6 +342,7 @@ def build(seed=generate_deck.DEFAULT_SEED, out_path=OUTPUT_APKG, verbose=True):
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     package = genanki.Package(deck)
     package.write_to_file(out_path, timestamp=FIXED_TIMESTAMP)
+    _rewrite_apkg_deterministically(out_path)
 
     summary = coverage_report.summarize(cards)
     if verbose:
