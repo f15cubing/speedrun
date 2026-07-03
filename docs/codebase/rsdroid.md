@@ -87,6 +87,26 @@ Outputs: `Anki-Android-Backend/rsdroid/build/outputs/aar/rsdroid-release.aar` (+
 and `Anki-Android/AnkiDroid/build/outputs/apk/full/debug/AnkiDroid-full-arm64-v8a-debug.apk` (bundles
 our `librsdroid.so`). All-ABI builds are CI-only (Sunday packaging).
 
+## GRE score card panel (Task 7 — read-only)
+
+The desktop-authoritative three-score `gre_scorecard` (written to `col.conf` by the desktop adapter —
+`qt.md` § scoring adapter) syncs here via normal collection sync (W4) and is rendered **read-only** — no
+scoring math on device.
+
+- **Parser:** `AnkiDroid/src/main/java/com/ichi2/anki/GreScorecard.kt` — kotlinx.serialization typed
+  model + `parse(raw)` (`ignoreUnknownKeys`, tolerates extra desktop fields). `CONFIG_KEY = "gre_scorecard"`.
+- **Panel:** `AnkiDroid/.../GreScorecardFragment.kt` (hosted by `SingleFragmentActivity`) reads the raw
+  JSON via `CollectionManager.withCol { config.getObject("gre_scorecard", …).toString() }` and shows the
+  three scores **separately**; Readiness shows a number only when `shown=true`, else the evidence panel
+  (reasons + best-next topic + coverage) — never a bare number. Footer stamps the desktop `updated_at`.
+- **Entry:** DeckPicker overflow → "GRE readiness" (`R.id.action_gre_scorecard` in `deck_picker.xml`).
+- **Read-only, no rebuild:** reads config only; no new RPC, **no rsdroid rebuild** (unlike the W3 mastery
+  query). Read an arbitrary key via `config.get<T>`/`getObject` — the enum-keyed `config.getString` won't
+  compile for a custom key.
+- **Tests:** `AnkiDroid/src/test/.../GreScorecardTest.kt` — 3 host-JVM parser tests (gated / shown /
+  robust). On-device smoke: DeckPicker → overflow → GRE readiness opens the panel (empty state until a
+  card syncs); screenshots in `docs/evidence/task7-android/`.
+
 ## Other key flows
 
 ### Review loop
@@ -141,5 +161,6 @@ our `librsdroid.so`). All-ABI builds are CI-only (Sunday packaging).
   `tests/libanki/`, `tests/CollectionTest.kt`).
 
 ---
-Last verified against: `f15cubing/Anki-Android@67364a7` (fork of `v2.24.0` `ebcf8e0`); rsdroid
+Last verified against: `f15cubing/Anki-Android@0bb017f1` (fork of `v2.24.0` `ebcf8e0`; + mastery binding +
+deck auto-import + LaTeX rebundle + read-only GRE score card panel); rsdroid
 `f15cubing/Anki-Android-Backend@3dc30c2` (built locally, bundles `f15cubing/anki@ea3acae`)

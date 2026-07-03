@@ -203,13 +203,25 @@ _Last updated: 2026-07-03 (Fri) — Exam-Mode LaTeX merged (PR #27); scoring lay
   double-import case — self-repairs). Re-smoked on the emulator: a version-matched dup'd collection
   (10,842) healed to **5,411 LaTeX notes, no dup**. (`f15cubing/speedrun#31`.)
 
+- **AnkiDroid read-only score card panel (Task 7)** (engine lane; `Anki-Android` fork
+  `agent/scoring-android` → `0bb017f1`, outer pin bumped) — the desktop-written `gre_scorecard` (Task 6)
+  now renders **read-only** on the phone: DeckPicker overflow → "GRE readiness" opens `GreScorecardFragment`
+  (hosted by `SingleFragmentActivity`), which reads the synced `col.conf` value via `withCol { config… }`,
+  parses it with a kotlinx.serialization model (`GreScorecard.kt`, `ignoreUnknownKeys`), and shows the three
+  scores **separately** — Readiness only as a number when the desktop gate passed, else the evidence panel;
+  never a bare number, no scoring math on device. Reuses the W3 local rsdroid (`local_backend=true`) — **no
+  rebuild** (config read only). 3 host-JVM parser tests + ktlint green; APK built + installed on the
+  `anki_test` emulator and the panel opens via the menu (empty state until a card syncs; screenshots in
+  `docs/evidence/task7-android/`). Full desktop→sync→populated-panel demo is the separable integration
+  (builds on W4 sync). Different-agent review pending.
+
 ## In flight
 
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
-  shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop scoring adapter (Task 6)
-  shipped; AnkiDroid read-only panel (Task 7) pending. **Only deferred gate:** Android build + emulator
-  smoke of the LaTeX deck re-import (no Android toolchain on this host)._
+  + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop
+  scoring adapter (Task 6) + AnkiDroid read-only panel (Task 7) shipped — Milestone-1 scoring surfaces
+  complete on both platforms. Nothing blocking in flight._
 
 ## Next (per execution-plan)
 
