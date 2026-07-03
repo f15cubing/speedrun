@@ -98,15 +98,53 @@ MCQ_MODEL = genanki.Model(
     templates=[
         {
             "name": "MCQ",
+            # Interactive: five tappable A-E options; tapping locks the choice, marks
+            # it green/red, highlights the correct option, and reveals the explanation.
+            # Grading stays the normal FSRS ease path (the tap is feedback only). The
+            # correct letter rides in a hidden hook the JS reads; the visible prompt
+            # never announces it. Vanilla ES5-safe JS so the same template works in the
+            # desktop qt webview and AnkiDroid's.
             "qfmt": (
-                "{{Question}}<br><br>"
-                "A. {{OptionA}}<br>B. {{OptionB}}<br>C. {{OptionC}}<br>"
-                "D. {{OptionD}}<br>E. {{OptionE}}"
+                '<div class="mcq-q">{{Question}}</div>'
+                '<div class="mcq-opts">'
+                '<button class="mcq-opt" data-i="0">A. {{OptionA}}</button>'
+                '<button class="mcq-opt" data-i="1">B. {{OptionB}}</button>'
+                '<button class="mcq-opt" data-i="2">C. {{OptionC}}</button>'
+                '<button class="mcq-opt" data-i="3">D. {{OptionD}}</button>'
+                '<button class="mcq-opt" data-i="4">E. {{OptionE}}</button>'
+                "</div>"
+                '<span id="mcq-correct" style="display:none">{{CorrectOption}}</span>'
+                '<div id="mcq-explain" class="mcq-explain" style="display:none">{{Explanation}}</div>'
+                "<script>(function(){"
+                "var root=document.getElementById('mcq-correct');"
+                "if(!root){return;}"
+                "var correct='ABCDE'.indexOf((root.textContent||'').trim());"
+                "var opts=document.querySelectorAll('.mcq-opt');"
+                "var exp=document.getElementById('mcq-explain');"
+                "function typeset(){try{if(window.MathJax&&MathJax.typeset){MathJax.typeset();}}catch(e){}}"
+                "function answer(i){"
+                "if(document.body.getAttribute('data-mcq-answered')){return;}"
+                "document.body.setAttribute('data-mcq-answered','1');"
+                "for(var j=0;j<opts.length;j++){"
+                "opts[j].disabled=true;"
+                "if(j===correct){opts[j].className+=' correct';}"
+                "else if(j===i){opts[j].className+=' wrong';}"
+                "}"
+                "if(exp){exp.style.display='block';}"
+                "typeset();"
+                "}"
+                "for(var k=0;k<opts.length;k++){(function(btn){"
+                "btn.addEventListener('click',function(){answer(parseInt(btn.getAttribute('data-i'),10));});"
+                "})(opts[k]);}"
+                "typeset();"
+                "})();</script>"
             ),
             "afmt": (
                 '{{FrontSide}}<hr id="answer">'
-                "Correct: {{CorrectOption}}<br><br>{{Explanation}}"
-                '<br><br><span style="color:#888;font-size:0.8em">{{LeafTag}}</span>'
+                '<div class="mcq-key">Correct: {{CorrectOption}}</div>'
+                '<div class="mcq-explain">{{Explanation}}</div>'
+                '<div class="mcq-leaf">{{LeafTag}}</div>'
+                "<script>(function(){try{if(window.MathJax&&MathJax.typeset){MathJax.typeset();}}catch(e){}})();</script>"
             ),
         }
     ],
@@ -114,6 +152,24 @@ MCQ_MODEL = genanki.Model(
         ".card{font-family:-apple-system,Segoe UI,Roboto,sans-serif;"
         "font-size:18px;line-height:1.5;color:#111;background:#fff;"
         "text-align:left;padding:16px;white-space:pre-wrap;}"
+        ".mcq-q{margin-bottom:14px;}"
+        ".mcq-opts{display:flex;flex-direction:column;gap:8px;}"
+        ".mcq-opt{display:block;width:100%;text-align:left;"
+        "min-height:44px;padding:10px 14px;font-size:17px;line-height:1.4;"
+        "border:1px solid #cbd5e0;border-radius:8px;background:#f7fafc;color:#111;"
+        "cursor:pointer;white-space:pre-wrap;}"
+        ".mcq-opt:hover:not(:disabled){background:#edf2f7;}"
+        ".mcq-opt:disabled{cursor:default;}"
+        ".mcq-opt.correct{background:#c6f6d5;border-color:#38a169;font-weight:600;}"
+        ".mcq-opt.wrong{background:#fed7d7;border-color:#e53e3e;}"
+        ".mcq-explain{margin-top:14px;}"
+        ".mcq-key{margin-top:4px;font-weight:600;}"
+        ".mcq-leaf{margin-top:14px;color:#888;font-size:0.8em;}"
+        ".night-mode .card{color:#e2e8f0;background:#1a202c;}"
+        ".night-mode .mcq-opt{background:#2d3748;border-color:#4a5568;color:#e2e8f0;}"
+        ".night-mode .mcq-opt:hover:not(:disabled){background:#374151;}"
+        ".night-mode .mcq-opt.correct{background:#22543d;border-color:#38a169;}"
+        ".night-mode .mcq-opt.wrong{background:#742a2a;border-color:#e53e3e;}"
     ),
 )
 

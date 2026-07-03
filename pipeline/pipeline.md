@@ -51,7 +51,10 @@ coverage map, readiness gate, and interleaving all build on.
   verified conceptual, canonical order), `cards_content_hash(cards)` (both
   formats), `note_for(card)` (dispatches basic/MCQ), `mcq_note_for(card)`,
   `load_conceptual_cards(path=, strict=)` + `assert_all_verified(path=)` (the
-  verification gate), `MODEL` / `MCQ_MODEL` (9-field "GRE MCQ" note type),
+  verification gate), `MODEL` / `MCQ_MODEL` (9-field "GRE MCQ" note type — **interactive
+  card template**: five tappable A–E options with instant green/red feedback + explanation
+  reveal + MathJax typeset; grades on the normal FSRS ease path; renders in the reviewer
+  webview on both desktop + Android. Spec: `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`),
   `build(seed=42, out_path=..., verbose=True)` → `(cards, summary)`; CLI
   `python pipeline/build_deck.py --seed 42` writes `pipeline/dist/gre-study-deck.apkg`.
 - `coverage_report.py` — `summarize(cards)` (now includes `by_format`),
