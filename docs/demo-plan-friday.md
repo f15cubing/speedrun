@@ -4,7 +4,7 @@
 > push — the Rust engine change, three scores **separated** on desktop *and* the read-only
 > panel on the phone, self-hosted sync, the **AI card pipeline** (honest AI-off), and the
 > quantitative + robustness proofs. Target **3–5 min**, live screen capture.
-> State: `main @ 90a2b8b`; engine `f15cubing/anki@ea3acae`; Android `@78989b9e`.
+> State: `main @ 4b6a473` (v0.3.0); engine `f15cubing/anki@a7e8992`; Android `@c6d0250`.
 >
 > Companions: `docs/demo-plan.md` (fuller Sunday cut + Milestone-1 appendix),
 > `docs/ai-run-howto.md` (the AI run, step by step), `docs/submission-checklist.md`.
@@ -21,11 +21,13 @@ change, and honesty as a feature** — now with live Performance/Readiness plumb
 - [ ] Do **a handful of reviews** so Memory shows a range (not the n=0 empty state).
 - [ ] Open the desktop **GRE dashboard once** (Tools ▸ GRE readiness dashboard) so it
       writes the synced `gre_scorecard`.
-- [ ] **Interactive MCQ deck loaded** (see the MCQ segment's "Get it on screen today" box).
-      The template lands in the app **only after re-import** — until PR #40 (deck re-bundle +
-      `GRE_DECK_VERSION` bump) merges, rebuild + import manually:
-      `python pipeline/build_deck.py --seed 42` → **File ▸ Import** `pipeline/dist/gre-study-deck.apkg`.
-      Confirm on an MCQ card that the options are **tappable buttons** (not plain `A. … B. …` text).
+- [ ] **Interactive MCQ deck loaded.** It now **ships bundled** (v0.3.0 / #40, `GRE_DECK_VERSION
+      2026-07-03b`) — a **fresh profile auto-imports it**. But your already-running `./run` is an
+      **existing** collection, and the note-type *template* does **not** auto-refresh on an existing
+      install (documented limitation), so re-import once to get the interactive template on screen:
+      `python pipeline/build_deck.py --seed 42` → **File ▸ Import** `pipeline/dist/gre-study-deck.apkg`
+      (stable GUIDs → updates in place, no dupes). Confirm on an MCQ card that the options are
+      **tappable buttons** (not plain `A. … B. …` text). *(Or demo on a fresh profile, where it's automatic.)*
 - [ ] Emulator `anki_test` booted with our debug APK (our `librsdroid.so`); GRE deck present.
 - [ ] Sync ready: `make sync-server` (port 8080, account `greuser`).
 - [ ] Two terminals sized for readable text: one for the mastery tests, one for the AI run
@@ -62,9 +64,10 @@ feature."
 
 ### 1:25 — MCQ study surface (the format Performance scores) (~35s)
 
-> **Get an interactive MCQ card on screen today (do this off-camera first).** The app's
-> *bundled* deck only carries the interactive template after PR #40 merges; until then,
-> put it on screen yourself:
+> **Get an interactive MCQ card on screen (do this off-camera first).** The interactive template
+> now **ships in the bundled deck** (v0.3.0 / #40) — a **fresh profile auto-imports it**. On an
+> **existing** collection (your already-running `./run`) the template won't auto-refresh (documented
+> limitation), so re-import once:
 > 1. Rebuild the deck: `python pipeline/build_deck.py --seed 42` (writes
 >    `pipeline/dist/gre-study-deck.apkg`).
 > 2. In the desktop app: **File ▸ Import** → pick `pipeline/dist/gre-study-deck.apkg` → Import.
@@ -73,6 +76,9 @@ feature."
 >    (leaf-tagged)`** note type (or the `note:"GRE Math MCQ*"` search) to confirm cards exist,
 >    then **Custom Study ▸ study by card state/tag** (or just study the deck) until an MCQ card
 >    comes up. Sanity check: the options are **tappable buttons**, not plain `A. … B. …` text.
+>
+> On the **phone**: a fresh AnkiDroid install auto-imports the interactive MCQ too (verified on the
+> emulator: 5,408 cards, MathJax renders) — same existing-install caveat applies.
 
 **On screen — do these steps live (~35s):**
 1. In the reviewer, land on a **GRE Math MCQ** card — five options rendered as **buttons** A–E,
@@ -102,7 +108,7 @@ card template, the same interactive card renders on the phone too — no separat
 the score card into the collection, and it **syncs** to the phone, which renders it
 read-only. Same three scores, same honesty rules, no scoring math on the device."
 
-### 2:00 — The Rust change under the hood (~55s)
+### 2:35 — The Rust change under the hood (~55s)
 **On screen:** split view of `anki/rslib/src/stats/mastery.rs` + the `stats.proto` diff;
 then run the tests live to green (the 3 Rust unit tests incl. `mastery_query_is_read_only`
 + the Python integration test).
@@ -111,14 +117,14 @@ same FSRS math the scheduler uses, in one database pass. It *provably* never wri
 touches undo, never corrupts the collection — that's this test. It's the hardest 20% of
 the grade, and because it lives in the shared engine it ships to the phone for free."
 
-### 2:55 — Sync + durability proofs (~35s)
+### 3:30 — Sync + durability proofs (~35s)
 **On screen:** `make sync-server`; then run `make crash-7g` (or show
 `docs/evidence/robustness/`) and `make sync-7b`.
 **Say:** "Sync runs on *our* engine, self-hosted. We kill the app mid-review twenty times
 — twenty out of twenty reopen clean, zero corruption. Ten offline reviews on each side all
 land on both peers, on a documented conflict rule. This is the durability ceiling, proven."
 
-### 3:30 — The AI card pipeline (~50s)
+### 4:05 — The AI card pipeline (~50s)
 **On screen:** a terminal — run `make ai-gate` then `make ai-baseline` (see
 `docs/ai-run-howto.md`). Let the reports print.
 **Say:** "Our AI card generator. Every fact must carry a **verbatim source quote** or it's
@@ -129,7 +135,7 @@ beats a naive baseline at McNemar p ≈ 6-in-a-million while shipping zero wrong
 it's **AI-off** — no live model here — so these numbers validate the *machinery*, not a
 model. That's deliberate honesty."
 
-### 4:20 — Honest close (~20s)
+### 4:55 — Honest close (~20s)
 **On screen:** back to the three dashboard slots.
 **Say:** "Everything shown is merged and reproducible from a single command each. What's
 *not* here — a live model run, the interleaving ablation — is documented as deferred, not
