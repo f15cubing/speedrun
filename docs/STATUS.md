@@ -364,6 +364,15 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
   distractors are named. `test_mcq_generation.py` +3 (16/16 with notetype); full pipeline suite green.
   No engine/scoring/held-out touch. Follow-up: re-bundle the `.apkg` so existing installs get the
   enriched explanations. Composes with the graded MCQ flow PR (independent).
+- **Give-up rule (D2) evidence audit** (fast lane; `proofs/`) — **open PR (overnight; do not
+  auto-merge).** Proves the highest-stakes ceiling — "**never show a bare Readiness number**" (an
+  auto-fail) — is enforced across evidence levels. `proofs/giveup_audit.py` (a **read-only consumer**
+  of `scoring/readiness.py`, never modifies the scoring defs) sweeps boundary + representative
+  scenarios through the real `give_up()`/`project()`: `make giveup-audit` → **1 shown / 4 gated**
+  (cleared: 808 [762–844]; then each of <200 reviews, <50% coverage, width>120, and all-three-fail
+  gated with **no number** + honest reasons). `assert_giveup_invariants` fails loudly if any gated
+  scenario ever leaks a scaled score. +3 tests (proofs suite 7/7); evidence in
+  `docs/evidence/proofs/giveup_audit.json`. No scoring-def / held-out / engine change.
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop
