@@ -317,6 +317,15 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
 
 ## In flight
 
+- **Exam Mode API-error fix** (fast lane; `anki`→`d9684c4`) — **open PR (overnight; do not
+  auto-merge).** Fixes the 403 that broke *every* Exam Mode mock (exam page posted
+  `Content-Type: application/json`, which `mediasrv` 403s before auth; switched to
+  `application/binary` + `get_json(force=True)`) plus honest **preset-capacity** gating (the vendored
+  `p0` held-out bank of 24 items fills only `mini`, so `full`/`half`/`third` are disabled with an
+  amber "not enough held-out items yet" state instead of erroring). Held-out bank / scoring defs /
+  partition semantics unchanged; mock stays `p0`-only + read-only. Green: `test_gre_exam.py` 17/17,
+  `check:svelte`/`check:eslint`, and the mediasrv gate+handlers verified end-to-end on the built
+  engine.
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop

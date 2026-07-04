@@ -95,35 +95,56 @@ logic + items live in `anki/qt/aqt/gre/` (the `dashboard_data.py` + `taxonomy.js
 - `anki/qt/aqt/gre/exam.py` — deterministic, blueprint-matched (ETS 50/25/25) form assembly at the
   official pace (2.58 min/item; presets `full 66 / half 33 / third 22 / mini 11`) + **rights-only**
   scoring with per-leaf/bucket breakdown + Wilson CI + the attempts record for the scoring seam.
-  Headless-importable (no aqt deps), mirrors `dashboard_data.py`.
+  Headless-importable (no aqt deps), mirrors `dashboard_data.py`. **Preset-feasibility helpers**
+  (`bucket_pool_sizes` / `size_is_feasible` / `max_feasible_size` / `feasible_presets`) report which
+  presets the firewalled bank can actually build, so a mock the bank can't fill is never offered.
 - `anki/qt/aqt/gre/exam_items.json` — vendored copy of the authored eval bank (drift-guarded by the
   outer `tests/test_exam_items_sync.py`). Firewalled: only eval items ever reach a mock.
 
 **Webview shell (B-2) — new files:**
-- `anki/ts/routes/gre-exam/` — `+page.svelte` (session state machine + one global countdown timer),
-  `ItemView.svelte` (one item, five A–E single-select options), `Countdown.svelte`, `Navigator.svelte`
+- `anki/ts/routes/gre-exam/` — `+page.svelte` (session state machine + one global countdown timer;
+  on mount fetches `greExamCapacity` and **disables presets the firewalled bank can't fill**, shown
+  as a calm dashed/amber "not enough held-out items yet" state with a capacity note — never a red
+  error), `ItemView.svelte` (one item, five A–E single-select options), `Countdown.svelte`, `Navigator.svelte`
   (review-screen grid: answered/unanswered/marked, jump-to), `Results.svelte` (rights-only range +
   per-area breakdown + item review, reusing the dashboard's `CalibrationStrip`), `lib.ts`/`lib.test.ts`.
   Faithful: one global clock, one item at a time, Mark + free Back/Next, Review screen, **no
   calculator**, **no pause**, auto-submit at 0:00, **no per-item feedback** (results only after submit).
 
 **Modified files (B-2):**
-- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-exam")` + two read-only handlers: `greExamForm`
-  (assembles a blueprint-matched form; **never sends the answer keys to the client**) and
-  `greExamSubmit` (rights-only **server-side** scoring; persists an attempts side-file — not the
-  collection — for the scoring layer; reveals keys only in the post-submit result).
+- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-exam")` + three read-only handlers:
+  `greExamCapacity` (reports feasible presets + max feasible size so the setup screen only offers
+  buildable mocks), `greExamForm` (pre-checks feasibility, then assembles a blueprint-matched form;
+  **never sends the answer keys to the client**; an unfillable preset returns an honest `locked`
+  reason, not an internal `InsufficientItemsError` dump), and `greExamSubmit` (rights-only
+  **server-side** scoring; persists an attempts side-file — not the collection — for the scoring
+  layer; reveals keys only in the post-submit result; a forged submit for an infeasible preset
+  returns a clean `locked` reason, never a 500).
 - `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_EXAM` + api-access allowlist.
 - `anki/qt/aqt/main.py` — Tools-menu action via `main_window_did_init` (`gre_exam.py`
   `GreExam` QDialog). Mastery-gate structure present (`EXAM_MODE_MIN_STUDIED_PCT`, 0.0 for now).
 
 **Tests:** `anki/qt/tests/test_gre_exam.py` (pace/blueprint/assembly determinism/insufficient/
-firewall/rights-only scoring/Wilson/attempts) + `anki/ts/routes/gre-exam/lib.test.ts` (clock/tally).
-Outer drift guard: `tests/test_exam_items_sync.py`.
+firewall/rights-only scoring/Wilson/attempts + **preset feasibility**: pool sizes, feasibility
+boundary, preset flags, and the p0-only regression) + `anki/ts/routes/gre-exam/lib.test.ts`
+(clock/tally). Outer drift guard: `tests/test_exam_items_sync.py`.
+
+**Preset capacity gate (why presets can be disabled).** The vendored held-out bank is small — the
+`p0` partition the mock draws from holds **24 items (8 calc / 7 alg / 9 add)** — so only the `mini`
+(11) preset can currently be assembled under the 50/25/25 blueprint; `full`/`half`/`third` need more
+items than exist and previously failed *after* the user picked them (`InsufficientItemsError` →
+`locked` reason exposing raw counts). The fix keeps the mock **p0-only and read-only** (no change to
+the held-out bank, the scoring defs, or the partition semantics) and instead makes Exam Mode honest
+about capacity: `greExamCapacity` drives the setup screen to enable only buildable presets. **Known
+limitation:** even the entire authored bank (p0+p3 = 80) can't build `full` (66) — calculus caps at
+28 < the 33 needed — so larger mocks unlock only when the firewalled bank grows (a
+content/eval-bank follow-up, not a UI change).
 
 **Data flow (read-only):** Tools ▸ GRE exam mode → `GreExam` QDialog → `load_sveltekit_page("gre-exam")`
-→ page POSTs `greExamForm` (server assembles + withholds keys) → timed session → `greExamSubmit`
-(server re-assembles deterministically from the echoed seed, scores rights-only, persists attempts,
-returns the revealed result). No `OpChanges`; attempts go to a profile side-file, never the collection.
+→ page POSTs `greExamCapacity` (feasible presets) then `greExamForm` (server assembles + withholds
+keys) → timed session → `greExamSubmit` (server re-assembles deterministically from the echoed seed,
+scores rights-only, persists attempts, returns the revealed result). No `OpChanges`; attempts go to a
+profile side-file, never the collection.
 
 ## GRE scoring adapter — synced 3-score card (Task 6 — implemented)
 
@@ -188,4 +209,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@7c4836c5` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter)
+Last verified against: `f15cubing/anki@d11b424` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening)
