@@ -98,12 +98,18 @@ MCQ_MODEL = genanki.Model(
     templates=[
         {
             "name": "MCQ",
-            # Interactive: five tappable A-E options; tapping locks the choice, marks
-            # it green/red, highlights the correct option, and reveals the explanation.
-            # Grading stays the normal FSRS ease path (the tap is feedback only). The
-            # correct letter rides in a hidden hook the JS reads; the visible prompt
-            # never announces it. Vanilla ES5-safe JS so the same template works in the
-            # desktop qt webview and AnkiDroid's.
+            # Interactive graded MCQ. Five tappable A-E options; tapping locks the
+            # choice, marks it green/red, highlights the correct option, and reveals
+            # the explanation. It does NOT auto-advance -- the learner grades
+            # explicitly, and the grade is bound to Anki's FSRS ease enum via the
+            # reviewer's own bridge commands (pycmd("ans") -> answer state, then
+            # pycmd("ease<N>")), exactly what the built-in answer buttons call:
+            #   correct -> Hard(2) / Good(3) / Easy(4);   wrong -> Again(1) only.
+            # A wrong answer is a lapse: a single "Continue" grades Again, never a
+            # rating. Where pycmd is unavailable (e.g. AnkiDroid) the custom rating
+            # row is hidden and the built-in Again/Hard/Good/Easy buttons remain the
+            # grader (feedback + explanation still show). Vanilla ES5-safe JS so the
+            # same template works in the desktop qt webview and AnkiDroid's.
             "qfmt": (
                 '<div class="mcq-q">{{Question}}</div>'
                 '<div class="mcq-opts">'
@@ -115,22 +121,47 @@ MCQ_MODEL = genanki.Model(
                 "</div>"
                 '<span id="mcq-correct" style="display:none">{{CorrectOption}}</span>'
                 '<div id="mcq-explain" class="mcq-explain" style="display:none">{{Explanation}}</div>'
+                '<div id="mcq-actions" class="mcq-actions"></div>'
                 "<script>(function(){"
                 "var root=document.getElementById('mcq-correct');"
                 "if(!root){return;}"
                 "var correct='ABCDE'.indexOf((root.textContent||'').trim());"
                 "var opts=document.querySelectorAll('.mcq-opt');"
                 "var exp=document.getElementById('mcq-explain');"
+                "var actions=document.getElementById('mcq-actions');"
+                "var canGrade=(typeof pycmd==='function');"
                 "function typeset(){try{if(window.MathJax&&MathJax.typeset){MathJax.typeset();}}catch(e){}}"
+                # grade() feeds the scheduler with the *existing* FSRS grade enum:
+                # ans flips the reviewer to answer state (set synchronously), then
+                # ease<N> answers the card -- the same path as the built-in buttons.
+                "function grade(ease){if(typeof pycmd==='function'){pycmd('ans');pycmd('ease'+ease);}}"
+                "function rateBtn(label,ease,cls){var b=document.createElement('button');"
+                "b.className='mcq-rate '+cls;b.setAttribute('data-ease',ease);b.textContent=label;"
+                "b.addEventListener('click',function(){grade(ease);});return b;}"
+                "var answered=false;"
                 "function answer(i){"
-                "if(document.body.getAttribute('data-mcq-answered')){return;}"
-                "document.body.setAttribute('data-mcq-answered','1');"
+                "if(answered){return;}"
+                "answered=true;"
+                "var right=(i===correct);"
                 "for(var j=0;j<opts.length;j++){"
                 "opts[j].disabled=true;"
                 "if(j===correct){opts[j].className+=' correct';}"
                 "else if(j===i){opts[j].className+=' wrong';}"
                 "}"
                 "if(exp){exp.style.display='block';}"
+                # No auto-advance: reveal only. The learner then rates (correct) or
+                # presses Continue (wrong, auto-Again) to move on.
+                "if(actions&&canGrade){var v=document.createElement('div');"
+                "v.className='mcq-verdict';"
+                "if(right){v.textContent='Correct - how hard was it?';"
+                "actions.appendChild(v);"
+                "actions.appendChild(rateBtn('Hard',2,'hard'));"
+                "actions.appendChild(rateBtn('Good',3,'good'));"
+                "actions.appendChild(rateBtn('Easy',4,'easy'));}"
+                "else{v.textContent='Not quite - read the explanation, then continue.';"
+                "actions.appendChild(v);"
+                "actions.appendChild(rateBtn('Continue',1,'again'));}"
+                "actions.style.display='flex';}"
                 "typeset();"
                 "}"
                 "for(var k=0;k<opts.length;k++){(function(btn){"
@@ -165,11 +196,23 @@ MCQ_MODEL = genanki.Model(
         ".mcq-explain{margin-top:14px;}"
         ".mcq-key{margin-top:4px;font-weight:600;}"
         ".mcq-leaf{margin-top:14px;color:#888;font-size:0.8em;}"
+        ".mcq-actions{display:none;flex-wrap:wrap;gap:8px;align-items:center;"
+        "margin-top:16px;}"
+        ".mcq-verdict{flex-basis:100%;font-weight:600;margin-bottom:2px;}"
+        ".mcq-rate{min-height:40px;padding:8px 18px;font-size:16px;border-radius:8px;"
+        "border:1px solid #cbd5e0;background:#edf2f7;color:#111;cursor:pointer;}"
+        ".mcq-rate:hover{background:#e2e8f0;}"
+        ".mcq-rate.easy{border-color:#38a169;}"
+        ".mcq-rate.good{border-color:#3182ce;}"
+        ".mcq-rate.hard{border-color:#dd6b20;}"
+        ".mcq-rate.again{border-color:#e53e3e;}"
         ".night-mode .card{color:#e2e8f0;background:#1a202c;}"
         ".night-mode .mcq-opt{background:#2d3748;border-color:#4a5568;color:#e2e8f0;}"
         ".night-mode .mcq-opt:hover:not(:disabled){background:#374151;}"
         ".night-mode .mcq-opt.correct{background:#22543d;border-color:#38a169;}"
         ".night-mode .mcq-opt.wrong{background:#742a2a;border-color:#e53e3e;}"
+        ".night-mode .mcq-rate{background:#2d3748;border-color:#4a5568;color:#e2e8f0;}"
+        ".night-mode .mcq-rate:hover{background:#374151;}"
     ),
 )
 

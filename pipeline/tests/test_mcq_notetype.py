@@ -78,3 +78,61 @@ def test_mcq_css_has_correct_and_wrong_states():
     css = build_deck.MCQ_MODEL.css
     assert ".mcq-opt" in css
     assert ".correct" in css and ".wrong" in css
+
+
+# --- graded answer flow (bound to the FSRS ease enum) ---
+
+
+def _right_branch(qfmt):
+    return qfmt.split("if(right){", 1)[1].split("else{", 1)[0]
+
+
+def _wrong_branch(qfmt):
+    return qfmt.split("else{", 1)[1]
+
+
+def test_mcq_grade_uses_reviewer_ease_commands():
+    # Grading feeds the scheduler through the reviewer's own bridge commands:
+    # show-answer (enters "answer" state) then ease<N> — the exact path the
+    # built-in answer buttons use, so ratings bind to the existing FSRS enum.
+    qfmt = _mcq_qfmt()
+    assert "function grade(ease){" in qfmt
+    assert "pycmd('ans');pycmd('ease'+ease)" in qfmt
+
+
+def test_mcq_correct_path_shows_three_ratings_bound_to_ease():
+    # Correct -> Hard(2) / Good(3) / Easy(4); never "Again".
+    right = _right_branch(_mcq_qfmt())
+    assert right.count("rateBtn(") == 3
+    assert "rateBtn('Hard',2,'hard')" in right
+    assert "rateBtn('Good',3,'good')" in right
+    assert "rateBtn('Easy',4,'easy')" in right
+    assert "rateBtn('Continue'" not in right  # no lapse option on a correct answer
+
+
+def test_mcq_wrong_path_autogrades_again_with_single_continue():
+    # Wrong -> a single Continue that grades Again(1) (a lapse); no rating choice.
+    wrong = _wrong_branch(_mcq_qfmt())
+    assert wrong.count("rateBtn(") == 1
+    assert "rateBtn('Continue',1,'again')" in wrong
+    for banned in ("'Hard',2", "'Good',3", "'Easy',4"):
+        assert banned not in wrong
+
+
+def test_mcq_does_not_auto_advance_on_selection():
+    # Selecting an option calls answer() (reveal only), not grade(): the learner
+    # must explicitly rate / continue, so there is time to read the explanation.
+    qfmt = _mcq_qfmt()
+    assert "answer(parseInt(btn.getAttribute('data-i'),10))" in qfmt
+    # the tap handler reveals the explanation but does not itself grade
+    answer_body = qfmt.split("function answer(i){", 1)[1].split("for(var k=0", 1)[0]
+    assert "exp.style.display='block'" in answer_body
+    assert "pycmd(" not in answer_body  # no grade/advance on mere selection
+
+
+def test_mcq_grading_degrades_gracefully_without_pycmd():
+    # Where the reviewer bridge is absent (e.g. AnkiDroid), the custom rating row
+    # is gated off (canGrade) and the built-in ease buttons remain the grader.
+    qfmt = _mcq_qfmt()
+    assert "var canGrade=(typeof pycmd==='function')" in qfmt
+    assert "if(actions&&canGrade){" in qfmt

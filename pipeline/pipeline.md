@@ -52,9 +52,15 @@ coverage map, readiness gate, and interleaving all build on.
   formats), `note_for(card)` (dispatches basic/MCQ), `mcq_note_for(card)`,
   `load_conceptual_cards(path=, strict=)` + `assert_all_verified(path=)` (the
   verification gate), `MODEL` / `MCQ_MODEL` (9-field "GRE MCQ" note type — **interactive
-  card template**: five tappable A–E options with instant green/red feedback + explanation
-  reveal + MathJax typeset; grades on the normal FSRS ease path; renders in the reviewer
-  webview on both desktop + Android. Spec: `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`),
+  graded card template**: five tappable A–E options with instant green/red feedback +
+  explanation reveal + MathJax typeset. **No auto-advance** — after the reveal the learner
+  grades explicitly, bound to Anki's existing FSRS ease enum via the reviewer's own bridge
+  commands (`pycmd("ans")` → answer state, then `pycmd("ease<N>")`, exactly what the built-in
+  buttons call): **correct → Hard(2)/Good(3)/Easy(4)**; **wrong → a single "Continue" that
+  auto-grades Again(1)** (a lapse, re-queued by the scheduler). Where `pycmd` is absent
+  (e.g. AnkiDroid) the custom rating row is hidden and the built-in Again/Hard/Good/Easy
+  buttons remain the grader (feedback still shows). Renders in the reviewer webview on both
+  desktop + Android. Spec: `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`),
   `build(seed=42, out_path=..., verbose=True)` → `(cards, summary)`; CLI
   `python pipeline/build_deck.py --seed 42` writes `pipeline/dist/gre-study-deck.apkg`.
 - `coverage_report.py` — `summarize(cards)` (now includes `by_format`),
@@ -137,7 +143,8 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_distractors.py` — deterministic 5-option assembly; wrongs ≠ key; raises when too few.
 - `pipeline/tests/test_mcq_generation.py` — MCQ determinism, well-formedness, correct-key integrity.
 - `pipeline/tests/test_conceptual_gate.py` — verification gate (verified-only load, hard-fails, MCQ records).
-- `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash).
+- `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash) +
+  **graded answer flow** (ease binding via `pycmd`; correct = 3 ratings, wrong = single Continue/Again; no auto-advance; graceful no-`pycmd` fallback).
 - `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
 - `pipeline/tests/test_scale.py` — total card count ≥ 5 000 and per-leaf minimums for the high-volume leaves.
 
