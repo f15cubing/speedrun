@@ -33,7 +33,7 @@ the PR that first builds each of these.
 
 | Area | Will live in | Design reference |
 |---|---|---|
-| Our app additions — interleaving toggle | `anki/ts/routes/`, `anki/qt/aqt/` | PRD §8; `qt.md` |
+| Our app additions — interleaving: **ordering core built** (`pipeline/interleave.py` — FSRS-cooperative constrained re-sort + confusable-cluster map + adjacency-dispersion / FSRS-displacement metrics + multiset invariant; `make interleave-report`). The reviewer/Qt **interleaved↔blocked toggle** + the ablation run remain planned. | ordering core: `pipeline/interleave.py` (+ `pipeline/tests/test_interleave.py`, `pipeline/run_interleave_report.py`); toggle: `anki/ts/routes/`, `anki/qt/aqt/` | PRD §8/D5, Appendix B; design spec §6; `pipeline/pipeline.md` |
 | Our app additions — MCQ study surface (Performance) | **built** in `pipeline/` — the "GRE MCQ" note type (SymPy-templated generation + verified conceptual MCQ) now has an **interactive card template** (five tappable A–E options, instant feedback + explanation reveal + MathJax; grades on FSRS, renders in the reviewer webview on desktop + Android). See `pipeline/pipeline.md` + `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`. Follow-ups (engine-lane): re-bundle the `.apkg` into both app assets + `GRE_DECK_VERSION` bump; the auto-grade reviewer hook | PRD §8a/§12 — content/data-model change, **not** a second engine change; reviews via the same FSRS loop |
 | Our app additions — timed practice mode (exam-pressure simulator, mastery-gated) | `anki/ts/routes/`, `anki/qt/aqt/` | PRD §8/§8a — sequenced last, after interleaving + ordering algorithm |
 | Scoring models — memory / performance / readiness | Python sidecar (desktop-authoritative), location TBD | PRD §7, §9 (Step 1–3) |

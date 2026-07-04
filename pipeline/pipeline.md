@@ -61,6 +61,25 @@ coverage map, readiness gate, and interleaving all build on.
   `format_report(summary)`, `assert_coverage(cards)` (raises on violation); CLI
   `python pipeline/coverage_report.py --seed 42` also runs `assert_all_verified`
   (non-zero exit on any coverage or verification violation).
+- `interleave.py` — **FSRS-cooperative interleaving ordering core** (PRD §8/D5; design
+  spec §6). `interleave_order(queue, k=1, w=3, clusters=None)` returns a
+  dispersion-maximising **permutation of the same cards** (a due queue `[(card_id,
+  leaf_tag), …]` in FSRS priority order): greedily emit the highest-priority card whose
+  confusable **cluster** (`cluster_of`, default = the leaf itself) differs from the last
+  `K` shown, with a **displacement bound `W`** (force-emit at the deadline so urgent
+  cards never starve). `blocked_order` = the ablation's identity/FSRS baseline arm.
+  Metrics: `adjacency_dispersion` (fraction of consecutive pairs from different clusters)
+  and `displacement` (mean/max forward drift). `interleave(...)` bundles the order +
+  metrics (`InterleaveResult`, incl. `used_fallback` for a homogeneous/tiny queue).
+  **Pure presentation-layer**: never touches FSRS scheduling, the collection/undo/store,
+  or the held-out eval bank; the reordered multiset == the input multiset (tested
+  invariant). Reviewer/Qt wiring + the interleaved↔blocked toggle + the ablation run are
+  documented follow-ups. Evidence: Rohrer et al. 2020 (d≈0.83), Brunmair & Richter 2019
+  (g≈0.34); honest incremental effect dz≈0.2–0.35 (PRD D5).
+- `run_interleave_report.py` — re-runnable metrics demo (PRD §11): builds a representative
+  **blocked** session from the seeded deck and reports blocked→interleaved dispersion +
+  displacement. `make interleave-report` (seed 42: dispersion **0.24 → 0.96**, displacement
+  max = W). Reads only study-deck leaf tags.
 - `conceptual_cards.yaml` — hand-authored cards (`cards:` list) for the conceptual
   leaves; the committed source of truth. Every entry carries the verification block
   `status: verified` + `verified_by` / `verified_on` / `source` (required). Entries
@@ -139,6 +158,7 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_conceptual_gate.py` — verification gate (verified-only load, hard-fails, MCQ records).
 - `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash).
 - `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
+- `pipeline/tests/test_interleave.py` — interleaving ordering core: multiset invariant, determinism, the two metrics (adjacency dispersion + forward displacement), dispersion-beats-blocked, the displacement bound (no starvation), homogeneous/tiny-queue fallback, and cluster-map defaults/overrides.
 - `pipeline/tests/test_scale.py` — total card count ≥ 5 000 and per-leaf minimums for the high-volume leaves.
 
 ---
