@@ -389,6 +389,17 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
   reasons, best-next — and only when `shown`), and every point estimate carries its range.
   `make scorecard-validate` on committed gated + shown fixtures. 10 tests. Pure — no scoring/engine/
   eval-bank imports; complements the give-up-rule audit at the *artifact* (sync-transport) layer.
+- **Interleaving ablation — analysis machinery** (fast lane; `ablation/`) — **open PR (overnight; do
+  not auto-merge).** The *analysis* half of the D5 study-feature deliverable (the *ordering* half is
+  the interleaving core; the pre-registration is PRD Appendix B): `ablation/analysis.py` takes the
+  within-subject arm scores (interleaved vs blocked), computes the paired effect + a **90% CI**
+  (paired bootstrap, stdlib) and runs the pre-registered **TOST equivalence** against ±SESOI (dz 0.3
+  → raw units), then emits the **honest-null verdict template**. `make ablation-analysis` on a
+  clearly-labelled synthetic pilot → the honest **INCONCLUSIVE** result the deliverable calls for
+  (dz +0.14, 90% CI [-3.13, +5.14], n=5 powers only dz≥~1.1). 7 tests. Pure stdlib; analyses provided
+  arm scores only — no scoring-def / held-out / engine touch. The ablation *run* itself stays
+  CUT-FIRST (needs human subjects); this ships the machinery + honest-null template that scores per
+  Appendix B. Evidence: Rohrer 2020, Brunmair & Richter 2019.
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop
