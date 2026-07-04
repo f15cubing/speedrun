@@ -13,7 +13,7 @@ FORK_ANKI := $(if $(FORK_ANKI),$(FORK_ANKI),/Users/felipecaicedo/Desktop/alpha/s
 BENCH_CARDS := 50000
 BENCH_ITERS := 300
 
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs
+.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs giveup-audit
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -77,3 +77,6 @@ proofs: ## Memory calibration chart + paraphrase results (needs .venv-proofs: py
 		python3 -m venv .venv-proofs && .venv-proofs/bin/pip -q install pyyaml matplotlib; fi
 	@PYTHONPATH=. .venv-proofs/bin/python proofs/calibration.py --seed 42
 	@PYTHONPATH=.:eval/bank:pipeline .venv-proofs/bin/python proofs/paraphrase.py --seed 42
+
+giveup-audit: ## D2 give-up-rule evidence audit: prove Readiness is gated w/ no bare number (PRD §7c). Stdlib-only.
+	@GU_PY="$${GU_PY:-python3}"; PYTHONPATH=. "$$GU_PY" proofs/giveup_audit.py --seed 42 --out docs/evidence/proofs/giveup_audit.json
