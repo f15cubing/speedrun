@@ -118,7 +118,8 @@ logic + items live in `anki/qt/aqt/gre/` (the `dashboard_data.py` + `taxonomy.js
   **never sends the answer keys to the client**; an unfillable preset returns an honest `locked`
   reason, not an internal `InsufficientItemsError` dump), and `greExamSubmit` (rights-only
   **server-side** scoring; persists an attempts side-file — not the collection — for the scoring
-  layer; reveals keys only in the post-submit result).
+  layer; reveals keys only in the post-submit result; a forged submit for an infeasible preset
+  returns a clean `locked` reason, never a 500).
 - `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_EXAM` + api-access allowlist.
 - `anki/qt/aqt/main.py` — Tools-menu action via `main_window_did_init` (`gre_exam.py`
   `GreExam` QDialog). Mastery-gate structure present (`EXAM_MODE_MIN_STUDIED_PCT`, 0.0 for now).
@@ -208,4 +209,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@d9684c4` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity)
+Last verified against: `f15cubing/anki@d11b424` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening)
