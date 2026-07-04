@@ -52,8 +52,11 @@ source of truth.
   same-key rewordings per base. Loader enforces: each `paraphrase_group` has exactly 2 rewordings
   sharing the same `options[correct_index]` text and the same `base_ref`.
 - **Firewall.** Distinct `eval::` tag namespace; never imported into the study-deck build;
-  `assert_firewall` guards against `(stem, answer)` overlap with the study deck. This is a lightweight
-  guard — the rigorous n-gram/embedding **leakage pipeline (7e) is a separate task**.
+  `assert_firewall` guards against `(stem, answer)` overlap with the study deck. The **layered
+  leakage scan (7e / PRD §11)** is now built in `pipeline/leakage_audit.py` (`make
+  deck-leakage-audit`): it extends this boolean guard to exact → normalised-stem → 13-gram →
+  token-Jaccard layers and **publishes a residual leakage rate** (currently **0.0**, 0/80). It reads
+  this bank via `load_eval_items` and **never modifies it**. Embedding-cosine remains a phase-2 item.
 - **Verification gate.** Every item must be `status: verified` with non-empty
   `verified_by`/`verified_on`/`src`, or the loader hard-fails.
 - **One leaf tag per item**; exactly 5 distinct options; `correct_index ∈ 0..4`; `difficulty ∈ 1..5`.
