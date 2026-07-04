@@ -326,6 +326,16 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
   partition semantics unchanged; mock stays `p0`-only + read-only. Green: `test_gre_exam.py` 17/17,
   `check:svelte`/`check:eslint`, and the mediasrv gate+handlers verified end-to-end on the built
   engine.
+- **MCQ graded answer flow** (fast lane; `pipeline/`) — **open PR (overnight; do not auto-merge).**
+  The interactive MCQ card template now grades: tap an option → reveal correctness + the full
+  explanation (**no auto-advance**) → **correct** shows Hard/Good/Easy bound to the FSRS ease enum
+  (2/3/4); **wrong** shows a single Continue that auto-grades **Again** (1, a lapse the scheduler
+  re-queues). Grades via the reviewer's own bridge commands `pycmd("ans")`→`pycmd("ease<N>")` (what
+  the built-in buttons call); degrades to the built-in ease buttons where `pycmd` is absent
+  (e.g. AnkiDroid). `test_mcq_notetype.py` 14/14 (+5 new: ease binding, correct/wrong paths,
+  no-auto-advance, no-`pycmd` fallback); full pipeline suite 60/60. Follow-up: re-bundle the
+  `.apkg` into both apps (engine lane) so existing installs pick up the graded template. No engine
+  change.
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop
