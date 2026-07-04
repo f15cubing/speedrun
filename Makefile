@@ -17,6 +17,7 @@ BENCH_ITERS := 300
 .PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval deck-leakage-audit ai-gate ai-gate-test ai-baseline bench proofs
 .PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs giveup-audit
 .PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval deck-report ai-gate ai-gate-test ai-baseline bench proofs
+.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval scorecard-validate ai-gate ai-gate-test ai-baseline bench proofs
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -67,6 +68,9 @@ deck-leakage-audit: ## Publish the study-deck<->eval-bank residual leakage rate 
 	@LK_PY="$${LK_PY:-python3}"; PYTHONPATH=pipeline:eval/bank "$$LK_PY" pipeline/run_leakage_audit.py --seed 42 --strict
 deck-report: ## Study-deck quality report + integrity GATE (distinct options / valid key / required fields).
 	@DR_PY="$${DR_PY:-python3}"; PYTHONPATH=pipeline "$$DR_PY" pipeline/run_deck_report.py --seed 42 --strict
+scorecard-validate: ## Validate the synced gre_scorecard honesty contract (no bare Readiness number; scores never blended; PRD §7c/D2).
+	@SC_PY="$${SC_PY:-python3}"; PYTHONPATH=. "$$SC_PY" proofs/validate_scorecard.py \
+		proofs/tests/fixtures/scorecard_gated.json proofs/tests/fixtures/scorecard_shown.json
 
 ai-gate: ## Run the AI card pipeline + gold-set gate (deterministic stub; AI-off, PRD §9).
 	@AI_PY="$${AI_PY:-python3}"; PYTHONPATH=pipeline:pipeline/aicards "$$AI_PY" pipeline/aicards/run_gate.py --seed 42
