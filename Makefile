@@ -13,12 +13,7 @@ FORK_ANKI := $(if $(FORK_ANKI),$(FORK_ANKI),/Users/felipecaicedo/Desktop/alpha/s
 BENCH_CARDS := 50000
 BENCH_ITERS := 300
 
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval interleave-report ai-gate ai-gate-test ai-baseline bench proofs
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval deck-leakage-audit ai-gate ai-gate-test ai-baseline bench proofs
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs giveup-audit
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval deck-report ai-gate ai-gate-test ai-baseline bench proofs
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval scorecard-validate ai-gate ai-gate-test ai-baseline bench proofs
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ablation-analysis ai-gate ai-gate-test ai-baseline bench proofs
+.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval interleave-report ai-gate ai-gate-test ai-baseline bench proofs deck-leakage-audit giveup-audit deck-report scorecard-validate ablation-analysis
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
