@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "updated_at": "2026-07-05T14:02:00+00:00",
+  "source": "desktop",
+  "memory": {
+    "estimate": 0.62,
+    "low": 0.56,
+    "high": 0.68,
+    "coverage_pct": 0.58
+  },
+  "performance": {
+    "estimate": 0.55,
+    "low": 0.44,
+    "high": 0.66,
+    "state": "available"
+  },
+  "readiness": {
+    "shown": true,
+    "estimate": 711,
+    "low": 678,
+    "high": 748,
+    "width": 70,
+    "reasons": [],
+    "coverage_pct": 0.58,
+    "confidence": "low",
+    "best_next_topic": "topic::additional::real_analysis"
+  }
+}

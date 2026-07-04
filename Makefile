@@ -13,7 +13,7 @@ FORK_ANKI := $(if $(FORK_ANKI),$(FORK_ANKI),/Users/felipecaicedo/Desktop/alpha/s
 BENCH_CARDS := 50000
 BENCH_ITERS := 300
 
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs
+.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval scorecard-validate ai-gate ai-gate-test ai-baseline bench proofs
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -57,6 +57,10 @@ deck-asset-check: ## Fail if the committed app assets drift from the pipeline ou
 
 score-eval: ## Simulate + fit + validate the scoring models; emit metrics + sample scorecard.
 	@PYTHONPATH=. python3 scoring/eval_cli.py --seed 42 --students 40 --out scoring/out
+
+scorecard-validate: ## Validate the synced gre_scorecard honesty contract (no bare Readiness number; scores never blended; PRD §7c/D2).
+	@SC_PY="$${SC_PY:-python3}"; PYTHONPATH=. "$$SC_PY" proofs/validate_scorecard.py \
+		proofs/tests/fixtures/scorecard_gated.json proofs/tests/fixtures/scorecard_shown.json
 
 ai-gate: ## Run the AI card pipeline + gold-set gate (deterministic stub; AI-off, PRD §9).
 	@AI_PY="$${AI_PY:-python3}"; PYTHONPATH=pipeline:pipeline/aicards "$$AI_PY" pipeline/aicards/run_gate.py --seed 42

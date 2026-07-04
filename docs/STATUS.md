@@ -317,6 +317,14 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
 
 ## In flight
 
+- **Scorecard honesty validator** (fast lane; `proofs/`) — **open PR (overnight; do not auto-merge).**
+  A pure dict validator for the synced `gre_scorecard` artifact (desktop adapter writes it → syncs →
+  AnkiDroid panel reads it; nothing validated the contract in between). Enforces the hard ceilings:
+  the three scores stay **separate** (no blended "overall"), **never a bare Readiness number** (an
+  estimate may appear only with the full evidence panel — range, coverage, confidence, timestamp,
+  reasons, best-next — and only when `shown`), and every point estimate carries its range.
+  `make scorecard-validate` on committed gated + shown fixtures. 10 tests. Pure — no scoring/engine/
+  eval-bank imports; complements the give-up-rule audit at the *artifact* (sync-transport) layer.
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop

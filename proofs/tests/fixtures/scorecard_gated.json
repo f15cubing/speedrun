@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "updated_at": "2026-07-04T00:00:00+00:00",
+  "source": "desktop",
+  "memory": {
+    "estimate": 0.6,
+    "low": 0.54,
+    "high": 0.66,
+    "coverage_pct": 0.41
+  },
+  "performance": {
+    "estimate": null,
+    "low": null,
+    "high": null,
+    "state": "not_available"
+  },
+  "readiness": {
+    "shown": false,
+    "estimate": null,
+    "low": null,
+    "high": null,
+    "width": null,
+    "reasons": ["<50% topic coverage", "no exam attempts yet"],
+    "coverage_pct": 0.41,
+    "confidence": "low",
+    "best_next_topic": "topic::additional::real_analysis"
+  }
+}
