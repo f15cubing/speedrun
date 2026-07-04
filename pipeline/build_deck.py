@@ -134,7 +134,11 @@ MCQ_MODEL = genanki.Model(
                 # grade() feeds the scheduler with the *existing* FSRS grade enum:
                 # ans flips the reviewer to answer state (set synchronously), then
                 # ease<N> answers the card -- the same path as the built-in buttons.
-                "function grade(ease){if(typeof pycmd==='function'){pycmd('ans');pycmd('ease'+ease);}}"
+                # grading is one-shot per card render: a fast double-click (or a second
+                # rating) must never answer the same card twice.
+                "var graded=false;"
+                "function grade(ease){if(graded){return;}"
+                "if(typeof pycmd==='function'){graded=true;pycmd('ans');pycmd('ease'+ease);}}"
                 "function rateBtn(label,ease,cls){var b=document.createElement('button');"
                 "b.className='mcq-rate '+cls;b.setAttribute('data-ease',ease);b.textContent=label;"
                 "b.addEventListener('click',function(){grade(ease);});return b;}"

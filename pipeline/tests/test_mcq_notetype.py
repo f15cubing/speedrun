@@ -100,6 +100,15 @@ def test_mcq_grade_uses_reviewer_ease_commands():
     assert "pycmd('ans');pycmd('ease'+ease)" in qfmt
 
 
+def test_mcq_grade_is_one_shot_per_card():
+    # A fast double-click / second rating must not answer the same card twice.
+    qfmt = _mcq_qfmt()
+    assert "var graded=false" in qfmt
+    grade_fn = qfmt.split("function grade(ease){", 1)[1]
+    assert grade_fn.startswith("if(graded){return;}")  # early-out before any pycmd
+    assert "graded=true" in grade_fn.split("pycmd('ans')", 1)[0]  # lock set first
+
+
 def test_mcq_correct_path_shows_three_ratings_bound_to_ease():
     # Correct -> Hard(2) / Good(3) / Easy(4); never "Again".
     right = _right_branch(_mcq_qfmt())
