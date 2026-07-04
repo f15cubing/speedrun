@@ -355,6 +355,15 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
   0.0000 (0/80)**, max token-Jaccard 0.688 (structural). 10 unit tests incl. a real-corpora
   residual-0 smoke. **Read-only on the held-out bank** (never writes it); no scoring/engine touch.
   Embedding-cosine is a phase-2 follow-up. Supports the "no leaked test data" hard ceiling.
+- **MCQ distractor rationales** (fast lane; `pipeline/`) — **open PR (overnight; do not auto-merge).**
+  Elaborated feedback on the computational MCQ surface: each SymPy distractor is paired with the
+  **named common error** it embodies, and the generated explanation gains a "Common errors to avoid:
+  …" line (e.g. "integrating instead of differentiating", "computing the LCM instead of the GCD"), so
+  a wrong tap teaches *why* it was tempting (PRD §8a; test-enhanced learning with explanatory
+  feedback). `error_labels` mirrors `make_options`' distinct/≠-key filter so only surviving
+  distractors are named. `test_mcq_generation.py` +3 (16/16 with notetype); full pipeline suite green.
+  No engine/scoring/held-out touch. Follow-up: re-bundle the `.apkg` so existing installs get the
+  enriched explanations. Composes with the graded MCQ flow PR (independent).
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop

@@ -33,9 +33,11 @@ MCQ_COUNTS = {
 def _mcq_differential_single(rng):
     f = _poly(rng, x, 2, 4)
     correct = sp.diff(f, x)
+    # Each wrong answer is paired with the named common error it embodies, so the
+    # card can give elaborated feedback ("why that tempting option is wrong").
     wrongs = [
-        sp.integrate(f, x),              # swapped operation (integrated)
-        sp.diff(sp.diff(f, x), x),       # differentiated twice
+        (sp.integrate(f, x), "integrating instead of differentiating"),
+        (sp.diff(sp.diff(f, x), x), "taking the second derivative instead of the first"),
     ]
     stem = "Differentiate with respect to x:\n\n" + mathfmt.inline("f(x) = " + mathfmt.tex(f))
     explanation = mathfmt.inline("f'(x) = " + mathfmt.tex(correct))
@@ -46,8 +48,8 @@ def _mcq_integral_single(rng):
     f = _poly(rng, x, 1, 3)
     correct = sp.integrate(f, x)         # antiderivative; options omit + C
     wrongs = [
-        sp.diff(f, x),                   # swapped operation (differentiated)
-        f,                               # forgot to integrate
+        (sp.diff(f, x), "differentiating instead of integrating"),
+        (f, "leaving the integrand unintegrated"),
     ]
     stem = (
         "Evaluate the indefinite integral (give the antiderivative, omit + C):"
@@ -64,8 +66,8 @@ def _mcq_linear(rng):
     d = _nonzero(rng, -6, 6)
     correct = sp.Integer(a * d - b * c)
     wrongs = [
-        sp.Integer(a * d + b * c),       # added instead of subtracted
-        sp.Integer(a * b - c * d),       # multiplied the wrong pairs
+        (sp.Integer(a * d + b * c), "adding the diagonal products instead of subtracting"),
+        (sp.Integer(a * b - c * d), "multiplying the wrong pairs of entries"),
     ]
     stem = "Compute the determinant of the matrix:\n\n" + mathfmt.expr_block(
         sp.Matrix([[a, b], [c, d]])
@@ -84,14 +86,40 @@ def _mcq_number_theory(rng):
     g = sp.igcd(a, b)
     correct = sp.Integer(g)
     wrongs = [
-        sp.Integer(a * b // g),          # lcm instead of gcd
-        sp.Integer(min(a, b)),           # picked the smaller input
+        (sp.Integer(a * b // g), "computing the LCM instead of the GCD"),
+        (sp.Integer(min(a, b)), "taking the smaller number instead of the GCD"),
     ]
     stem = "Compute the greatest common divisor:\n\n" + mathfmt.inline(
         "\\gcd({}, {})".format(a, b)
     )
     explanation = mathfmt.inline("\\gcd({}, {}) = {}".format(a, b, mathfmt.tex(correct)))
     return stem, correct, wrongs, explanation
+
+
+def error_labels(correct, wrongs_labeled):
+    """Labels for the named distractors that survive the option-assembly filter.
+
+    Mirrors :func:`distractors.make_options`'s "distinct + != key" rule so we only
+    surface an error whose distractor actually appears among the options.
+    """
+    seen = {sp.sstr(correct)}
+    labels = []
+    for expr, label in wrongs_labeled:
+        if expr is None or distractors._equal(expr, correct):
+            continue
+        canon = sp.sstr(expr)
+        if canon in seen:
+            continue
+        seen.add(canon)
+        labels.append(label)
+    return labels
+
+
+def with_error_feedback(explanation, labels):
+    """Append the elaborated 'common errors to avoid' feedback to an explanation."""
+    if not labels:
+        return explanation
+    return explanation + "\n\nCommon errors to avoid: " + "; ".join(labels) + "."
 
 
 _MCQ_BUILDERS = {
@@ -126,13 +154,20 @@ def generate_mcq_cards(seed=DEFAULT_SEED):
                 raise RuntimeError(
                     "could not generate {} MCQ cards for {}".format(count, leaf)
                 )
-            stem, correct, wrongs, explanation = builder(rng)
+            stem, correct, wrongs_labeled, explanation = builder(rng)
             if stem in seen:
                 continue
+            wrong_exprs = [expr for expr, _label in wrongs_labeled]
             try:
-                options, correct_index = distractors.make_options(rng, correct, wrongs)
+                options, correct_index = distractors.make_options(rng, correct, wrong_exprs)
             except distractors.InsufficientDistractors:
                 continue
+            # Elaborated feedback: name the common errors the (surviving) distractors
+            # embody, so a wrong tap teaches *why* it was tempting (PRD §8a; test-
+            # enhanced learning with explanatory feedback).
+            explanation = with_error_feedback(
+                explanation, error_labels(correct, wrongs_labeled)
+            )
             cards.append(
                 {
                     "leaf_tag": tag,
