@@ -46,7 +46,12 @@ coverage map, readiness gate, and interleaving all build on.
 - `generate_mcq.py` — `generate_mcq_cards(seed=42)` → ordered list of MCQ card
   dicts `{leaf_tag, format:"mcq", question, options[5], correct_index, explanation}`;
   `MCQ_COUNTS` maps leaf → count. Reuses `generate_deck` helpers; SymPy computes
-  both key and distractors.
+  both key and distractors. Each builder now pairs every intentional distractor with the
+  **named common error** it embodies (e.g. "integrating instead of differentiating",
+  "computing the LCM instead of the GCD"); `error_labels(correct, wrongs_labeled)` keeps
+  only the labels whose distractor survives `make_options`' distinct/≠-key filter, and
+  `with_error_feedback` appends a "**Common errors to avoid: …**" line to the explanation
+  — **elaborated feedback** so a wrong tap teaches *why* it was tempting (PRD §8a).
 - `build_deck.py` — `load_all_cards(seed=42)` (generated flashcards + MCQ +
   verified conceptual, canonical order), `cards_content_hash(cards)` (both
   formats), `note_for(card)` (dispatches basic/MCQ), `mcq_note_for(card)`,
@@ -135,7 +140,7 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_coverage.py` — coverage assertions hold (all 17 leaves, calc ≥ 50 %).
 - `pipeline/tests/test_recompute.py` — generated backs match independent SymPy recomputation.
 - `pipeline/tests/test_distractors.py` — deterministic 5-option assembly; wrongs ≠ key; raises when too few.
-- `pipeline/tests/test_mcq_generation.py` — MCQ determinism, well-formedness, correct-key integrity.
+- `pipeline/tests/test_mcq_generation.py` — MCQ determinism, well-formedness, correct-key integrity, and the **elaborated-feedback distractor rationales** (`error_labels` filter, `with_error_feedback`, per-leaf named errors appended to the explanation).
 - `pipeline/tests/test_conceptual_gate.py` — verification gate (verified-only load, hard-fails, MCQ records).
 - `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash).
 - `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
