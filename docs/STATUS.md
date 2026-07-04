@@ -373,6 +373,14 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
   gated with **no number** + honest reasons). `assert_giveup_invariants` fails loudly if any gated
   scenario ever leaks a scaled score. +3 tests (proofs suite 7/7); evidence in
   `docs/evidence/proofs/giveup_audit.json`. No scoring-def / held-out / engine change.
+- **Deck quality report + integrity gate** (fast lane; `pipeline/`) — **open PR (overnight; do not
+  auto-merge).** A whole-deck quality gate complementing the coverage gate: `pipeline/deck_report.py`
+  proves every MCQ has 5 **distinct** options, a valid `correct_index`, and (when a ground-truth
+  `_correct_expr` is present) the correct option renders exactly that key — plus no empty
+  stem/answer/explanation. `make deck-report` (a `--strict` GATE) on the seeded deck: **5,407 cards
+  (526 MCQ), integrity OK, 0 violations**. 8 tests incl. a real-deck smoke. Pure `pipeline/`; reads
+  the study deck only (no eval bank / scoring / engine). Rounds out the re-runnable gates
+  (coverage + leakage + give-up + deck-quality) for the fair-tests lever (PRD §11/§12).
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop

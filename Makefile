@@ -16,6 +16,7 @@ BENCH_ITERS := 300
 .PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval interleave-report ai-gate ai-gate-test ai-baseline bench proofs
 .PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval deck-leakage-audit ai-gate ai-gate-test ai-baseline bench proofs
 .PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs giveup-audit
+.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval deck-report ai-gate ai-gate-test ai-baseline bench proofs
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -64,6 +65,8 @@ interleave-report: ## Interleaving metrics (adjacency dispersion + FSRS displace
 	@IL_PY="$${IL_PY:-python3}"; PYTHONPATH=pipeline "$$IL_PY" pipeline/run_interleave_report.py --seed 42
 deck-leakage-audit: ## Publish the study-deck<->eval-bank residual leakage rate (PRD §11; read-only on the held-out bank).
 	@LK_PY="$${LK_PY:-python3}"; PYTHONPATH=pipeline:eval/bank "$$LK_PY" pipeline/run_leakage_audit.py --seed 42 --strict
+deck-report: ## Study-deck quality report + integrity GATE (distinct options / valid key / required fields).
+	@DR_PY="$${DR_PY:-python3}"; PYTHONPATH=pipeline "$$DR_PY" pipeline/run_deck_report.py --seed 42 --strict
 
 ai-gate: ## Run the AI card pipeline + gold-set gate (deterministic stub; AI-off, PRD §9).
 	@AI_PY="$${AI_PY:-python3}"; PYTHONPATH=pipeline:pipeline/aicards "$$AI_PY" pipeline/aicards/run_gate.py --seed 42

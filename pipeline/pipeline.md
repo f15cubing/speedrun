@@ -105,6 +105,15 @@ coverage map, readiness gate, and interleaving all build on.
   (a re-runnable GATE: `--strict` exits non-zero on any exact leakage). Loads both corpora
   via their read-only loaders. Real corpora, seed 42: **residual leakage rate 0.0000**
   (0/80), max token-Jaccard 0.688 (structural). Embedding-cosine is a phase-2 follow-up.
+- `deck_report.py` — **quality report + integrity gate** (complements `coverage_report`:
+  coverage proves the deck *covers* the taxonomy, this proves each card is *well-formed*).
+  `audit_mcq(card)` (exactly 5 **distinct** options, valid `correct_index`, and — when the
+  ground-truth `_correct_expr` is present — the option at `correct_index` renders exactly
+  that key), `required_fields(card)` (no empty stem/answer/explanation), `summarize_quality`,
+  `assert_deck_quality` (raises on any violation), `format_report`. Whole-deck version of the
+  per-generator integrity unit tests (PRD §12/§12a "distractors provably ≠ key"). Stem/option
+  lengths are reported, not gated. `run_deck_report.py` CLI + `make deck-report` (a `--strict`
+  GATE). Seed 42: **5,407 cards (526 MCQ), integrity OK, 0 violations**.
 - `conceptual_cards.yaml` — hand-authored cards (`cards:` list) for the conceptual
   leaves; the committed source of truth. Every entry carries the verification block
   `status: verified` + `verified_by` / `verified_on` / `source` (required). Entries
@@ -186,6 +195,7 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
 - `pipeline/tests/test_interleave.py` — interleaving ordering core: multiset invariant, determinism, the two metrics (adjacency dispersion + forward displacement), dispersion-beats-blocked, the displacement bound (no starvation), homogeneous/tiny-queue fallback, and cluster-map defaults/overrides.
 - `pipeline/tests/test_leakage_audit.py` — leakage self-audit: helper metrics, each §11 layer (exact-QA leakage, stem-only + shared-template near-dups flagged not counted), the `assert_no_leakage` gate, determinism, and a real-corpora smoke asserting the residual leakage rate is 0.0.
+- `pipeline/tests/test_deck_report.py` — quality/integrity gate: MCQ option distinctness, valid index, ground-truth key match, required non-empty fields, the `assert_deck_quality` gate, and a real-deck smoke asserting the whole deck passes.
 - `pipeline/tests/test_scale.py` — total card count ≥ 5 000 and per-leaf minimums for the high-volume leaves.
 
 ---
