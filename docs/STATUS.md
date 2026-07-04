@@ -336,6 +336,16 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
   no-auto-advance, no-`pycmd` fallback); full pipeline suite 60/60. Follow-up: re-bundle the
   `.apkg` into both apps (engine lane) so existing installs pick up the graded template. No engine
   change.
+- **Interleaving ordering core** (fast lane; `pipeline/`) — **open PR (overnight; do not auto-merge).**
+  The pre-registered learning-science feature's ordering algorithm, finally built (was 0% built): pure
+  `pipeline/interleave.py` FSRS-cooperative constrained re-sort (greedy dispersion by confusable
+  cluster + a displacement bound so urgent cards never starve) + the two spec metrics (adjacency
+  dispersion, FSRS displacement) + the load-bearing multiset invariant. `make interleave-report` on
+  the seeded deck: adjacency dispersion **0.24 → 0.96**, displacement max = W (no starvation). 9 unit
+  tests. **Pure presentation-layer** — no scheduler/undo/store, no held-out bank, no scoring touch.
+  The reviewer/Qt interleaved↔blocked toggle + the ablation run remain documented follow-ups.
+  Evidence: Rohrer 2020, Brunmair & Richter 2019 (with the honest dz≈0.2–0.35 incremental caveat,
+  PRD D5).
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop
