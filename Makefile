@@ -13,7 +13,7 @@ FORK_ANKI := $(if $(FORK_ANKI),$(FORK_ANKI),/Users/felipecaicedo/Desktop/alpha/s
 BENCH_CARDS := 50000
 BENCH_ITERS := 300
 
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval ai-gate ai-gate-test ai-baseline bench proofs
+.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval deck-leakage-audit ai-gate ai-gate-test ai-baseline bench proofs
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -57,6 +57,9 @@ deck-asset-check: ## Fail if the committed app assets drift from the pipeline ou
 
 score-eval: ## Simulate + fit + validate the scoring models; emit metrics + sample scorecard.
 	@PYTHONPATH=. python3 scoring/eval_cli.py --seed 42 --students 40 --out scoring/out
+
+deck-leakage-audit: ## Publish the study-deck<->eval-bank residual leakage rate (PRD §11; read-only on the held-out bank).
+	@LK_PY="$${LK_PY:-python3}"; PYTHONPATH=pipeline:eval/bank "$$LK_PY" pipeline/run_leakage_audit.py --seed 42 --strict
 
 ai-gate: ## Run the AI card pipeline + gold-set gate (deterministic stub; AI-off, PRD §9).
 	@AI_PY="$${AI_PY:-python3}"; PYTHONPATH=pipeline:pipeline/aicards "$$AI_PY" pipeline/aicards/run_gate.py --seed 42

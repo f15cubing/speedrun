@@ -317,6 +317,15 @@ _Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DE
 
 ## In flight
 
+- **Leakage self-audit** (fast lane; `pipeline/`) — **open PR (overnight; do not auto-merge).**
+  Builds PRD §11's layered study-deck↔eval-bank leakage scan and **publishes a residual leakage
+  rate** (was: only a boolean exact-match firewall). `pipeline/leakage_audit.py` (pure) scans
+  exact-QA (the real leakage) + normalised-stem + 13-gram + token-Jaccard near-dups (the latter
+  reported for review, not counted — both corpora share SymPy templates so structural overlap is
+  expected). `make deck-leakage-audit` (a `--strict` GATE) on real corpora: **residual leakage rate
+  0.0000 (0/80)**, max token-Jaccard 0.688 (structural). 10 unit tests incl. a real-corpora
+  residual-0 smoke. **Read-only on the held-out bank** (never writes it); no scoring/engine touch.
+  Embedding-cosine is a phase-2 follow-up. Supports the "no leaked test data" hard ceiling.
 - _Dashboard redesign (PR #20) + Exam Mode (PR #21 core, PR #22 shell) + deck auto-incorporation +
   LaTeX math rendering (PR #25) + Exam-Mode LaTeX + LaTeX study-deck rebundle + `gre_deck_version` bump
   + pre-uid dedup migration shipped. Scoring `scoring/` package (Tasks 1–5) done + math-reviewed; desktop

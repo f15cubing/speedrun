@@ -61,6 +61,20 @@ coverage map, readiness gate, and interleaving all build on.
   `format_report(summary)`, `assert_coverage(cards)` (raises on violation); CLI
   `python pipeline/coverage_report.py --seed 42` also runs `assert_all_verified`
   (non-zero exit on any coverage or verification violation).
+- `leakage_audit.py` — **study-deck ↔ eval-bank leakage self-audit** (PRD §11). Pure
+  functions (`normalize`, `word_ngrams`, `jaccard`, `scan_leakage(study_cards,
+  eval_items) -> LeakageReport`, `assert_no_leakage`, `format_report`). Publishes the
+  **residual leakage rate** = fraction of eval items whose normalised `(question, answer)`
+  also appears in the study deck (the real leakage; other PRD §11 layers — normalised-stem
+  collisions, shared 13-grams, token-Jaccard near-dups — are reported for human
+  adjudication, **not** counted as leakage, since both corpora share SymPy templates so
+  structural overlap is expected). **Never reads or writes the eval bank itself** — a pure
+  function of two card lists; the CLI passes them in. Extends the boolean
+  `eval/bank/loader.assert_firewall` (exact only) to the quantified scan.
+- `run_leakage_audit.py` — CLI (`--seed 42 --strict --out …`) + `make deck-leakage-audit`
+  (a re-runnable GATE: `--strict` exits non-zero on any exact leakage). Loads both corpora
+  via their read-only loaders. Real corpora, seed 42: **residual leakage rate 0.0000**
+  (0/80), max token-Jaccard 0.688 (structural). Embedding-cosine is a phase-2 follow-up.
 - `conceptual_cards.yaml` — hand-authored cards (`cards:` list) for the conceptual
   leaves; the committed source of truth. Every entry carries the verification block
   `status: verified` + `verified_by` / `verified_on` / `source` (required). Entries
@@ -139,6 +153,7 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_conceptual_gate.py` — verification gate (verified-only load, hard-fails, MCQ records).
 - `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash).
 - `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
+- `pipeline/tests/test_leakage_audit.py` — leakage self-audit: helper metrics, each §11 layer (exact-QA leakage, stem-only + shared-template near-dups flagged not counted), the `assert_no_leakage` gate, determinism, and a real-corpora smoke asserting the residual leakage rate is 0.0.
 - `pipeline/tests/test_scale.py` — total card count ≥ 5 000 and per-leaf minimums for the high-volume leaves.
 
 ---
