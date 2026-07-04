@@ -61,6 +61,15 @@ coverage map, readiness gate, and interleaving all build on.
   `format_report(summary)`, `assert_coverage(cards)` (raises on violation); CLI
   `python pipeline/coverage_report.py --seed 42` also runs `assert_all_verified`
   (non-zero exit on any coverage or verification violation).
+- `deck_report.py` — **quality report + integrity gate** (complements `coverage_report`:
+  coverage proves the deck *covers* the taxonomy, this proves each card is *well-formed*).
+  `audit_mcq(card)` (exactly 5 **distinct** options, valid `correct_index`, and — when the
+  ground-truth `_correct_expr` is present — the option at `correct_index` renders exactly
+  that key), `required_fields(card)` (no empty stem/answer/explanation), `summarize_quality`,
+  `assert_deck_quality` (raises on any violation), `format_report`. Whole-deck version of the
+  per-generator integrity unit tests (PRD §12/§12a "distractors provably ≠ key"). Stem/option
+  lengths are reported, not gated. `run_deck_report.py` CLI + `make deck-report` (a `--strict`
+  GATE). Seed 42: **5,407 cards (526 MCQ), integrity OK, 0 violations**.
 - `conceptual_cards.yaml` — hand-authored cards (`cards:` list) for the conceptual
   leaves; the committed source of truth. Every entry carries the verification block
   `status: verified` + `verified_by` / `verified_on` / `source` (required). Entries
@@ -139,6 +148,7 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_conceptual_gate.py` — verification gate (verified-only load, hard-fails, MCQ records).
 - `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash).
 - `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
+- `pipeline/tests/test_deck_report.py` — quality/integrity gate: MCQ option distinctness, valid index, ground-truth key match, required non-empty fields, the `assert_deck_quality` gate, and a real-deck smoke asserting the whole deck passes.
 - `pipeline/tests/test_scale.py` — total card count ≥ 5 000 and per-leaf minimums for the high-volume leaves.
 
 ---
