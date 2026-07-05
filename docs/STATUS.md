@@ -453,7 +453,8 @@ _Last updated: 2026-07-05 (Sun) — merged **GRE Home + 70% exam-mode coverage l
   **Data + generator + tests only — no scheduler/undo/store/proto/Rust; Exam Mode read-only.** Green:
   eval-bank suite 20/20, `test_exam_items_sync` 1/1, exam feasibility verified (all presets feasible,
   full-66 assembles); the aqt `test_gre_exam.py` runs under CI/`./ninja check` (needs the built app env).
-  (`f15cubing/speedrun#TBD`.)
+  Different-agent engine-lane review **APPROVED** (all 9 checklist items incl. firewall + independently
+  recomputed keys). (`f15cubing/speedrun#65`, submodule `f15cubing/anki#4`.)
 
 - **Live-reviewer interleaving toggle** (engine lane; `anki` fork `agent/gre-interleave-reviewer` →
   `4c991c9`, outer pin bumped) — **wires the pre-registered interleaving feature into the actual
