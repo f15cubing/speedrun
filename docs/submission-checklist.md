@@ -6,8 +6,8 @@
 >
 > **Legend:** ✅ = merged / verified in-repo (re-runnable now) · 🧑 = **human-gated** (needs a person
 > at the keyboard, a signing key, or a clean device — cannot be finished headless in this environment).
-> Pinned engine: `f15cubing/anki@ea3acae` (Anki 25.09.4); Android forks
-> `f15cubing/Anki-Android@78989b9e` + `f15cubing/Anki-Android-Backend` (rsdroid, built locally).
+> Pinned engine: `f15cubing/anki@6d05314` (Anki 25.09.4); Android forks
+> `f15cubing/Anki-Android@c6d02501` + `f15cubing/Anki-Android-Backend@3dc30c2` (rsdroid, built locally).
 
 ---
 
@@ -109,4 +109,4 @@ Brainlift, tick the hard-ceiling table above, then **submit by 10:59 PM CT.**
 
 ---
 
-Last verified against: `f15cubing/anki@ea3acae` (Anki 25.09.4); Android `f15cubing/Anki-Android@78989b9e`.
+Last verified against: `f15cubing/anki@6d05314` (Anki 25.09.4); Android `f15cubing/Anki-Android@c6d02501`.

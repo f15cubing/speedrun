@@ -131,10 +131,13 @@ speedrun/
 └─ .cursor/skills/   # project skills: codebase-docs, shipping-changes
 ```
 
-**Pinned upstream versions** (what the docs are verified against): `anki` fork
-`f15cubing/anki@ea3acae` (25.09.4 `d52ca66` + our W1/W2 work), `Anki-Android` fork
-`f15cubing/Anki-Android@67364a7` (of `v2.24.0` `ebcf8e0`), `Anki-Android-Backend` (rsdroid) fork
-`f15cubing/Anki-Android-Backend@3dc30c2` (built locally from source; bundles `anki@ea3acae`).
+**Pinned upstream versions** (the actual submodule pins — what a fresh `--recurse-submodules` clone
+checks out): `anki` fork `f15cubing/anki@6d05314` (25.09.4 `d52ca66` + our Mastery-Query engine
+change, dashboard, Exam Mode, LaTeX, scoring adapter, method page), `Anki-Android` fork
+`f15cubing/Anki-Android@c6d02501` (of `v2.24.0` `ebcf8e0`; + mastery-query binding, deck auto-import,
+read-only 3-score panel (Task 7), interactive-MCQ deck), `Anki-Android-Backend` (rsdroid) fork
+`f15cubing/Anki-Android-Backend@3dc30c2` (built locally from source; bundles `anki@ea3acae` — the
+`rslib`/Mastery-Query is unchanged through the current pin, so the phone engine matches the desktop).
 
 ## Getting started
 
