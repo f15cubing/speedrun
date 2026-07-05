@@ -27,9 +27,15 @@ source of truth.
   - `PARTITIONS = ("p0","p1","p2","p3")`, `ITEMS_YAML`.
 - `eval/bank/generate_eval.py` — deterministic SymPy authoring aid: `gen_p0_items(seed)`,
   `gen_p3_pairs(seed)` (each P3 group = 2 same-key rewordings, guaranteed by a single
-  `distractors.make_options` call), `emit_yaml(items)`, and a `__main__` that prints p0+p3 YAML to
-  freeze into `items.yaml`. **Stems/options are delimited LaTeX** via `pipeline/mathfmt`; P3 surface
-  framings are functions (not `str.format` templates) so LaTeX braces don't collide with format fields.
+  `distractors.make_options` call), `gen_demo_p0_items(seed)` (see **Demo items** below),
+  `emit_yaml(items)` / `emit_items(items)` (bare-list dump for appending), and a `__main__` that
+  prints p0+p3 YAML to freeze into `items.yaml`. **Stems/options are delimited LaTeX** via
+  `pipeline/mathfmt`; P3 surface framings are functions (not `str.format` templates) so LaTeX braces
+  don't collide with format fields.
+- `eval/bank/vendor_exam_items.py` — regenerates the in-app copy
+  `anki/qt/aqt/gre/exam_items.json` from `items.yaml` (validated projection of the 8 exam-facing
+  fields). Run `python eval/bank/vendor_exam_items.py` after editing `items.yaml`; the drift guard
+  `tests/test_exam_items_sync.py` enforces the two stay identical.
 
 ## Dependencies
 - External (pinned in `pipeline/requirements.txt`): `PyYAML`, `sympy` (authoring aid), `pytest`.
@@ -42,10 +48,21 @@ source of truth.
   **P3** groups drive the paraphrase go/no-go.
 - Nothing here touches `anki/` or `Anki-Android/`. Not an engine/Rust change.
 
+## Demo items (unlock the full-length Exam-Mode mock)
+`items.yaml` also carries **47 generated demo items** (`id: eval-p0-gen-*`, `gen: generated`,
+`src: generated`, `demo: true`) produced by `gen_demo_p0_items(seed=42)`. They enlarge the **p0**
+pool to **35 calculus / 18 algebra / 18 additional** so Exam Mode can build the official full-length
+(66-item) form under the 50/25/25 blueprint (`anki/qt/aqt/gre/exam.py`). They are deterministic and
+correct-by-construction (SymPy keys) — **not a live-model run** (same AI-off posture as the AI card
+pipeline) — and authored in a high-coefficient / distinct-phrasing regime disjoint from the study
+deck, so `assert_firewall` holds. The `demo: true` flag + `eval-p0-gen-*` id prefix let the scoring
+layer exclude them from real calibration/validation folds.
+
 ## Gotchas & invariants
 - **Frozen / version-locked.** `items.yaml` is the source of truth; the SymPy generator is an authoring
-  aid, not run at load. Regenerating with a different seed would change computational items — don't,
-  once frozen.
+  aid, not run at load. The frozen `eval-p0-*` / `eval-p3-*` items must not be reseeded. The demo
+  `eval-p0-gen-*` items are an **additive, deterministic** extension (regenerable via
+  `gen_demo_p0_items(seed=42)`); appending more is fine, re-vendor with `vendor_exam_items.py`.
 - **Difficulty is PROVISIONAL (expert-rated, r≈0.6).** Flag it provisional wherever surfaced; it widens
   the Readiness interval (report accuracy with Wilson CIs downstream).
 - **P3 = rewordings only.** The base recall item is the **study-deck** card (7d); the bank holds the 2
@@ -66,8 +83,10 @@ source of truth.
 - `eval/bank/tests/test_generate_eval.py` — generator determinism, well-formedness, same-key P3, loader round-trip.
 - `eval/bank/tests/test_bank_composition.py` — committed bank: all verified, P0≥20 / P3≥56 (==2×groups), calc weight ≥0.30, firewall holds.
 
-## Composition (as frozen)
-80 items: **P0 = 24** (frozen held-out, taxonomy-weighted) + **P3 = 56** (28 paraphrase groups × 2 same-key rewordings). Calculus weight ≈ 0.35.
+## Composition
+127 items: **P0 = 71** (24 frozen held-out, taxonomy-weighted + 47 generated demo items, see above)
++ **P3 = 56** (28 paraphrase groups × 2 same-key rewordings). The frozen-only P0 is 24; the demo
+items bring P0 to 35 calculus / 18 algebra / 18 additional so a full 66-item mock is buildable.
 
 ## LaTeX rendering (2026-07-02)
 Math in `items.yaml` is **delimited LaTeX** (`\(...\)` / `\[...\]`), migrated together with the vendored
@@ -77,4 +96,4 @@ the same LaTeX. Computational strings were converted via SymPy (round-trip-verif
 strings were hand-mapped. See `docs/superpowers/specs/2026-07-02-latex-math-rendering-design.md` §5.
 
 ---
-Last verified against: `agent/pipeline-latex-math`
+Last verified against: `agent/exam-demo-items` (added 47 `eval-p0-gen-*` demo items + `vendor_exam_items.py`)

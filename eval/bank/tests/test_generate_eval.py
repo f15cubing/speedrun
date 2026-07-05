@@ -35,6 +35,27 @@ def test_generation_is_deterministic():
     assert generate_eval.gen_p3_pairs(seed=42) == generate_eval.gen_p3_pairs(seed=42)
 
 
+def test_demo_p0_items_wellformed_and_deterministic():
+    from collections import Counter
+
+    demo = generate_eval.gen_demo_p0_items(seed=42)
+    assert len(demo) == 47
+    counts = Counter(taxonomy.bucket_of(it["leaf_tag"]) for it in demo)
+    assert counts["calculus"] == 27
+    assert counts["algebra"] == 11
+    assert counts["additional"] == 9
+    for it in demo:
+        assert it["partition"] == "p0"
+        assert it["gen"] == "generated" and it["src"] == "generated"
+        assert it["demo"] is True and it["status"] == "verified"
+        assert it["id"].startswith("eval-p0-gen-")
+        assert taxonomy.validate_leaf_tag(it["leaf_tag"])
+        assert len(it["options"]) == 5 and len(set(it["options"])) == 5
+        assert 0 <= it["correct_index"] < 5
+        assert 1 <= it["difficulty"] <= 5
+    assert generate_eval.gen_demo_p0_items(seed=42) == demo  # deterministic
+
+
 def test_generated_items_pass_the_loader(tmp_path):
     # Freeze then load: generated computational items must satisfy the validator.
     text = generate_eval.emit_yaml(

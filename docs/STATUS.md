@@ -441,6 +441,20 @@ _Last updated: 2026-07-05 (Sun) — merged **GRE Home + 70% exam-mode coverage l
 
 ## In flight
 
+- **Exam-Mode full-length demo items** (engine lane; `anki` fork `agent/exam-demo-items` → `bc995b88`,
+  outer pin bumped) — **open PR (do not self-merge).** Enlarges the firewalled held-out `p0` bank with
+  **47 generated, correct-by-construction MCQ items** (`eval-p0-gen-*`, `gen: generated`, `demo: true`)
+  so Exam Mode can build the **official full-length 66-item mock** (and half/third) — previously only the
+  11-item mini was feasible (`p0` was 8/7/9; now **35/18/18**). Deterministic SymPy keys via
+  `generate_eval.gen_demo_p0_items` (**not a live model** — same AI-off posture), high-coefficient /
+  distinct-phrasing regime disjoint from the study deck so `assert_firewall` holds; `demo: true` +
+  id-prefix let the scoring layer exclude them from real folds. New reproducible
+  `eval/bank/vendor_exam_items.py` (items.yaml → vendored `exam_items.json`), drift-guard stays green.
+  **Data + generator + tests only — no scheduler/undo/store/proto/Rust; Exam Mode read-only.** Green:
+  eval-bank suite 20/20, `test_exam_items_sync` 1/1, exam feasibility verified (all presets feasible,
+  full-66 assembles); the aqt `test_gre_exam.py` runs under CI/`./ninja check` (needs the built app env).
+  (`f15cubing/speedrun#TBD`.)
+
 - **Live-reviewer interleaving toggle** (engine lane; `anki` fork `agent/gre-interleave-reviewer` →
   `4c991c9`, outer pin bumped) — **wires the pre-registered interleaving feature into the actual
   review loop** (previously only an algorithm + explainer demo), so interleaved↔blocked is a real,
