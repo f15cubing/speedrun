@@ -4,7 +4,18 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-05 (Sun) — cut **v0.4.0** desktop release: a fresh self-contained macOS `.dmg` (Apple Silicon) rebuilt from the current pin (`anki@4c991c9`, outer `851a299`) — the first updated installer since v0.1.0, now carrying Exam Mode + LaTeX + the redesigned three-score dashboard + the interleaving toggle + the interactive/graded MCQ deck; README gains a prebuilt-download path. Prior: reconciled stale current-pin doc claims to the actual submodule pins (`anki@6d05314`→now `4c991c9` via #57, `Anki-Android@c6d02501`, `Anki-Android-Backend@3dc30c2`); confirmed all three pins are pushed — no pin regression._
+_Last updated: 2026-07-05 (Sun) — refreshed the **Sunday-cut demo plan** (`docs/demo-plan.md`, #58, fast lane, docs only) into a comprehensive superset: the ⭐-marked spec-required 3–5 min core plus optional showcase (interactive/graded MCQ, timed Exam Mode, live interleaving toggle + FSRS-differences explainer, observed Performance), stale bits corrected (engine SHA `ea3acae → 4c991c9`), Milestone-1 appendix preserved verbatim. Prior: cut **v0.4.0** desktop release — a fresh self-contained macOS `.dmg` (Apple Silicon) rebuilt from the current pin (`anki@4c991c9`, outer `851a299`), the first updated installer since v0.1.0, carrying Exam Mode + LaTeX + the redesigned three-score dashboard + the interleaving toggle + the interactive/graded MCQ deck._
+
+- **Demo-plan refresh** (fast lane; docs only) — `docs/demo-plan.md` refreshed into a comprehensive
+  **superset** covering every merged feature + all spec demo items: the ⭐-marked spec-required 3–5 min
+  core (review session · Rust engine change · phone→desktop sync · three separated scores with ranges ·
+  AI pipeline + gold-set gate · test results) plus optional showcase (interactive/graded MCQ, timed Exam
+  Mode with honest capacity gating, the live interleaving toggle + the interactive "How this differs from
+  FSRS" explainer with the honest "ablation pre-registered, not yet run" caveat, and observed Performance
+  from in-app Exam-Mode answers). Stale bits corrected (engine SHA `ea3acae → 4c991c9`; expanded the
+  vs-base-Anki table, pre-flight, honesty framing, runnable proofs/gates incl. `make bench`'s next-card
+  cycle p95 0.33 ms @ 50k). The Milestone-1 appendix is preserved verbatim. No engine/submodule change.
+  (`f15cubing/speedrun#58`.)
 
 - **v0.4.0 desktop release** (fast lane; release + docs) — a fresh self-contained macOS installer
   (`GRE-Anki-v0.4.0-arm64.dmg`, Apple Silicon, ad-hoc signed, ~236 MB) rebuilt from the pinned wheels
