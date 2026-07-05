@@ -496,7 +496,7 @@ _Last updated: 2026-07-05 (Sun) — merged **GRE Home + 70% exam-mode coverage l
   `docs/superpowers/specs/2026-07-05-algorithm-explainer-page-design.md`.
 
 - **Observed Performance on the desktop dashboard** (fast lane; `anki` Qt-UI + pure view-model,
-  read-only) — **wired + verified locally; not yet committed/PR'd (see note).** The dashboard's
+  read-only) — **SHIPPED — live in `main` via the anki pin (see status note).** The dashboard's
   Performance slot no longer shows the stale "Arrives Thursday" placeholder: `greExamSubmit` already
   persists per-item attempts to a profile side-file (`gre_exam_results.jsonl`, never the collection),
   and the read-only `greDashboardData` handler now pools them via new pure helpers in
@@ -509,9 +509,11 @@ _Last updated: 2026-07-05 (Sun) — merged **GRE Home + 70% exam-mode coverage l
   full `check_pytest_aqt` green, the two dashboard test files **23/23** (9 new observed-Performance +
   side-file tests). Docs updated (`qt.md` § Observed Performance, `models/performance.md` § Live
   surface). **Follow-ups:** carry observed Performance into the synced `gre_scorecard` (Android panel
-  still `not_available`); live GUI smoke of the slot with a real timed mock. **Ship note:** the shared
-  working tree has unrelated uncommitted deck-migration WIP in `anki/qt/aqt/mediasrv.py`; the commit/PR
-  must isolate from it (worktree) so that WIP isn't captured.
+  still `not_available`); live GUI smoke of the slot with a real timed mock. **Status note (2026-07-05):**
+  this feature is now live in `main` via the anki pin (`dashboard_data.observed_performance` /
+  `load_exam_attempts` + the `ScoreSlot` `observed` state are present in the pinned engine). The earlier
+  standalone commits were **superseded** and are preserved as `backup/observed-perf-dash` /
+  `backup/observed-perf-method` (outer) + `backup/observed-perf-anki` (anki fork) — nothing to merge.
 - **Exam Mode API-error fix** (fast lane; `anki`→`d9684c4`) — **open PR (overnight; do not
   auto-merge).** Fixes the 403 that broke *every* Exam Mode mock (exam page posted
   `Content-Type: application/json`, which `mediasrv` 403s before auth; switched to
