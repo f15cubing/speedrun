@@ -4,7 +4,16 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids Anki's dev WebEngine debugger on 8080) + `doctor`/`status` now identify a foreign port holder & suggest a free port. Prior: sync operator tooling (`make sync-up` + status/verify/down/reset/urls/doctor); MCQ deck re-bundle + `GRE_DECK_VERSION`→`2026-07-03b`._
+_Last updated: 2026-07-05 (Sun) — reconciled stale current-pin doc claims to the actual submodule pins (`anki@6d05314`, `Anki-Android@c6d02501`, `Anki-Android-Backend@3dc30c2`); confirmed all three pins are pushed and that `Anki-Android@c6d02501` is the complete fork tip (mastery binding → auto-import → LaTeX → Task-7 panel → interactive-MCQ deck) — no pin regression. Prior: sync default port moved 8080→8452 + `doctor`/`status` foreign-holder diagnostics; sync operator tooling; MCQ deck re-bundle + `GRE_DECK_VERSION`→`2026-07-03b`._
+
+- **Current-pin doc reconciliation** (fast lane; docs only) — `README.md` "Pinned upstream versions" and
+  `docs/submission-checklist.md` cited stale pins (`anki@ea3acae`, `Anki-Android@67364a7`/`78989b9e`);
+  both now state the **actual** submodule pins a fresh clone checks out: `anki@6d05314`,
+  `Anki-Android@c6d02501` (complete fork tip — verified `78989b9e` Task-7 panel is an ancestor, plus the
+  interactive-MCQ rebundle on top), `Anki-Android-Backend@3dc30c2` (built locally; bundles `anki@ea3acae`
+  whose `rslib`/Mastery-Query is unchanged through the current pin, so the phone engine matches). No
+  engine/submodule pin change (pins were already correct); the local dirty Anki-Android checkout was
+  snapped back to the pin. Historical/verified-against references left intact.
 
 - **Sync default port 8080→8452 + foreign-holder diagnostics** (fast lane; `sync/`, docs) — the sync
   server now defaults to `SYNC_PORT=8452` instead of 8080, which collided with Anki's dev WebEngine
