@@ -422,6 +422,26 @@ _Last updated: 2026-07-05 (Sun) — merged the **Readout MCQ card** (engine lane
 
 ## In flight
 
+- **GRE Home landing + 70% exam-mode coverage lock** (fast lane; Qt-UI-only; `anki`
+  `agent/gre-home-ux` → `ac5d0d0`, outer pin bump) — **built + machine-verified; open (live GUI smoke
+  + push/PR pending — `gh` auth invalid in this env).** A friendly **Home** (Tools ▸ GRE Home;
+  **auto-opens on startup**, dismissible via a `col.conf` toggle) that surfaces the **three separated
+  scores** (Memory range · observed Performance · gated Readiness — never a bare number), a **study-stats
+  strip** (cards reviewed / topics covered / exam questions answered + per-bucket bars), and a
+  one-click **Study next** that recomputes the best *studyable* topic server-side and builds/enters a
+  "GRE · Study next" filtered deck → review (a standard undoable op); plus quick links (dashboard ·
+  Exam Mode with 🔒/coverage · how-it-differs). Timed **Exam Mode is now gated to ≥70% studied topic
+  coverage** (`exam.py` `MIN_STUDIED_COVERAGE`; enforced server-side in `greExamForm`, surfaced by
+  `greExamCapacity` + a calm amber locked panel on the setup screen). Pure presentation: a composed
+  read-only `greHomeData` endpoint, `AnkiWebViewKind.GRE_HOME`, the `GreHome` dialog + bridge, and pure
+  view-model additions (`studied_coverage`/`study_next`/`stats_block`/`leaf_label`). **No
+  rslib/proto/scheduler change; read RPCs return no `OpChanges`; three scores stay separate.** Writes
+  limited to the study-next filtered deck + one `col.conf` startup flag. Green: **49 GRE pytest** (incl.
+  new coverage/study-next/stats/lock tests), `check:svelte`, sveltekit bundle (gre-home compiled), ruff
+  + prettier + eslint on changed files. **Live GUI click-through is the one human smoke step** (offscreen
+  QtWebEngine won't init headlessly). Spec:
+  `docs/superpowers/specs/2026-07-05-gre-home-and-exam-lock-design.md`.
+
 - **Live-reviewer interleaving toggle** (engine lane; `anki` fork `agent/gre-interleave-reviewer` →
   `4c991c9`, outer pin bumped) — **wires the pre-registered interleaving feature into the actual
   review loop** (previously only an algorithm + explainer demo), so interleaved↔blocked is a real,

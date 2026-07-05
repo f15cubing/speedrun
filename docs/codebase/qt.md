@@ -96,7 +96,59 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
 
 **Observed Performance (how the score goes live).** Exam Mode's `greExamSubmit` appends per-item attempts to a profile side-file (`gre_exam_results.jsonl`; never the collection). The dashboard handler pools every recorded attempt and shows Performance as the **rights-only accuracy with a Wilson range + `n`** — the honest low-`n` surface, deliberately *not* the calibrated logistic+Platt model in `scoring/performance.py` (that needs a multi-student attempt corpus; fitting it on one learner's handful of attempts would look confident exactly when it knows least). The three scores stay **separate**; Performance is never blended into Memory or Readiness. Note this is the desktop **dashboard** surface only — the synced `gre_scorecard` (Android panel) still reports Performance `not_available` (see the scoring-adapter note below); wiring observed Performance into the synced card is a documented follow-up.
 
-**Tests:** `anki/qt/tests/test_gre_dashboard_data.py` (20 unit tests covering taxonomy, Wilson, headline renorm, view-model, **observed Performance** + the side-file loader), `anki/qt/tests/test_gre_dashboard_mediasrv.py` (2 tests: route registration + endpoint read-only invariant). Outer drift guard: `tests/test_taxonomy_sync.py`.
+**Tests:** `anki/qt/tests/test_gre_dashboard_data.py` (unit tests covering taxonomy, Wilson, headline renorm, view-model, **observed Performance** + the side-file loader, **plus the Home additions**: `studied_coverage`, `study_next`, `stats_block`, `leaf_label`), `anki/qt/tests/test_gre_dashboard_mediasrv.py` (2 tests: route registration + endpoint read-only invariant). Outer drift guard: `tests/test_taxonomy_sync.py`.
+
+## GRE Home — friendly landing + study-next (implemented)
+
+A friendly landing surface (Tools ▸ **GRE Home**) that also **auto-opens on startup**. It surfaces the
+three separated scores + study stats + a one-click "study the best next topic", and links out to the
+deeper surfaces. Pure presentation over the existing read-only view-model; the only writes are a
+standard undoable filtered-deck op (study-next) and one non-undoable `col.conf` flag (startup toggle).
+
+**New files:**
+- `anki/qt/aqt/gre_home.py` — `GreHome` QDialog + a `set_bridge_command` handler for the imperative
+  actions (`gre:study`, `gre:dashboard`, `gre:exam`, `gre:method`, `gre:startup:on|off`), a
+  singleton so reopening focuses the live window, and the startup auto-open (via `profile_did_open`,
+  deferred with a `QTimer`, gated by `gre_home_show_on_startup` in `col.conf`, default on).
+- `anki/ts/routes/gre-home/+page.svelte` — the landing page (Readout identity: imports the dashboard's
+  `tokens.css`/`fonts.css` + `CalibrationStrip` + `ScoreSlot`). Fetches the composed `greHomeData`
+  payload and renders: the **Study next → {topic}** CTA, three compact score cards (Memory range +
+  Performance/Readiness via `ScoreSlot`, so Readiness stays gated — never a bare number), a **stats
+  strip** (cards reviewed / topics covered / exam questions answered + per-bucket bars), quick links
+  (dashboard · Exam Mode with 🔒/coverage · how-it-differs), and the "Show on startup" toggle.
+
+**Modified files:**
+- `anki/qt/aqt/gre/dashboard_data.py` — pure Home additions: `LEAF_LABELS`/`leaf_label`,
+  `studied_coverage`, `study_next` (best *studyable* topic: highest-weight unstudied leaf, else
+  weakest studied by Wilson lower bound), `stats_block`; `build_view_model` now also emits `stats`,
+  `study_next`, and a `label` per coverage leaf.
+- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-home")` + `greHomeData` (one composed read-only
+  payload: the dashboard view-model + the Exam-Mode coverage block + the startup flag; one mastery RPC
+  call reused for both). `_gre_dashboard_vm` factored out so the dashboard + Home compute an identical
+  view-model.
+- `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_HOME` + api-access allowlist entry.
+- `anki/qt/aqt/main.py` — Tools-menu action + startup hook via `main_window_did_init`.
+
+**Study-next flow (read → one undoable write → review).** `gre:study` recomputes the current
+`study_next` tag **server-side** (never trusts a client search string; validated against
+`all_leaf_tags`), builds/reuses a single filtered deck **"GRE · Study next"** (`tag:<leaf>
+-is:suspended`, rescheduling on → real FSRS study) via the standard
+`get_or_create_filtered_deck` → `add_or_update_filtered_deck` (an undoable `CollectionOp`), selects
+it, closes the Home, and enters review (deferred past the op's own redraw with `QTimer.singleShot(0)`;
+Anki lands on the deck overview if nothing is due).
+
+**Data flow (read-only load):** Tools ▸ GRE Home (or startup) → `GreHome` QDialog →
+`load_sveltekit_page("gre-home")` → page POSTs `greHomeData` → handler calls the read-only
+`col.mastery_query` once → `{dashboard: build_view_model(...), exam: coverage block, show_on_startup}`
+JSON. No `OpChanges` on load. Honesty ceilings inherited from the shared view-model + `ScoreSlot`:
+three scores stay separate; Readiness never a bare number; Performance an observed range or "not
+available".
+
+**Tests:** the Home view-model additions are covered in `anki/qt/tests/test_gre_dashboard_data.py`
+(`studied_coverage`, `study_next` paths, `stats_block`, `leaf_label`); the 70% lock helpers in
+`anki/qt/tests/test_gre_exam.py`. The live GUI click-through (auto-open, three cards + stats,
+study-next enters a topic review, exam lock < 70% / unlock ≥ 70%) is the one human smoke step
+(offscreen QtWebEngine won't init headlessly).
 
 ## Exam Mode — faithful GRE Math Subject Test
 
@@ -126,8 +178,10 @@ logic + items live in `anki/qt/aqt/gre/` (the `dashboard_data.py` + `taxonomy.js
 
 **Modified files (B-2):**
 - `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-exam")` + three read-only handlers:
-  `greExamCapacity` (reports feasible presets + max feasible size so the setup screen only offers
-  buildable mocks), `greExamForm` (pre-checks feasibility, then assembles a blueprint-matched form;
+  `greExamCapacity` (reports feasible presets + max feasible size **plus the studied-coverage lock
+  block** so the setup screen shows the lock state and only offers buildable mocks), `greExamForm`
+  (**enforces the 70% studied-coverage lock first** — a locked call returns an honest `locked` reason,
+  never a form — then pre-checks feasibility and assembles a blueprint-matched form;
   **never sends the answer keys to the client**; an unfillable preset returns an honest `locked`
   reason, not an internal `InsufficientItemsError` dump), and `greExamSubmit` (rights-only
   **server-side** scoring; persists an attempts side-file — not the collection — for the scoring
@@ -135,7 +189,17 @@ logic + items live in `anki/qt/aqt/gre/` (the `dashboard_data.py` + `taxonomy.js
   returns a clean `locked` reason, never a 500).
 - `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_EXAM` + api-access allowlist.
 - `anki/qt/aqt/main.py` — Tools-menu action via `main_window_did_init` (`gre_exam.py`
-  `GreExam` QDialog). Mastery-gate structure present (`EXAM_MODE_MIN_STUDIED_PCT`, 0.0 for now).
+  `GreExam` QDialog).
+
+**70% studied-coverage lock (PRD §8a — implemented).** Timed Exam Mode now unlocks only once the
+learner has studied **≥70% of the 17 ETS leaf topics** (studied coverage = ≥1 graded review per leaf;
+see `dashboard_data.studied_coverage`). This is independent of the readiness give-up gate (≥50%) — a
+timed mock helps prepared learners and wastes under-prepared ones, so the gate is intentionally
+higher. `exam.py` owns the pure helpers (`MIN_STUDIED_COVERAGE = 0.70`, `coverage_meets_threshold`,
+`coverage_lock_reason`); `mediasrv._coverage_block` shapes the lock state from a `studied_coverage`
+dict (via the read-only mastery RPC). `greExamForm` enforces it **server-side** before assembling a
+form; `greExamCapacity` returns the `coverage` block and the `gre-exam` setup screen renders a calm
+amber locked panel (coverage bar + `reason`) until unlocked. The Home mirrors the same state.
 
 **Tests:** `anki/qt/tests/test_gre_exam.py` (pace/blueprint/assembly determinism/insufficient/
 firewall/rights-only scoring/Wilson/attempts + **preset feasibility**: pool sizes, feasibility
@@ -352,4 +416,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@f3acc684` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle + graded-MCQ wrong-answer lockdown + Readout dashboard identity: bundled JetBrains Mono/Inter + math-notation calibration strip + Readout cascade: exam mode imports the bundled fonts + a big mono countdown; deck browser home restyled to the mono identity (`qt/aqt/data/web/css/deckbrowser.scss` + `deckbrowser.py`))
+Last verified against: `f15cubing/anki@ac5d0d0` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle + graded-MCQ wrong-answer lockdown + Readout dashboard identity: bundled JetBrains Mono/Inter + math-notation calibration strip + Readout cascade: exam mode imports the bundled fonts + a big mono countdown; deck browser home restyled to the mono identity (`qt/aqt/data/web/css/deckbrowser.scss` + `deckbrowser.py`) + GRE Home landing (three scores + study stats + study-next filtered deck; auto-opens on startup) + 70% studied-coverage Exam-Mode lock)
