@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GRE Math — identity directions</title>
+<!-- Preview only: fonts load from Google Fonts CDN so you can see them.
+     The shipped app will BUNDLE the chosen OFL font locally (fully offline). -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #e9ebee;
+    color: #1a1a1a;
+    font-family: Inter, -apple-system, system-ui, sans-serif;
+    padding: 28px clamp(12px, 4vw, 48px) 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .doc-head { max-width: 1200px; margin: 0 auto 24px; }
+  .doc-head h1 { font-size: 1.5rem; margin: 0 0 6px; font-weight: 600; }
+  .doc-head p { margin: 0; color: #555; max-width: 70ch; line-height: 1.5; font-size: 0.95rem; }
+  .doc-head code { background: #dfe2e6; padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
+
+  .direction { max-width: 1200px; margin: 0 auto 34px; }
+  .direction > .caption { margin: 0 0 10px; }
+  .caption .nm { font-weight: 700; font-size: 1.05rem; }
+  .caption .meta { color: #555; font-size: 0.9rem; }
+  .caption .risk { color: #7a4d00; font-size: 0.85rem; margin-top: 2px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .pair { grid-template-columns: 1fr; } }
+
+  /* ---- a rendered panel: all component styles read CSS vars set on .panel ---- */
+  .panel {
+    background: var(--bg);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    padding: 20px 20px 22px;
+    position: relative;
+    overflow: hidden;
+    font-family: var(--display-font);
+  }
+  .panel.grid::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, var(--hairline) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--hairline) 1px, transparent 1px);
+    background-size: 22px 22px;
+    opacity: var(--grid-opacity, 0.4);
+    -webkit-mask-image: radial-gradient(120% 90% at 20% 0%, #000 30%, transparent 78%);
+    mask-image: radial-gradient(120% 90% at 20% 0%, #000 30%, transparent 78%);
+    pointer-events: none;
+  }
+  .panel > * { position: relative; }
+
+  .mode-tag {
+    position: absolute; top: 10px; right: 12px;
+    font-family: var(--mono-font); font-size: 0.62rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); opacity: 0.8;
+  }
+
+  .eyebrow {
+    font-family: var(--mono-font);
+    font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .title { font-size: 1.9rem; font-weight: 700; line-height: 1; margin: 0 0 2px; letter-spacing: -0.01em; }
+  .title.mono { font-family: var(--mono-font); letter-spacing: -0.02em; }
+
+  .swatches { display: flex; gap: 6px; margin: 14px 0 16px; flex-wrap: wrap; }
+  .sw { width: 44px; }
+  .sw .chip { height: 26px; border-radius: 6px; border: 1px solid rgba(128,128,128,0.28); }
+  .sw .hx { font-family: var(--mono-font); font-size: 0.52rem; color: var(--muted); margin-top: 3px; text-align: center; letter-spacing: 0.02em; }
+
+  .specimen { margin: 4px 0 18px; padding-bottom: 14px; border-bottom: 1px solid var(--hairline); }
+  .specimen .big { font-size: 1.15rem; font-weight: 500; }
+  .specimen .data {
+    font-family: var(--mono-font); font-variant-numeric: tabular-nums;
+    font-size: 1.35rem; font-weight: 600; margin-top: 4px; color: var(--ink);
+  }
+  .specimen .data .ci { color: var(--muted); font-size: 0.95rem; font-weight: 400; }
+  .specimen .fn { color: var(--muted); font-size: 0.75rem; font-family: var(--mono-font); }
+
+  /* calibration strip */
+  .strip { margin: 12px 0; }
+  .strip .lab { font-size: 0.82rem; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: baseline; }
+  .strip .lab .best { font-family: var(--mono-font); font-size: 0.6rem; letter-spacing: 0.1em; color: var(--abstain); text-transform: uppercase; }
+  .track {
+    position: relative; height: 14px; border-radius: 999px;
+    background: var(--sunk); border: 1px solid var(--hairline); overflow: hidden;
+  }
+  .track.grad::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(90deg, var(--hairline) 0 1px, transparent 1px 10%);
+    opacity: 0.9; pointer-events: none;
+  }
+  .band { position: absolute; top: 0; bottom: 0; background: var(--band); }
+  .band.glow { box-shadow: 0 0 10px 0 var(--band); }
+  .tick { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--accent); transform: translateX(-1px); }
+  .track.empty { background: repeating-linear-gradient(90deg, transparent 0 5px, var(--hairline) 5px 7px); border-style: dashed; }
+  .readout { display: flex; gap: 8px; align-items: baseline; margin-top: 5px; font-family: var(--mono-font); font-variant-numeric: tabular-nums; }
+  .readout .pt { color: var(--ink); font-weight: 600; }
+  .readout .rg, .readout .nn { color: var(--muted); font-size: 0.78rem; }
+  .readout .empty-lab { color: var(--muted); font-family: var(--display-font); font-size: 0.82rem; }
+
+  /* abstain slot */
+  .slot { margin-top: 16px; border: 1px solid var(--hairline); border-radius: 10px; padding: 12px 14px; background: var(--sunk); }
+  .slot .badge {
+    display: inline-block; font-family: var(--mono-font); font-size: 0.6rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--abstain); border: 1px solid var(--abstain);
+    background: var(--abstain-weak); padding: 2px 7px; border-radius: 5px;
+  }
+  .slot .sname { font-family: var(--mono-font); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+  .slot .body { font-size: 0.85rem; color: var(--ink); margin-top: 7px; line-height: 1.45; }
+  .slot .next { font-family: var(--mono-font); font-size: 0.78rem; margin-top: 6px; color: var(--muted); }
+  .slot .next b { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="doc-head">
+  <h1>GRE Math — three identity directions</h1>
+  <p>Pick the one that feels right; I'll refine it into the shared token system, then cascade it to
+  the dashboard, exam mode, MCQ card, and deck browser. Each direction keeps every honesty rule
+  (range never a point, teal-ish signal + <b>amber</b> abstain, tabular-mono numerals, light + dark).
+  The difference is the <i>metaphor</i>, the <i>type</i>, and the one aesthetic risk. Fonts here load
+  from a CDN for preview only — the shipped app bundles the chosen font locally (offline).</p>
+</div>
+<div id="root"></div>
+
+<script>
+const SAMPLE = { /* verbatim from the brief so it reads real */
+  eyebrow: "GRE · MATHEMATICS SUBJECT TEST",
+};
+
+const directions = [
+  {
+    id: "graticule",
+    name: "A · Graticule",
+    metaphor: "An oscilloscope / analyzer screen. The confidence band is a trace on a graticule; ticks are scope divisions.",
+    risk: "Risk: a faint graticule grid + division-marked axes, dark-instrument-first (calibrated cyan-teal, not acid green).",
+    fonts: { display: "'Space Grotesk', sans-serif", mono: "'Space Mono', monospace" },
+    grid: true, grad: true, glow: true, titleMono: false,
+    dark: { bg:"#0c1618", sunk:"#0a1315", ink:"#dbeae7", muted:"#6f8a88", hairline:"#20403f", accent:"#33c9c2", band:"rgba(51,201,194,0.20)", abstain:"#f0b429", abstainWeak:"rgba(240,180,41,0.12)" },
+    light:{ bg:"#f3f7f6", sunk:"#e7efed", ink:"#12211f", muted:"#5a6f6d", hairline:"#cbdedb", accent:"#0e8f86", band:"rgba(14,143,134,0.16)", abstain:"#b06a00", abstainWeak:"rgba(176,106,0,0.10)" },
+  },
+  {
+    id: "vernier",
+    name: "B · Vernier",
+    metaphor: "Engineering paper + a vernier caliper. Every interval is literally measured — graduation ticks along each axis.",
+    risk: "Risk: vernier graduation ticks as the repeated motif + a cool blueprint grid (cool paper, never warm cream).",
+    fonts: { display: "'Archivo', sans-serif", mono: "'IBM Plex Mono', monospace" },
+    grid: true, grad: true, glow: false, titleMono: false, gridOpacity: 0.5,
+    light:{ bg:"#eef1f4", sunk:"#e3e9ee", ink:"#1c2a33", muted:"#5c6f7c", hairline:"#c2d0da", accent:"#12707d", band:"rgba(18,112,125,0.15)", abstain:"#a96700", abstainWeak:"rgba(169,103,0,0.10)" },
+    dark: { bg:"#141b20", sunk:"#1a232a", ink:"#dbe6ec", muted:"#8ba0ad", hairline:"#2c3a44", accent:"#2ba7b3", band:"rgba(43,167,179,0.20)", abstain:"#d99a3f", abstainWeak:"rgba(217,154,63,0.12)" },
+  },
+  {
+    id: "readout",
+    name: "C · Readout",
+    metaphor: "A CAS / terminal printout. The monospaced data face is the hero — the whole page speaks in the instrument's voice.",
+    risk: "Risk: mono-as-hero (headline, labels, numbers all monospaced); intervals written CAS-style. Clean, no grid.",
+    fonts: { display: "'Inter', sans-serif", mono: "'JetBrains Mono', monospace" },
+    grid: false, grad: false, glow: false, titleMono: true,
+    light:{ bg:"#fbfbfa", sunk:"#f0f0ee", ink:"#191a1a", muted:"#6a6a68", hairline:"#dededb", accent:"#0a7d78", band:"rgba(10,125,120,0.14)", abstain:"#9c6200", abstainWeak:"rgba(156,98,0,0.09)" },
+    dark: { bg:"#14161a", sunk:"#1b1e23", ink:"#e6e7e9", muted:"#8b8f96", hairline:"#2a2e35", accent:"#34c0b8", band:"rgba(52,192,184,0.18)", abstain:"#d59a3c", abstainWeak:"rgba(213,154,60,0.12)" },
+  },
+];
+
+function tokenStyle(d, mode) {
+  const t = d[mode];
+  return [
+    `--bg:${t.bg}`, `--sunk:${t.sunk}`, `--ink:${t.ink}`, `--muted:${t.muted}`,
+    `--hairline:${t.hairline}`, `--accent:${t.accent}`, `--band:${t.band}`,
+    `--abstain:${t.abstain}`, `--abstain-weak:${t.abstainWeak}`,
+    `--display-font:${d.fonts.display}`, `--mono-font:${d.fonts.mono}`,
+    `--grid-opacity:${d.gridOpacity ?? 0.4}`,
+  ].join(";");
+}
+
+function swatches(d, mode) {
+  const t = d[mode];
+  const items = [["ink",t.ink],["surface",t.bg],["hairline",t.hairline],["signal",t.accent],["abstain",t.abstain],["sunk",t.sunk]];
+  return `<div class="swatches">${items.map(([nm,hx]) =>
+    `<div class="sw"><div class="chip" style="background:${hx}"></div><div class="hx">${hx}</div></div>`).join("")}</div>`;
+}
+
+function strip({label, best, point, low, high, n, grad, glow, empty}) {
+  if (empty) {
+    return `<div class="strip">
+      <div class="lab"><span>${label}</span>${best?`<span class="best">◀ best next</span>`:""}</div>
+      <div class="track empty"></div>
+      <div class="readout"><span class="empty-lab">not studied yet</span></div>
+    </div>`;
+  }
+  const left = low, width = high - low, tick = point;
+  return `<div class="strip">
+    <div class="lab"><span>${label}</span></div>
+    <div class="track ${grad?'grad':''}">
+      <div class="band ${glow?'glow':''}" style="left:${left}%;width:${width}%"></div>
+      <div class="tick" style="left:${tick}%"></div>
+    </div>
+    <div class="readout"><span class="pt">${point}%</span><span class="rg">${low}–${high}%</span><span class="nn">n=${n}</span></div>
+  </div>`;
+}
+
+function panel(d, mode) {
+  const titleClass = d.titleMono ? "title mono" : "title";
+  const ci = d.id === "readout" ? `<span class="ci">∈ [54, 66]</span>` : `<span class="ci">54–66%</span>`;
+  return `<div class="panel ${d.grid?'grid':''}" style="${tokenStyle(d, mode)}">
+    <div class="mode-tag">${mode}</div>
+    <div class="eyebrow">${SAMPLE.eyebrow}</div>
+    <div class="${titleClass}">Readiness</div>
+
+    ${swatches(d, mode)}
+
+    <div class="specimen">
+      <div class="big">You can reliably recall about <b>60%</b> of what you've studied.</div>
+      <div class="data">60% ${ci} <span class="fn">n=238</span></div>
+    </div>
+
+    ${strip({label:"Memory · headline", point:60, low:54, high:66, n:238, grad:d.grad, glow:d.glow})}
+    ${strip({label:"differential single", point:78, low:70, high:86, n:52, grad:d.grad, glow:d.glow})}
+    ${strip({label:"real analysis", best:true, empty:true})}
+
+    <div class="slot">
+      <div class="sname">Readiness</div>
+      <span class="badge">Insufficient evidence</span>
+      <div class="body">Insufficient evidence to score a projected exam result — you've studied 41% of the exam's topics. That's the honest output, not a gap to paper over.</div>
+      <div class="next">best next → <b>real analysis</b></div>
+    </div>
+  </div>`;
+}
+
+const root = document.getElementById("root");
+root.innerHTML = directions.map(d => `
+  <div class="direction">
+    <div class="caption">
+      <div class="nm">${d.name}</div>
+      <div class="meta">${d.metaphor} &nbsp;·&nbsp; type: ${d.fonts.display.split(",")[0].replace(/'/g,"")} + ${d.fonts.mono.split(",")[0].replace(/'/g,"")}</div>
+      <div class="risk">${d.risk}</div>
+    </div>
+    <div class="pair">${panel(d,"light")}${panel(d,"dark")}</div>
+  </div>
+`).join("");
+</script>
+</body>
+</html>

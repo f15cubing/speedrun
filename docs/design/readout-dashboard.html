@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Readiness — Readout identity mock</title>
+<!-- Preview only: fonts via CDN. Shipped app bundles JetBrains Mono + Inter locally (offline). -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #d9dbdf; padding: 24px clamp(10px,3vw,40px) 70px; }
+  .head { max-width: 1180px; margin: 0 auto 18px; font-family: Inter, system-ui, sans-serif; }
+  .head h1 { margin: 0 0 5px; font-size: 1.35rem; }
+  .head p { margin: 0; color: #555; max-width: 78ch; line-height: 1.5; font-size: 0.92rem; }
+  .grid2 { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* ---------- Readout identity tokens ---------- */
+  .app {
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    --body: 'Inter', -apple-system, system-ui, sans-serif;
+    background: var(--bg); color: var(--ink);
+    border-radius: 14px; border: 1px solid var(--hairline);
+    padding: 22px clamp(14px, 3vw, 26px) 26px;
+    font-family: var(--body);
+  }
+  .app.light {
+    --bg:#fbfbfa; --surface:#ffffff; --sunk:#f0f0ee; --ink:#191a1a; --muted:#6a6a68; --faint:#9a9a97;
+    --hairline:#dededb; --accent:#0a7d78; --band:rgba(10,125,120,0.15);
+    --abstain:#9c6200; --abstain-weak:rgba(156,98,0,0.09); --abstain-band:rgba(156,98,0,0.13);
+  }
+  .app.dark {
+    --bg:#14161a; --surface:#1b1e23; --sunk:#191c21; --ink:#e6e7e9; --muted:#8b8f96; --faint:#61656d;
+    --hairline:#2a2e35; --accent:#34c0b8; --band:rgba(52,192,184,0.20);
+    --abstain:#d59a3c; --abstain-weak:rgba(213,154,60,0.12); --abstain-band:rgba(213,154,60,0.18);
+  }
+
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .app .eyebrow { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); }
+
+  /* masthead */
+  .masthead { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 14px; border-bottom: 1px solid var(--hairline); }
+  .masthead .title { font-family: var(--mono); font-weight: 700; font-size: 2rem; letter-spacing: -0.03em; line-height: 1; margin-top: 3px; }
+  .masthead .stamp { font-family: var(--mono); font-size: 0.66rem; color: var(--faint); text-align: right; }
+
+  .section { padding: 16px 0; border-bottom: 1px solid var(--hairline); }
+  .section:last-child { border-bottom: 0; }
+  .sec-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+
+  .lede { font-size: 0.95rem; line-height: 1.5; }
+  .lede b { font-weight: 600; }
+  .caveat { font-size: 0.8rem; color: var(--muted); line-height: 1.45; margin-top: 8px; }
+
+  /* the printout strip */
+  .strip { margin: 12px 0 4px; }
+  .track { position: relative; height: 12px; border-radius: 999px; background: var(--sunk); border: 1px solid var(--hairline); overflow: hidden; }
+  .track.mini { height: 8px; }
+  .band { position: absolute; top: 0; bottom: 0; background: var(--band); }
+  .tick { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--accent); transform: translateX(-1px); }
+  .track.empty { background: repeating-linear-gradient(90deg, transparent 0 5px, var(--hairline) 5px 7px); border-style: dashed; }
+  .abstain .band { background: var(--abstain-band); }
+  .abstain .tick { background: var(--abstain); }
+
+  .readout { font-family: var(--mono); font-variant-numeric: tabular-nums; display: flex; gap: 10px; align-items: baseline; margin-top: 6px; }
+  .readout .pt { font-weight: 700; font-size: 1.25rem; }
+  .readout .in { color: var(--muted); }
+  .readout .nn { color: var(--faint); font-size: 0.8rem; }
+  .readout .method { margin-left: auto; color: var(--faint); font-size: 0.64rem; letter-spacing: 0.04em; }
+
+  /* areas table */
+  .rows { display: grid; gap: 2px; margin-top: 6px; }
+  .arow { display: grid; grid-template-columns: 1.15fr 62px 1fr 132px; gap: 10px; align-items: center; padding: 7px 0; }
+  .arow .an { font-family: var(--mono); font-size: 0.82rem; }
+  .arow .aw { font-family: var(--mono); font-size: 0.68rem; color: var(--faint); }
+  .arow .av { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.8rem; text-align: right; white-space: nowrap; }
+  .arow .av .rg { color: var(--muted); }
+  .arow .av .nn { color: var(--faint); }
+  .arow .av .none { color: var(--faint); }
+
+  /* three score slots */
+  .slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 6px; }
+  @media (max-width: 520px) { .slots { grid-template-columns: 1fr; } }
+  .slot { border: 1px solid var(--hairline); border-radius: 10px; padding: 12px; background: var(--surface); display: flex; flex-direction: column; min-height: 132px; }
+  .slot .nm { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .slot .val { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1.3rem; margin-top: 8px; }
+  .slot .val .in { display: block; font-size: 0.74rem; font-weight: 400; color: var(--muted); margin-top: 2px; }
+  .slot .badge { align-self: flex-start; font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 7px; border-radius: 5px; margin-top: 8px; border: 1px solid var(--muted); color: var(--muted); }
+  .slot.abstain .badge { color: var(--abstain); border-color: var(--abstain); background: var(--abstain-weak); }
+  .slot .sbody { font-size: 0.76rem; color: var(--ink); line-height: 1.45; margin-top: 8px; }
+  .slot .next { font-family: var(--mono); font-size: 0.72rem; margin-top: auto; padding-top: 8px; color: var(--muted); }
+  .slot .next b { color: var(--abstain); }
+
+  .reasons { font-size: 0.74rem; color: var(--muted); line-height: 1.5; margin-top: 10px; }
+  .reasons .rl { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); margin-bottom: 3px; }
+
+  /* coverage map */
+  .cov-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .cov-stats { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .cov-group { margin-top: 12px; }
+  .cov-group .gh { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--hairline); padding-bottom: 4px; margin-bottom: 4px; }
+  .crow { display: grid; grid-template-columns: 1.3fr 78px 150px; gap: 10px; align-items: center; padding: 5px 4px; border-radius: 6px; }
+  .crow .cn { font-family: var(--mono); font-size: 0.78rem; }
+  .crow .cv { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 0.74rem; text-align: right; white-space: nowrap; }
+  .crow .cv .rg { color: var(--muted); }
+  .crow .cv .nn { color: var(--faint); }
+  .crow.dim { opacity: 0.42; }
+  .crow.dim .cv { color: var(--faint); }
+  .crow .nostudy { color: var(--faint); }
+  .crow.best { background: var(--abstain-weak); box-shadow: inset 2px 0 0 var(--abstain); }
+  .crow.best .cn::after { content: " ◀ best next"; color: var(--abstain); font-size: 0.6rem; letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Readiness dashboard — “Readout” identity</h1>
+  <p>The hero surface, mono-as-hero, in light + dark, with the brief’s exact sample data. Every figure
+  is a range in math notation with a faint method tag (it “shows its work”); the abstain states are
+  amber and calm; numbers column-align like an instrument log. This is a static mock for approval —
+  not wired to data.</p>
+</div>
+<div class="grid2" id="root"></div>
+
+<script>
+const areas = [
+  { n:"Calculus", w:"50% of exam", pt:62, lo:56, hi:68, nn:174 },
+  { n:"Algebra", w:"25% of exam", pt:55, lo:45, hi:65, nn:64 },
+  { n:"Additional topics", w:"25% of exam", none:true, nn:0 },
+];
+const coverage = [
+  ["Calculus", [
+    ["differential single", 78,70,86,52],
+    ["integral single", 69,60,78,41],
+    ["integral multi", 51,38,64,24],
+    ["differential multi", 44,30,58,22],
+    ["applications", 55,44,66,35],
+    ["differential equations", "nostudy"],
+  ]],
+  ["Algebra", [
+    ["elementary", 61,50,72,38],
+    ["linear", 47,34,60,26],
+    ["abstract", "nostudy"],
+    ["number theory", "nostudy"],
+  ]],
+  ["Additional topics", [
+    ["real analysis", "best"],
+    ["discrete", "nostudy"],
+    ["topology", "nocards"],
+    ["geometry", "nostudy"],
+    ["complex", "nostudy"],
+    ["probability & statistics", "nostudy"],
+    ["numerical analysis", "nocards"],
+  ]],
+];
+
+const pct = v => (v/100*100).toFixed(0);
+function strip(pt, lo, hi, mini, tone) {
+  return `<div class="track ${mini?'mini':''} ${tone||''}">
+    <div class="band" style="left:${lo}%;width:${hi-lo}%"></div>
+    <div class="tick" style="left:${pt}%"></div></div>`;
+}
+function emptyStrip(mini){ return `<div class="track ${mini?'mini':''} empty"></div>`; }
+
+function coverageRow(item) {
+  const [name, a] = item;
+  if (a === "nocards") return `<div class="crow dim"><div class="cn">${name}</div><div>${emptyStrip(true)}</div><div class="cv none">no cards</div></div>`;
+  if (a === "nostudy") return `<div class="crow"><div class="cn">${name}</div><div>${emptyStrip(true)}</div><div class="cv nostudy">not studied yet</div></div>`;
+  if (a === "best") return `<div class="crow best"><div class="cn">${name}</div><div>${emptyStrip(true)}</div><div class="cv nostudy">not studied yet</div></div>`;
+  const [ , pt, lo, hi, nn] = item; // name, pt, lo, hi, nn
+  return `<div class="crow"><div class="cn">${name}</div><div>${strip(pt,lo,hi,true)}</div>
+    <div class="cv">${pt}% <span class="rg">∈[${lo},${hi}]</span> <span class="nn">n=${nn}</span></div></div>`;
+}
+
+function dashboard(mode) {
+  const areaRows = areas.map(a => `
+    <div class="arow">
+      <div class="an">${a.n}</div>
+      <div class="aw">${a.w}</div>
+      <div>${a.none ? emptyStrip(true) : strip(a.pt,a.lo,a.hi,true)}</div>
+      <div class="av">${a.none ? `<span class="none">not studied · n=0</span>` : `${a.pt}% <span class="rg">∈[${a.lo},${a.hi}]</span> <span class="nn">n=${a.nn}</span>`}</div>
+    </div>`).join("");
+
+  const covGroups = coverage.map(([g, items]) => `
+    <div class="cov-group"><div class="gh">${g}</div>${items.map(coverageRow).join("")}</div>`).join("");
+
+  return `<div class="app ${mode}">
+    <div class="masthead">
+      <div>
+        <div class="eyebrow">GRE · MATHEMATICS SUBJECT TEST</div>
+        <div class="title">Readiness</div>
+      </div>
+      <div class="stamp">updated<br>Jul 3, 2026 · 4:02 PM</div>
+    </div>
+
+    <div class="section">
+      <div class="sec-label">Memory · P(recall now)</div>
+      <div class="lede">You can reliably recall about <b>60%</b> of what you’ve studied.</div>
+      <div class="strip">${strip(60,54,66)}</div>
+      <div class="readout"><span class="pt">0.60</span><span class="in">∈ [0.54, 0.66]</span><span class="nn">n=238</span><span class="method">Wilson</span></div>
+      <div class="caveat">Headline reflects 2 of 3 exam areas — the rest have no graded reviews yet.</div>
+      <div class="rows">${areaRows}</div>
+      <div class="caveat">Aggregate-calibrated on population defaults — not a personalized model.</div>
+    </div>
+
+    <div class="section">
+      <div class="sec-label">Three scores · never summed</div>
+      <div class="slots">
+        <div class="slot">
+          <div class="nm">Memory</div>
+          <div class="val">60%<span class="in">∈ [54, 66] · n=238</span></div>
+          <div class="sbody">P(you recall a studied card right now).</div>
+        </div>
+        <div class="slot">
+          <div class="nm">Performance</div>
+          <div class="badge">Not available yet</div>
+          <div class="sbody">Arrives with the multiple-choice surface.</div>
+        </div>
+        <div class="slot abstain">
+          <div class="nm">Readiness</div>
+          <div class="badge">Insufficient evidence</div>
+          <div class="sbody">Insufficient evidence to score a projected exam result — you’ve studied 41% of the exam’s topics. That’s the honest output, not a gap to paper over.</div>
+          <div class="next">best next → <b>real analysis</b></div>
+        </div>
+      </div>
+      <div class="reasons"><div class="rl">why gated</div>
+        41% of exam topics studied (need ≥ 50%) · &lt; 200 graded reviews in some areas · projection interval still too wide to be useful.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="cov-head"><div class="sec-label">Coverage · 17 leaf topics</div>
+        <div class="cov-stats">88% in deck · 41% studied</div></div>
+      ${covGroups}
+    </div>
+  </div>`;
+}
+
+document.getElementById("root").innerHTML = dashboard("light") + dashboard("dark");
+</script>
+</body>
+</html>
