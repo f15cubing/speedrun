@@ -1679,3 +1679,1040 @@ items:
   status: verified
   verified_by: fc
   verified_on: '2026-07-02'
+- id: eval-p0-gen-0001
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(19 x + 12\right)\,dx\)'
+  options:
+  - \(19\)
+  - \(\frac{19 x^{2}}{2} + 12 x\)
+  - \(19 x + 12\)
+  - \(- \frac{19 x^{2}}{2} - 12 x\)
+  - \(19 x^{2} + 24 x\)
+  correct_index: 1
+  explanation: \(F(x) = \frac{19 x^{2}}{2} + 12 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0002
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(19 x + 20\right)\,dx\)'
+  options:
+  - \(\frac{19 x^{2}}{2} + 20 x\)
+  - \(19\)
+  - \(19 x + 20\)
+  - \(- \frac{19 x^{2}}{2} - 20 x\)
+  - \(19 x^{2} + 40 x\)
+  correct_index: 0
+  explanation: \(F(x) = \frac{19 x^{2}}{2} + 20 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0003
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(23 x + 20\right)\,dx\)'
+  options:
+  - \(23\)
+  - \(\frac{23 x^{2}}{2} + 20 x\)
+  - \(23 x + 20\)
+  - \(- \frac{23 x^{2}}{2} - 20 x\)
+  - \(23 x^{2} + 40 x\)
+  correct_index: 1
+  explanation: \(F(x) = \frac{23 x^{2}}{2} + 20 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0004
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(9 x + 20\right)\,dx\)'
+  options:
+  - \(9\)
+  - \(\frac{9 x^{2}}{2} + 20 x\)
+  - \(9 x + 20\)
+  - \(- \frac{9 x^{2}}{2} - 20 x\)
+  - \(9 x^{2} + 40 x\)
+  correct_index: 1
+  explanation: \(F(x) = \frac{9 x^{2}}{2} + 20 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0005
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(15 x + 13\right)\,dx\)'
+  options:
+  - \(15\)
+  - \(\frac{15 x^{2}}{2} + 13 x\)
+  - \(15 x + 13\)
+  - \(- \frac{15 x^{2}}{2} - 13 x\)
+  - \(15 x^{2} + 26 x\)
+  correct_index: 1
+  explanation: \(F(x) = \frac{15 x^{2}}{2} + 13 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0006
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(17 x + 14\right)\,dx\)'
+  options:
+  - \(17\)
+  - \(17 x + 14\)
+  - \(\frac{17 x^{2}}{2} + 14 x\)
+  - \(- \frac{17 x^{2}}{2} - 14 x\)
+  - \(17 x^{2} + 28 x\)
+  correct_index: 2
+  explanation: \(F(x) = \frac{17 x^{2}}{2} + 14 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0007
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(13 x + 12\right)\,dx\)'
+  options:
+  - \(\frac{13 x^{2}}{2} + 12 x\)
+  - \(13\)
+  - \(13 x + 12\)
+  - \(- \frac{13 x^{2}}{2} - 12 x\)
+  - \(13 x^{2} + 24 x\)
+  correct_index: 0
+  explanation: \(F(x) = \frac{13 x^{2}}{2} + 12 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0008
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(11 x + 11\right)\,dx\)'
+  options:
+  - \(11\)
+  - \(11 x + 11\)
+  - \(- \frac{11 x^{2}}{2} - 11 x\)
+  - \(\frac{11 x^{2}}{2} + 11 x\)
+  - \(11 x^{2} + 22 x\)
+  correct_index: 3
+  explanation: \(F(x) = \frac{11 x^{2}}{2} + 11 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0009
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(8 x + 8\right)\,dx\)'
+  options:
+  - \(8\)
+  - \(8 x + 8\)
+  - \(- 4 x^{2} - 8 x\)
+  - \(4 x^{2} + 8 x\)
+  - \(8 x^{2} + 16 x\)
+  correct_index: 3
+  explanation: \(F(x) = 4 x^{2} + 8 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0010
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(14 x + 24\right)\,dx\)'
+  options:
+  - \(7 x^{2} + 24 x\)
+  - \(14\)
+  - \(14 x + 24\)
+  - \(- 7 x^{2} - 24 x\)
+  - \(14 x^{2} + 48 x\)
+  correct_index: 0
+  explanation: \(F(x) = 7 x^{2} + 24 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0011
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(20 x + 22\right)\,dx\)'
+  options:
+  - \(20\)
+  - \(20 x + 22\)
+  - \(- 10 x^{2} - 22 x\)
+  - \(10 x^{2} + 22 x\)
+  - \(20 x^{2} + 44 x\)
+  correct_index: 3
+  explanation: \(F(x) = 10 x^{2} + 22 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0012
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(7 x + 17\right)\,dx\)'
+  options:
+  - \(7\)
+  - \(\frac{7 x^{2}}{2} + 17 x\)
+  - \(7 x + 17\)
+  - \(- \frac{7 x^{2}}{2} - 17 x\)
+  - \(7 x^{2} + 34 x\)
+  correct_index: 1
+  explanation: \(F(x) = \frac{7 x^{2}}{2} + 17 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0013
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(18 x + 12\right)\,dx\)'
+  options:
+  - \(18\)
+  - \(18 x + 12\)
+  - \(- 9 x^{2} - 12 x\)
+  - \(18 x^{2} + 24 x\)
+  - \(9 x^{2} + 12 x\)
+  correct_index: 4
+  explanation: \(F(x) = 9 x^{2} + 12 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0014
+  leaf_tag: topic::calculus::integral_single
+  format: mcq
+  question: 'Give the antiderivative (omit + C):  \(\int \left(13 x + 23\right)\,dx\)'
+  options:
+  - \(13\)
+  - \(13 x + 23\)
+  - \(- \frac{13 x^{2}}{2} - 23 x\)
+  - \(13 x^{2} + 46 x\)
+  - \(\frac{13 x^{2}}{2} + 23 x\)
+  correct_index: 4
+  explanation: \(F(x) = \frac{13 x^{2}}{2} + 23 x + C\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0015
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 24 x^{2}\)'
+  options:
+  - \(8 x^{3}\)
+  - \(48\)
+  - \(48 x\)
+  - \(- 48 x\)
+  - \(96 x\)
+  correct_index: 2
+  explanation: \(f'(x) = 48 x\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0016
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 20 x^{4}\)'
+  options:
+  - \(4 x^{5}\)
+  - \(240 x^{2}\)
+  - \(- 80 x^{3}\)
+  - \(80 x^{3}\)
+  - \(160 x^{3}\)
+  correct_index: 3
+  explanation: \(f'(x) = 80 x^{3}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0017
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 23 x^{3}\)'
+  options:
+  - \(\frac{23 x^{4}}{4}\)
+  - \(138 x\)
+  - \(- 69 x^{2}\)
+  - \(138 x^{2}\)
+  - \(69 x^{2}\)
+  correct_index: 4
+  explanation: \(f'(x) = 69 x^{2}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0018
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 18 x^{4}\)'
+  options:
+  - \(\frac{18 x^{5}}{5}\)
+  - \(216 x^{2}\)
+  - \(- 72 x^{3}\)
+  - \(144 x^{3}\)
+  - \(72 x^{3}\)
+  correct_index: 4
+  explanation: \(f'(x) = 72 x^{3}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0019
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 16 x^{3}\)'
+  options:
+  - \(4 x^{4}\)
+  - \(96 x\)
+  - \(- 48 x^{2}\)
+  - \(48 x^{2}\)
+  - \(96 x^{2}\)
+  correct_index: 3
+  explanation: \(f'(x) = 48 x^{2}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0020
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 14 x^{3}\)'
+  options:
+  - \(\frac{7 x^{4}}{2}\)
+  - \(84 x\)
+  - \(- 42 x^{2}\)
+  - \(84 x^{2}\)
+  - \(42 x^{2}\)
+  correct_index: 4
+  explanation: \(f'(x) = 42 x^{2}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0021
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 14 x^{2}\)'
+  options:
+  - \(28 x\)
+  - \(\frac{14 x^{3}}{3}\)
+  - \(28\)
+  - \(- 28 x\)
+  - \(56 x\)
+  correct_index: 0
+  explanation: \(f'(x) = 28 x\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0022
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 14 x^{4}\)'
+  options:
+  - \(56 x^{3}\)
+  - \(\frac{14 x^{5}}{5}\)
+  - \(168 x^{2}\)
+  - \(- 56 x^{3}\)
+  - \(112 x^{3}\)
+  correct_index: 0
+  explanation: \(f'(x) = 56 x^{3}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0023
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 19 x^{3}\)'
+  options:
+  - \(\frac{19 x^{4}}{4}\)
+  - \(57 x^{2}\)
+  - \(114 x\)
+  - \(- 57 x^{2}\)
+  - \(114 x^{2}\)
+  correct_index: 1
+  explanation: \(f'(x) = 57 x^{2}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0024
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 10 x^{2}\)'
+  options:
+  - \(\frac{10 x^{3}}{3}\)
+  - \(20\)
+  - \(- 20 x\)
+  - \(40 x\)
+  - \(20 x\)
+  correct_index: 4
+  explanation: \(f'(x) = 20 x\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0025
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 7 x^{3}\)'
+  options:
+  - \(21 x^{2}\)
+  - \(\frac{7 x^{4}}{4}\)
+  - \(42 x\)
+  - \(- 21 x^{2}\)
+  - \(42 x^{2}\)
+  correct_index: 0
+  explanation: \(f'(x) = 21 x^{2}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0026
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 15 x^{4}\)'
+  options:
+  - \(60 x^{3}\)
+  - \(3 x^{5}\)
+  - \(180 x^{2}\)
+  - \(- 60 x^{3}\)
+  - \(120 x^{3}\)
+  correct_index: 0
+  explanation: \(f'(x) = 60 x^{3}\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0027
+  leaf_tag: topic::calculus::differential_single
+  format: mcq
+  question: 'Differentiate:  \(f(x) = 17 x^{2}\)'
+  options:
+  - \(\frac{17 x^{3}}{3}\)
+  - \(34 x\)
+  - \(34\)
+  - \(- 34 x\)
+  - \(68 x\)
+  correct_index: 1
+  explanation: \(f'(x) = 34 x\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0028
+  leaf_tag: topic::algebra::linear
+  format: mcq
+  question: Determinant of \(\left[\begin{matrix}14 & 10\\20 & 17\end{matrix}\right]\)?
+  options:
+  - \(438\)
+  - \(-200\)
+  - \(-38\)
+  - \(76\)
+  - \(38\)
+  correct_index: 4
+  explanation: \(\det = 38\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0029
+  leaf_tag: topic::algebra::linear
+  format: mcq
+  question: Determinant of \(\left[\begin{matrix}13 & 19\\18 & 12\end{matrix}\right]\)?
+  options:
+  - \(-186\)
+  - \(498\)
+  - \(31\)
+  - \(186\)
+  - \(-372\)
+  correct_index: 0
+  explanation: \(\det = -186\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0030
+  leaf_tag: topic::algebra::linear
+  format: mcq
+  question: Determinant of \(\left[\begin{matrix}11 & 14\\20 & 13\end{matrix}\right]\)?
+  options:
+  - \(423\)
+  - \(-106\)
+  - \(137\)
+  - \(-137\)
+  - \(-274\)
+  correct_index: 3
+  explanation: \(\det = -137\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0031
+  leaf_tag: topic::algebra::linear
+  format: mcq
+  question: Determinant of \(\left[\begin{matrix}13 & 19\\16 & 16\end{matrix}\right]\)?
+  options:
+  - \(512\)
+  - \(-9\)
+  - \(96\)
+  - \(-192\)
+  - \(-96\)
+  correct_index: 4
+  explanation: \(\det = -96\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0032
+  leaf_tag: topic::algebra::linear
+  format: mcq
+  question: Determinant of \(\left[\begin{matrix}13 & 18\\14 & 19\end{matrix}\right]\)?
+  options:
+  - \(-5\)
+  - \(499\)
+  - \(-32\)
+  - \(5\)
+  - \(-10\)
+  correct_index: 0
+  explanation: \(\det = -5\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0033
+  leaf_tag: topic::algebra::linear
+  format: mcq
+  question: Determinant of \(\left[\begin{matrix}12 & 13\\20 & 16\end{matrix}\right]\)?
+  options:
+  - \(-68\)
+  - \(452\)
+  - \(-164\)
+  - \(68\)
+  - \(-136\)
+  correct_index: 0
+  explanation: \(\det = -68\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0034
+  leaf_tag: topic::algebra::number_theory
+  format: mcq
+  question: Compute \(\gcd(60, 96)\).
+  options:
+  - \(480\)
+  - \(60\)
+  - \(24\)
+  - \(-12\)
+  - \(12\)
+  correct_index: 4
+  explanation: \(\gcd = 12\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0035
+  leaf_tag: topic::algebra::number_theory
+  format: mcq
+  question: Compute \(\gcd(120, 135)\).
+  options:
+  - \(15\)
+  - \(1080\)
+  - \(120\)
+  - \(30\)
+  - \(-15\)
+  correct_index: 0
+  explanation: \(\gcd = 15\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0036
+  leaf_tag: topic::algebra::number_theory
+  format: mcq
+  question: Compute \(\gcd(21, 28)\).
+  options:
+  - \(84\)
+  - \(7\)
+  - \(21\)
+  - \(14\)
+  - \(-7\)
+  correct_index: 1
+  explanation: \(\gcd = 7\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0037
+  leaf_tag: topic::algebra::number_theory
+  format: mcq
+  question: Compute \(\gcd(84, 60)\).
+  options:
+  - \(12\)
+  - \(420\)
+  - \(60\)
+  - \(24\)
+  - \(-12\)
+  correct_index: 0
+  explanation: \(\gcd = 12\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0038
+  leaf_tag: topic::algebra::number_theory
+  format: mcq
+  question: Compute \(\gcd(45, 27)\).
+  options:
+  - \(9\)
+  - \(135\)
+  - \(27\)
+  - \(18\)
+  - \(-9\)
+  correct_index: 0
+  explanation: \(\gcd = 9\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0039
+  leaf_tag: topic::additional::discrete
+  format: mcq
+  question: How many ways can 4 objects be chosen from 11 when order does not matter?
+  options:
+  - \(330\)
+  - \(7920\)
+  - \(14641\)
+  - \(165\)
+  - \(-330\)
+  correct_index: 0
+  explanation: \(\binom{11}{4} = 330\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0040
+  leaf_tag: topic::additional::discrete
+  format: mcq
+  question: How many ways can 2 objects be chosen from 11 when order does not matter?
+  options:
+  - \(110\)
+  - \(121\)
+  - \(11\)
+  - \(-55\)
+  - \(55\)
+  correct_index: 4
+  explanation: \(\binom{11}{2} = 55\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0041
+  leaf_tag: topic::additional::discrete
+  format: mcq
+  question: How many ways can 3 objects be chosen from 9 when order does not matter?
+  options:
+  - \(504\)
+  - \(84\)
+  - \(729\)
+  - \(36\)
+  - \(-84\)
+  correct_index: 1
+  explanation: \(\binom{9}{3} = 84\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0042
+  leaf_tag: topic::additional::geometry
+  format: mcq
+  question: What is the area of a circle of radius \(11\)?
+  options:
+  - \(121 \pi\)
+  - \(22 \pi\)
+  - \(11 \pi\)
+  - \(\frac{121 \pi}{2}\)
+  - \(- 121 \pi\)
+  correct_index: 0
+  explanation: \(A = \pi r^2 = 121 \pi\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0043
+  leaf_tag: topic::additional::geometry
+  format: mcq
+  question: What is the area of a circle of radius \(9\)?
+  options:
+  - \(18 \pi\)
+  - \(81 \pi\)
+  - \(9 \pi\)
+  - \(\frac{81 \pi}{2}\)
+  - \(- 81 \pi\)
+  correct_index: 1
+  explanation: \(A = \pi r^2 = 81 \pi\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0044
+  leaf_tag: topic::additional::geometry
+  format: mcq
+  question: What is the area of a circle of radius \(5\)?
+  options:
+  - \(10 \pi\)
+  - \(5 \pi\)
+  - \(\frac{25 \pi}{2}\)
+  - \(25 \pi\)
+  - \(- 25 \pi\)
+  correct_index: 3
+  explanation: \(A = \pi r^2 = 25 \pi\)
+  difficulty: 2
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0045
+  leaf_tag: topic::additional::probability_stats
+  format: mcq
+  question: A jar holds 2 red and 5 blue marbles. If one is drawn at random, what
+    is \(P(\text{red})\)?
+  options:
+  - \(\frac{5}{7}\)
+  - \(\frac{2}{5}\)
+  - \(\frac{2}{7}\)
+  - \(\frac{7}{2}\)
+  - \(- \frac{2}{7}\)
+  correct_index: 2
+  explanation: \(P = \frac{2}{7}\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0046
+  leaf_tag: topic::additional::probability_stats
+  format: mcq
+  question: A jar holds 6 red and 6 blue marbles. If one is drawn at random, what
+    is \(P(\text{red})\)?
+  options:
+  - \(1\)
+  - \(2\)
+  - \(- \frac{1}{2}\)
+  - \(\frac{1}{2}\)
+  - \(\frac{3}{2}\)
+  correct_index: 3
+  explanation: \(P = \frac{1}{2}\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true
+- id: eval-p0-gen-0047
+  leaf_tag: topic::additional::probability_stats
+  format: mcq
+  question: A jar holds 5 red and 2 blue marbles. If one is drawn at random, what
+    is \(P(\text{red})\)?
+  options:
+  - \(\frac{2}{7}\)
+  - \(\frac{5}{7}\)
+  - \(\frac{5}{2}\)
+  - \(\frac{7}{5}\)
+  - \(- \frac{5}{7}\)
+  correct_index: 1
+  explanation: \(P = \frac{5}{7}\)
+  difficulty: 3
+  partition: p0
+  paraphrase_group: null
+  base_ref: null
+  src: generated
+  gen: generated
+  status: verified
+  verified_by: sympy-cas
+  verified_on: '2026-07-05'
+  demo: true

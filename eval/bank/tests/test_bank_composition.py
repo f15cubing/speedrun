@@ -20,5 +20,14 @@ def test_calc_weight_reasonable():
     assert s["calc_weight"] >= 0.30  # calc well represented (P0+P3 combined)
 
 
+def test_p0_supports_full_length_exam_blueprint():
+    # p0 must hold >= 33 calc / 17 algebra / 16 additional so Exam Mode can build
+    # the official 66-item 50/25/25 form (see anki/qt/aqt/gre/exam.py).
+    b = loader.summarize(loader.load_eval_items(partition="p0"))["by_bucket"]
+    assert b.get("calculus", 0) >= 33
+    assert b.get("algebra", 0) >= 17
+    assert b.get("additional", 0) >= 16
+
+
 def test_firewall_holds():
     loader.assert_firewall()  # no overlap with the study deck

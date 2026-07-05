@@ -207,8 +207,200 @@ def gen_p3_pairs(seed=42):
     return items
 
 
+# --------------------------------------------------------------------------- #
+# Demo items — enlarge the p0 held-out pool so Exam Mode can build the official
+# full-length (66-item) form under the 50/25/25 blueprint.
+#
+# These are deterministic and correct-by-construction (SymPy keys), authored in
+# a HIGH-COEFFICIENT / distinct-phrasing regime disjoint from the study deck so
+# `loader.assert_firewall` holds. They are labelled `gen: generated`,
+# `demo: True`, and id-prefixed `eval-p0-gen-*` so the scoring layer can exclude
+# them from real calibration folds. NOT a live-model run — same AI-off posture.
+# --------------------------------------------------------------------------- #
+_DEMO_ATTR = {
+    "src": "generated",
+    "gen": "generated",
+    "status": "verified",
+    "verified_by": "sympy-cas",
+    "verified_on": "2026-07-05",
+}
+
+# (leaf, difficulty, count). Totals: calculus 27 / algebra 11 / additional 9 ->
+# final p0 pool 35 / 18 / 18, clearing the 33 / 17 / 16 a full form needs.
+_DEMO_SPEC = [
+    ("integral_single", 2, 14),
+    ("differential_single", 2, 13),
+    ("linear", 3, 6),
+    ("number_theory", 3, 5),
+    ("discrete", 3, 3),
+    ("geometry", 2, 3),
+    ("probability_stats", 3, 3),
+]
+
+
+def _demo_record(rec_id, leaf_tag, question, options, correct_index,
+                 explanation, difficulty):
+    rec = {
+        "id": rec_id,
+        "leaf_tag": leaf_tag,
+        "format": "mcq",
+        "question": question,
+        "options": options,
+        "correct_index": correct_index,
+        "explanation": explanation,
+        "difficulty": difficulty,
+        "partition": "p0",
+        "paraphrase_group": None,
+        "base_ref": None,
+    }
+    rec.update(_DEMO_ATTR)
+    rec["demo"] = True
+    return rec
+
+
+def _coprime_pair(rng, lo, hi):
+    """Two distinct coprime integers in ``[lo, hi]`` (for a non-trivial gcd)."""
+    while True:
+        m = rng.randint(lo, hi)
+        n = rng.randint(lo, hi)
+        if m != n and sp.igcd(m, n) == 1:
+            return m, n
+
+
+def _permutations(n, k):
+    p = 1
+    for i in range(k):
+        p *= n - i
+    return p
+
+
+def _demo_problem(leaf, rng):
+    """Return ``(question, correct_expr, wrong_exprs, explanation)``.
+
+    High-coefficient / distinct-phrasing regime, disjoint from the study deck so
+    the firewall holds; keys are SymPy-exact (correct-by-construction).
+    """
+    if leaf == "integral_single":
+        a = rng.randint(7, 25)
+        b = rng.randint(7, 25)
+        f = a * x + b
+        correct = sp.integrate(f, x)
+        return (
+            "Give the antiderivative (omit + C):  "
+            + mathfmt.inline("\\int \\left(" + mathfmt.tex(f) + "\\right)\\,dx"),
+            correct,
+            [sp.diff(f, x), f],
+            mathfmt.inline("F(x) = " + mathfmt.tex(correct) + " + C"),
+        )
+    if leaf == "differential_single":
+        a = rng.randint(7, 25)
+        n = rng.randint(2, 4)
+        f = a * x**n
+        correct = sp.diff(f, x)
+        return (
+            "Differentiate:  " + mathfmt.inline("f(x) = " + mathfmt.tex(f)),
+            correct,
+            [sp.integrate(f, x), sp.diff(correct, x)],
+            mathfmt.inline("f'(x) = " + mathfmt.tex(correct)),
+        )
+    if leaf == "linear":
+        a, b = rng.randint(10, 20), rng.randint(10, 20)
+        c, d = rng.randint(10, 20), rng.randint(10, 20)
+        correct = sp.Integer(a * d - b * c)
+        mat = sp.Matrix([[a, b], [c, d]])
+        return (
+            "Determinant of " + mathfmt.expr_inline(mat) + "?",
+            correct,
+            [sp.Integer(a * d + b * c), sp.Integer(a * b - c * d)],
+            mathfmt.inline("\\det = " + mathfmt.tex(correct)),
+        )
+    if leaf == "number_theory":
+        g = rng.randint(6, 15)
+        m, n = _coprime_pair(rng, 2, 9)
+        a, b = g * m, g * n
+        correct = sp.Integer(g)
+        return (
+            "Compute " + mathfmt.inline("\\gcd({}, {})".format(a, b)) + ".",
+            correct,
+            [sp.Integer(a * b // g), sp.Integer(min(a, b)), sp.Integer(g * 2)],
+            mathfmt.inline("\\gcd = " + mathfmt.tex(correct)),
+        )
+    if leaf == "discrete":
+        n = rng.randint(6, 12)
+        k = rng.randint(2, 4)
+        correct = sp.binomial(n, k)
+        return (
+            "How many ways can {} objects be chosen from {} when order does "
+            "not matter?".format(k, n),
+            correct,
+            [sp.Integer(_permutations(n, k)), sp.Integer(n**k),
+             sp.binomial(n, k - 1)],
+            mathfmt.inline("\\binom{%d}{%d} = %s" % (n, k, mathfmt.tex(correct))),
+        )
+    if leaf == "geometry":
+        r = rng.randint(3, 12)
+        correct = sp.pi * r**2
+        return (
+            "What is the area of a circle of radius "
+            + mathfmt.inline(str(r)) + "?",
+            correct,
+            [2 * sp.pi * r, sp.pi * r, sp.pi * r**2 / 2],
+            mathfmt.inline("A = \\pi r^2 = " + mathfmt.tex(correct)),
+        )
+    if leaf == "probability_stats":
+        red = rng.randint(2, 6)
+        blue = rng.randint(2, 6)
+        correct = sp.Rational(red, red + blue)
+        return (
+            "A jar holds {} red and {} blue marbles. If one is drawn at "
+            "random, what is ".format(red, blue)
+            + mathfmt.inline("P(\\text{red})") + "?",
+            correct,
+            [sp.Rational(blue, red + blue), sp.Rational(red, blue),
+             sp.Rational(red + blue, red)],
+            mathfmt.inline("P = " + mathfmt.tex(correct)),
+        )
+    raise ValueError("no demo generator for leaf " + leaf)
+
+
+def gen_demo_p0_items(seed=42):
+    """Deterministic demo p0 items that unlock the full-length mock."""
+    items = []
+    n = 0
+    for leaf, difficulty, count in _DEMO_SPEC:
+        tag = taxonomy.TAG_BY_LEAF[leaf]
+        rng = _leaf_rng(seed, tag + "::eval::p0-demo")
+        seen = set()
+        generated = 0
+        attempts = 0
+        while generated < count:
+            attempts += 1
+            if attempts > 5000:
+                raise RuntimeError("demo generation stuck for leaf " + leaf)
+            q, correct, wrongs, expl = _demo_problem(leaf, rng)
+            if q in seen:
+                continue
+            try:
+                options, ci = distractors.make_options(rng, correct, wrongs)
+            except distractors.InsufficientDistractors:
+                continue
+            seen.add(q)
+            n += 1
+            generated += 1
+            items.append(_demo_record(
+                "eval-p0-gen-{:04d}".format(n), tag, q, options, ci,
+                expl, difficulty,
+            ))
+    return items
+
+
 def emit_yaml(items):
     return yaml.safe_dump({"items": items}, sort_keys=False, allow_unicode=True)
+
+
+def emit_items(items):
+    """Dump a bare item list (no ``items:`` key) for appending to the corpus."""
+    return yaml.safe_dump(items, sort_keys=False, allow_unicode=True)
 
 
 if __name__ == "__main__":
