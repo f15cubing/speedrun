@@ -23,8 +23,8 @@ One server, one account (`greuser`), two peers — all on the **same engine**
 ```
                      host machine (one engine: f15cubing/anki@ea3acae)
    ┌───────────────────────────────────────────────────────────────────┐
-   │  anki-sync-server   (python -m anki.syncserver, SYNC_PORT=8080)     │
-   │        ▲  http://127.0.0.1:8080/            ▲  http://10.0.2.2:8080/│
+   │  anki-sync-server   (python -m anki.syncserver, SYNC_PORT=8452)     │
+   │        ▲  http://127.0.0.1:8452/            ▲  http://10.0.2.2:8452/│
    │        │                                    │                       │
    │  Desktop peer (our fork engine)        Android emulator (anki_test) │
    │  Preferences ▸ Syncing (127.0.0.1)     AnkiDroid ▸ custom sync URL  │
@@ -50,18 +50,18 @@ A fresh feature *worktree's* own `anki/out` is typically only partially built an
 FORK_ANKI = /Users/felipecaicedo/Desktop/alpha/speedrun/anki     # complete desktop build
 FORK_PY   = $FORK_ANKI/out/pyenv/bin/python
 PYTHONPATH= $FORK_ANKI/out/pylib   # prepended by the launcher
-SYNC_USER1=greuser:grepass  SYNC_HOST=0.0.0.0  SYNC_PORT=8080  SYNC_BASE=sync/.sync-data
+SYNC_USER1=greuser:grepass  SYNC_HOST=0.0.0.0  SYNC_PORT=8452  SYNC_BASE=sync/.sync-data
 ```
 
 Equivalent one-liner the launcher runs:
 `PYTHONPATH=$FORK_ANKI/out/pylib SYNC_USER1=greuser:grepass $FORK_ANKI/out/pyenv/bin/python -m anki.syncserver`
-→ logs `INFO listening addr=0.0.0.0:8080` (a `GET /` returns HTTP 404 = serving).
+→ logs `INFO listening addr=0.0.0.0:8452` (a `GET /` returns HTTP 404 = serving).
 
 **Client config** (set the URL **before first login**; never leave it blank):
 
-- **Desktop (127.0.0.1):** Preferences ▸ Syncing ▸ self-hosted sync server URL = `http://127.0.0.1:8080/`.
+- **Desktop (127.0.0.1):** Preferences ▸ Syncing ▸ self-hosted sync server URL = `http://127.0.0.1:8452/`.
 - **AnkiDroid (10.0.2.2):** Settings ▸ Sync ▸ **Custom sync server** ▸ enable *Sync URL* =
-  `http://10.0.2.2:8080/` (`10.0.2.2` is the emulator's alias for the host loopback — `127.0.0.1`
+  `http://10.0.2.2:8452/` (`10.0.2.2` is the emulator's alias for the host loopback — `127.0.0.1`
   from inside the emulator points at the phone, not the host). Then Sync ▸ log in as `greuser`.
 
 ## Operating sync (`make sync-up` — the one-command path)
@@ -86,7 +86,7 @@ work unchanged.**
 - **One server per data dir.** A second server pointed at a `SYNC_BASE` already open elsewhere fails with
   `open media db … Locked` — `doctor` catches a *port* clash, but if you changed only the port, stop the
   other server or use a fresh `SYNC_BASE`. A leftover foreground `make sync-server` is **not** tracked by
-  `make sync-down` (different mechanism) — stop it in its own terminal (`lsof -iTCP:8080 -sTCP:LISTEN`).
+  `make sync-down` (different mechanism) — stop it in its own terminal (`lsof -iTCP:8452 -sTCP:LISTEN`).
 - **Non-default port/base:** `SYNC_PORT=8095 make sync-up` (same on `sync-verify`/`sync-down`), or set
   `SYNC_PORT`/`SYNC_BASE`/`FORK_ANKI` in `sync/.env` (gitignored).
 - **Verified 2026-07-04** on a dedicated port/base: `doctor` → `up` → `status` → `verify` (`OK … A=1, B=1`
@@ -108,6 +108,15 @@ work unchanged.**
 
 ## Gotchas & invariants
 
+- **Why the default port is 8452, not 8080.** Running the desktop fork via `anki/run` (`./run`,
+  `ANKIDEV=1`) opens Qt WebEngine's Chromium remote-debugger on **8080** (`anki/run` sets
+  `QTWEBENGINE_REMOTE_DEBUGGING=8080`). Upstream `anki-sync-server` also defaults to 8080, so an 8080
+  sync default would collide with the dev app every time. This fork therefore **defaults `SYNC_PORT` to
+  8452** so `make sync-up` just works while the desktop app is running. If a chosen port is already held
+  (e.g. you force `SYNC_PORT=8080` with Anki open, or leave an old server up), `doctor`/`up` **identify
+  the holder** — `pid … tools/run.py` = Anki's dev app (free 8080 with `QTWEBENGINE_REMOTE_DEBUGGING=9222
+  ./run`), `… -m anki.syncserver` = a leftover server (stop it) — and print a concrete free-port command.
+  `status` names the holder too and points at `make sync-doctor`.
 - **Server dies if `SYNC_USER1` is unset** — the launcher always exports it. Committed
   `greuser:grepass` is a **local throwaway**, never a real secret.
 - **`10.0.2.2`, not `127.0.0.1`, from the emulator.** Getting this wrong = "A network error occurred:
@@ -115,7 +124,7 @@ work unchanged.**
 - **The server must stay running for the whole test.** A backgrounded `& ` launched inside a one-shot
   shell can be reaped between steps; keep `make sync-server` in its own live terminal (or a tracked
   background job). Symptom of a dead server: emulator/desktop login fails with a network error and
-  `lsof -iTCP:8080 -sTCP:LISTEN` shows nothing.
+  `lsof -iTCP:8452 -sTCP:LISTEN` shows nothing.
 - **Empty-server first contact = full sync.** Whoever syncs first should **upload**, the other
   **downloads**. `roundtrip_smoke.py`'s `_sync(prefer_upload=...)` encodes this; for the live test,
   choose "keep AnkiWeb" / Replace to pull the server (desktop) copy to the phone.
@@ -159,7 +168,7 @@ The Block-C robustness proofs now stand on this engine, fully headless. Both are
 only — no engine/collection change** (7b proves the stock conflict rule above; it does not change
 it). Harnesses run with the primary build's python (same rule as `sync-smoke`); the 7b server runs
 on its **own** port/data dir (`:8090`, `sync/.sync-data-7b`) so it never collides with the shared
-`:8080` server or the emulator.
+foundation server (default `:8452`) or the emulator.
 
 - **7b — two-way sync** (`sync/two_way_sync_7b.py`, `make sync-server-7b` + `make sync-7b`):
   - *No-loss:* A reviews 10 cards offline, B reviews 10 *different* cards offline → reconnect →
@@ -189,7 +198,11 @@ on its **own** port/data dir (`:8090`, `sync/.sync-data-7b`) so it never collide
 
 ---
 Last verified against: `f15cubing/anki@ea3acae` (`anki 25.09.4`, buildhash `d52ca669`; server engine
-+ both peers; `python -m anki.syncserver`). Foundation `SYNC_PORT=8080`; 7b proof `SYNC_PORT=8090`.
++ both peers; `python -m anki.syncserver`). Foundation `SYNC_PORT=8452` (was 8080 before 2026-07-05); 7b proof `SYNC_PORT=8090`.
 Block C 7b/7g verified 2026-07-03. Operator tooling `sync/sync.sh` (`make sync-up`/`status`/`verify`/
 `down`/`reset`/`urls`/`doctor`) added + verified 2026-07-04 (full lifecycle on a dedicated port/base;
-engine buildhash `d52ca669`; no engine change).
+engine buildhash `d52ca669`; no engine change). **2026-07-05:** default `SYNC_PORT` changed 8080→**8452**
+so `make sync-up` no longer collides with Anki's dev WebEngine remote-debugger (which `anki/run` binds on
+8080); `doctor`/`status` now **identify** a foreign port holder (Anki dev app vs. a leftover sync server)
+and suggest a concrete free port. Verified live: `doctor` all-green on 8452 while the dev app still held
+8080; own-server + free-port paths unchanged. Fast lane, no engine change.

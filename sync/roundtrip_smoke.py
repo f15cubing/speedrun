@@ -19,7 +19,7 @@ from pathlib import Path
 
 from anki.collection import Collection
 
-ENDPOINT = os.environ.get("SYNC_ENDPOINT") or f"http://127.0.0.1:{os.environ.get('SYNC_PORT', '8080')}/"
+ENDPOINT = os.environ.get("SYNC_ENDPOINT") or f"http://127.0.0.1:{os.environ.get('SYNC_PORT', '8452')}/"
 USER = os.environ.get("SYNC_USER", "greuser")
 PASSWORD = os.environ.get("SYNC_PASSWORD", "grepass")
 TAG = "topic::calculus::integral_single"

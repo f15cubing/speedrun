@@ -29,7 +29,7 @@ change, and honesty as a feature** — now with live Performance/Readiness plumb
       (stable GUIDs → updates in place, no dupes). Confirm on an MCQ card that the options are
       **tappable buttons** (not plain `A. … B. …` text). *(Or demo on a fresh profile, where it's automatic.)*
 - [ ] Emulator `anki_test` booted with our debug APK (our `librsdroid.so`); GRE deck present.
-- [ ] Sync ready: `make sync-server` (port 8080, account `greuser`).
+- [ ] Sync ready: `make sync-server` (port 8452, account `greuser`).
 - [ ] Two terminals sized for readable text: one for the mastery tests, one for the AI run
       (`docs/ai-run-howto.md`).
 - [ ] `make ai-gate` / `make ai-baseline` dry-run once off-camera so they're warm + you

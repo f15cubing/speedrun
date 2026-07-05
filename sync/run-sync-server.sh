@@ -11,7 +11,9 @@ if [[ -f "$REPO_ROOT/sync/.env" ]]; then set -a; source "$REPO_ROOT/sync/.env"; 
 # Local-only throwaway credentials (NOT a secret). Override via sync/.env.
 : "${SYNC_USER1:=greuser:grepass}"
 : "${SYNC_HOST:=0.0.0.0}"
-: "${SYNC_PORT:=8080}"
+# Default 8452 (not 8080): `anki/run` opens the dev WebEngine remote-debugger on 8080, which would
+# collide with the sync server whenever the desktop fork is running from source.
+: "${SYNC_PORT:=8452}"
 : "${SYNC_BASE:=$REPO_ROOT/sync/.sync-data}"
 export SYNC_USER1 SYNC_HOST SYNC_PORT SYNC_BASE
 
