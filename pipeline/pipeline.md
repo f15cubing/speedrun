@@ -62,10 +62,14 @@ coverage map, readiness gate, and interleaving all build on.
   grades explicitly, bound to Anki's existing FSRS ease enum via the reviewer's own bridge
   commands (`pycmd("ans")` → answer state, then `pycmd("ease<N>")`, exactly what the built-in
   buttons call): **correct → Hard(2)/Good(3)/Easy(4)**; **wrong → a single "Continue" that
-  auto-grades Again(1)** (a lapse, re-queued by the scheduler). Where `pycmd` is absent
-  (e.g. AnkiDroid) the custom rating row is hidden and the built-in Again/Hard/Good/Easy
-  buttons remain the grader (feedback still shows). Renders in the reviewer webview on both
-  desktop + Android. Spec: `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`),
+  auto-grades Again(1)** (a lapse, re-queued by the scheduler). On a tap the template also emits a
+  **guarded correctness hint** `pycmd("gremcq:right"|"gremcq:wrong")` (a state hint, never a
+  grade/advance) that the desktop reviewer uses to lock a wrong answer to **Again only even on the
+  built-in bottom answer bar** (see `docs/codebase/qt.md` § Graded MCQ; `aqt.gre.mcq_lockdown`). Where
+  `pycmd` is absent (e.g. AnkiDroid) both the hint and the custom rating row are no-ops and the
+  built-in Again/Hard/Good/Easy buttons remain the grader (feedback still shows). Renders in the
+  reviewer webview on both desktop + Android.
+  Spec: `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`),
   `build(seed=42, out_path=..., verbose=True)` → `(cards, summary)`; CLI
   `python pipeline/build_deck.py --seed 42` writes `pipeline/dist/gre-study-deck.apkg`.
 - `coverage_report.py` — `summarize(cards)` (now includes `by_format`),
@@ -191,7 +195,7 @@ coverage map, readiness gate, and interleaving all build on.
 - `pipeline/tests/test_mcq_generation.py` — MCQ determinism, well-formedness, correct-key integrity, and the **elaborated-feedback distractor rationales** (`error_labels` filter, `with_error_feedback`, per-leaf named errors appended to the explanation).
 - `pipeline/tests/test_conceptual_gate.py` — verification gate (verified-only load, hard-fails, MCQ records).
 - `pipeline/tests/test_mcq_notetype.py` — GRE MCQ note type (9 fields, one topic tag, stable hash) +
-  **graded answer flow** (ease binding via `pycmd`; correct = 3 ratings, wrong = single Continue/Again; no auto-advance; graceful no-`pycmd` fallback).
+  **graded answer flow** (ease binding via `pycmd`; correct = 3 ratings, wrong = single Continue/Again; no auto-advance; graceful no-`pycmd` fallback) + the **guarded `gremcq:` correctness hint** on selection (drives the desktop wrong-answer lockdown; selection still never grades/advances).
 - `pipeline/tests/test_template_capacity.py` — uniqueness of generated cards within each leaf at current scale; catches approaching combinatorial limits early.
 - `pipeline/tests/test_interleave.py` — interleaving ordering core: multiset invariant, determinism, the two metrics (adjacency dispersion + forward displacement), dispersion-beats-blocked, the displacement bound (no starvation), homogeneous/tiny-queue fallback, and cluster-map defaults/overrides.
 - `pipeline/tests/test_leakage_audit.py` — leakage self-audit: helper metrics, each §11 layer (exact-QA leakage, stem-only + shared-template near-dups flagged not counted), the `assert_no_leakage` gate, determinism, and a real-corpora smoke asserting the residual leakage rate is 0.0.

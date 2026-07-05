@@ -147,6 +147,13 @@ MCQ_MODEL = genanki.Model(
                 "if(answered){return;}"
                 "answered=true;"
                 "var right=(i===correct);"
+                # Report correctness to the desktop reviewer (guarded: no-op on
+                # AnkiDroid, which has no pycmd) so it can lock a wrong answer to
+                # Again only, even via the built-in Show Answer bar. This is a state
+                # hint, NOT a grade/advance -- grading still waits for an explicit
+                # in-card rating (correct) or Continue (wrong).
+                "if(typeof pycmd==='function'){"
+                "pycmd(right?'gremcq:right':'gremcq:wrong');}"
                 "for(var j=0;j<opts.length;j++){"
                 "opts[j].disabled=true;"
                 "if(j===correct){opts[j].className+=' correct';}"

@@ -4,7 +4,23 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-05 (Sun) — refreshed the **Sunday-cut demo plan** (`docs/demo-plan.md`, #58, fast lane, docs only) into a comprehensive superset: the ⭐-marked spec-required 3–5 min core plus optional showcase (interactive/graded MCQ, timed Exam Mode, live interleaving toggle + FSRS-differences explainer, observed Performance), stale bits corrected (engine SHA `ea3acae → 4c991c9`), Milestone-1 appendix preserved verbatim. Prior: cut **v0.4.0** desktop release — a fresh self-contained macOS `.dmg` (Apple Silicon) rebuilt from the current pin (`anki@4c991c9`, outer `851a299`), the first updated installer since v0.1.0, carrying Exam Mode + LaTeX + the redesigned three-score dashboard + the interleaving toggle + the interactive/graded MCQ deck._
+_Last updated: 2026-07-05 (Sun) — merged the **graded-MCQ wrong-answer lockdown** (engine lane, #60): a wrong multiple-choice answer now grades **Again only** (in-card + built-in bottom bar + keyboard + auto-advance; correct keeps Hard/Good/Easy), plus an in-place note-type template refresh so existing installs get the graded template (`anki@15bab43a`, `Anki-Android@86b9e0b`). Different-agent review APPROVED; live GUI smoke owner-waived at merge. Prior: refreshed the **Sunday-cut demo plan** (`docs/demo-plan.md`, #58, fast lane, docs only) into a comprehensive superset: the ⭐-marked spec-required 3–5 min core plus optional showcase (interactive/graded MCQ, timed Exam Mode, live interleaving toggle + FSRS-differences explainer, observed Performance), stale bits corrected (engine SHA `ea3acae → 4c991c9`), Milestone-1 appendix preserved verbatim. Prior: cut **v0.4.0** desktop release — a fresh self-contained macOS `.dmg` (Apple Silicon) rebuilt from the current pin (`anki@4c991c9`, outer `851a299`), the first updated installer since v0.1.0, carrying Exam Mode + LaTeX + the redesigned three-score dashboard + the interleaving toggle + the interactive/graded MCQ deck._
+
+- **Graded-MCQ wrong-answer lockdown** (engine lane; `anki`→`15bab43a`, `Anki-Android`→`86b9e0b`, outer
+  pins bumped) — **MERGED (#60).** A wrong multiple-choice answer is a lapse: it now grades **Again only**,
+  never Hard/Good/Easy — across the in-card buttons, the built-in **bottom answer bar**, keyboard
+  shortcuts, and auto-advance (correct MCQ keeps Hard/Good/Easy; non-MCQ untouched). The graded MCQ
+  template emits a guarded `pycmd("gremcq:…")` correctness hint (a **state hint, never a grade/advance**;
+  no-op on AnkiDroid → built-in buttons); the desktop reviewer clamps a wrong MCQ's ease to Again in
+  `_answerCard` (the sole grading funnel) and collapses the bottom bar in `_answerButtonList`. New pure
+  `qt/aqt/gre/mcq_lockdown.py`. **Existing installs** now get the graded template via an in-place
+  note-type refresh (`deck_autoimport._refresh_bundled_notetype_templates`: reads the bundled `.apkg`,
+  applies qfmt/afmt/css via `models.update_dict`, gated by `gre_deck_template_revision`; **no deck
+  re-import, review history preserved**). **No `col` write beyond the text-only refresh, no `OpChanges`,
+  no scheduler/undo/proto/Rust change.** Tests: pipeline `test_mcq_notetype` 16 + aqt
+  `test_gre_mcq_lockdown` 13; real-collection refresh integration `quick_check=ok`; ruff clean.
+  Different-agent review **APPROVED** (ceilings hold); the live GUI click-through (the one human smoke)
+  was **owner-waived at merge**. (`f15cubing/speedrun#60`.)
 
 - **Demo-plan refresh** (fast lane; docs only) — `docs/demo-plan.md` refreshed into a comprehensive
   **superset** covering every merged feature + all spec demo items: the ⭐-marked spec-required 3–5 min
