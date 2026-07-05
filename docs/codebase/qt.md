@@ -187,6 +187,46 @@ interleaving algorithm (a verbatim copy of `pipeline/interleave.py`) on a fixed 
 lib.test.ts` (colour mapping + formatters). Outer drift guard: `tests/test_interleave_sync.py`.
 Design spec: `docs/superpowers/specs/2026-07-05-algorithm-explainer-page-design.md`.
 
+## Review interleaving — live reviewer wiring (ablation — implemented)
+
+The explainer above *demonstrates* interleaving; this wires it into the **actual review loop** so
+interleaved vs blocked is a real, toggleable study mode (the ablation's two app arms). It is a
+**pure presentation-layer reorder** of the batch the v3 scheduler already returned — it never
+changes FSRS scheduling, the collection, or undo.
+
+**Off by default.** With `col.conf["gre_interleave"]` unset the reviewer behaves byte-for-byte as
+upstream (`get_queued_cards(fetch_limit=1)`, no reorder), so the default app — and every demo /
+installer recording — is unaffected.
+
+**New files:**
+- `anki/qt/aqt/gre/interleave_review.py` — the reorder core. `interleave_enabled(col)` /
+  `fetch_limit(col)` (1 when off, 16 when on) / `reorder_output(col, queued_cards)`. When on, it
+  reorders **only the `REVIEW` cards** of the batch for confusable-type dispersion via the vendored
+  `aqt.gre.interleave.interleave_order`; `NEW` / `LEARNING` cards keep their scheduler positions
+  (intraday-learning timing preserved). Each `QueuedCard` (card + states + context) moves as a
+  self-contained unit, so the shown card is always paired with **its own** scheduling states. Safe
+  fallbacks (no-op) on `<3` review cards, a homogeneous cluster, or any review card missing a
+  `topic::` leaf tag.
+- `anki/qt/aqt/gre_interleave.py` — `setup_gre_interleave_menu()`: a **checkable** Tools-menu action
+  ("GRE: Interleave reviews (ablation)") that flips `col.conf["gre_interleave"]` via
+  `set_config(..., undoable=False)` (persists + syncs, no undo entry). On = interleaved arm, off =
+  blocked arm; takes effect from the next card.
+
+**Modified files:**
+- `anki/qt/aqt/reviewer.py` — `_get_next_v3_card` now fetches `fetch_limit(col)` cards and calls
+  `reorder_output(col, output)` before `V3CardInfo.from_queue`. The **only** review-loop change; a
+  no-op when the flag is off.
+- `anki/qt/aqt/main.py` — Tools-menu hook via `main_window_did_init`.
+
+**Invariant (why this respects the engine ceilings):** the reorder mutates an in-memory protobuf
+batch only. No `col` write, no `OpChanges`, no scheduling-field change → undo and the collection are
+untouched; the "same cards, different presentation order" multiset invariant is unit-tested.
+
+**Tests:** `anki/qt/tests/test_gre_interleave_review.py` (9): flag gate + `fetch_limit` switch,
+dispersion of a blocked queue, **multiset invariant**, `NEW`/`LEARNING` positions preserved, and the
+three safe fallbacks. Live GUI click-through (flip the toggle mid-review, confirm the order changes)
+is the one human smoke step — offscreen QtWebEngine won't init headlessly here.
+
 ## GRE scoring adapter — synced 3-score card (Task 6 — implemented)
 
 Desktop-authoritative scoring: on dashboard open, compute the three-score
@@ -252,4 +292,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@6d05314` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard)
+Last verified against: `f15cubing/anki@001d4a1` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle)

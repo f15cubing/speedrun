@@ -339,6 +339,22 @@ _Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids 
 
 ## In flight
 
+- **Live-reviewer interleaving toggle** (engine lane; `anki` fork `agent/gre-interleave-reviewer` →
+  `001d4a1`, outer pin bumped) — **wires the pre-registered interleaving feature into the actual
+  review loop** (previously only an algorithm + explainer demo), so interleaved↔blocked is a real,
+  toggleable study mode = the ablation's two in-app arms. Pure presentation-layer reorder of the v3
+  `QueuedCards` batch in `reviewer._get_next_v3_card`: **off by default**
+  (`col.conf["gre_interleave"]`) → byte-identical to upstream; when on, reorders **only `REVIEW`**
+  cards for confusable-type dispersion via the tested `aqt.gre.interleave` (K/W bound), leaving
+  `NEW`/`LEARNING` in place and each `QueuedCard` self-contained. **No `col` write, no `OpChanges`,
+  undo untouched, no Rust/proto/scheduler change.** A checkable Tools-menu toggle flips the flag. New:
+  `qt/aqt/gre/interleave_review.py` + `qt/aqt/gre_interleave.py`; modified `reviewer.py`/`main.py`.
+  **9 unit tests green** (flag gate, fetch-limit switch, dispersion, multiset invariant, new/learning
+  preserved, 3 safe fallbacks); ruff clean; 64 aqt GRE tests green (no regression). **Live GUI
+  click-through is the one human smoke** (offscreen QtWebEngine won't init headlessly). Different-agent
+  review pending; **open PR — do not self-merge (engine lane).** Unblocks a runnable ablation (a human
+  can now do interleaved vs blocked sessions on the same items).
+
 - **"How this differs from FSRS" study-method page** (fast lane; `anki`→`6d05314`) — **MERGED (#55).**
   A read-only desktop explainer (Tools ▸ "How this app differs from FSRS"): we
   build **on** FSRS rather than replacing it — interleaving, timed exam mode, three separated scores,
