@@ -18,7 +18,7 @@ _Last updated: 2026-07-04 (Sat) — sync operator tooling: one-command `make syn
   dedicated port/base (doctor→up→status→verify `PASS`→down; idempotent `up` reused the pid). Also
   **corrected** the stale "client `SYNC_ENDPOINT` override" note in `sync.md`/the W4 spec (the desktop
   endpoint is profile-driven, `customSyncUrl`). Spec + plan under `docs/superpowers/`. No engine/submodule
-  change. (`f15cubing/speedrun#TBD`.)
+  change. (`f15cubing/speedrun#52`.)
 
 - **MCQ deck re-bundle + version bump** (engine lane; `anki`/`Anki-Android` submodules) — the interactive
   MCQ card template (tappable 5-option webview) is now **bundled into both apps' first-run deck asset**
