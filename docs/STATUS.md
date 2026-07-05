@@ -339,6 +339,23 @@ _Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids 
 
 ## In flight
 
+- **Observed Performance on the desktop dashboard** (fast lane; `anki` Qt-UI + pure view-model,
+  read-only) — **wired + verified locally; not yet committed/PR'd (see note).** The dashboard's
+  Performance slot no longer shows the stale "Arrives Thursday" placeholder: `greExamSubmit` already
+  persists per-item attempts to a profile side-file (`gre_exam_results.jsonl`, never the collection),
+  and the read-only `greDashboardData` handler now pools them via new pure helpers in
+  `dashboard_data.py` (`load_exam_attempts` + `observed_performance`) and renders **observed
+  rights-only accuracy as a Wilson range with `n`** through the existing `CalibrationStrip`
+  (`ScoreSlot` gains an `observed` state; the no-fabrication guard still collapses any range-less
+  state to `not_available`). Honesty: a range never a bare point; a give-up state (never a fabricated
+  0) at n=0; the three scores stay separate; deliberately **observed accuracy, not** the calibrated
+  `scoring/performance.py` model (which needs a multi-student corpus). Verified: `check_svelte` green,
+  full `check_pytest_aqt` green, the two dashboard test files **23/23** (9 new observed-Performance +
+  side-file tests). Docs updated (`qt.md` § Observed Performance, `models/performance.md` § Live
+  surface). **Follow-ups:** carry observed Performance into the synced `gre_scorecard` (Android panel
+  still `not_available`); live GUI smoke of the slot with a real timed mock. **Ship note:** the shared
+  working tree has unrelated uncommitted deck-migration WIP in `anki/qt/aqt/mediasrv.py`; the commit/PR
+  must isolate from it (worktree) so that WIP isn't captured.
 - **Exam Mode API-error fix** (fast lane; `anki`→`d9684c4`) — **open PR (overnight; do not
   auto-merge).** Fixes the 403 that broke *every* Exam Mode mock (exam page posted
   `Content-Type: application/json`, which `mediasrv` 403s before auth; switched to

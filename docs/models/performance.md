@@ -69,6 +69,20 @@ know the least — the opposite of honest. At `n ≈ 1` the interval is (correct
 - **Never blended.** Performance is displayed as its own score with its own range; it *feeds*
   Readiness but is never averaged into Memory or Readiness.
 
+## Live surface (desktop dashboard)
+
+The calibrated model above is the **eval/research artifact** — it is validated on the
+simulated-student harness and answers "P(correct on a new item)" given a trained attempt corpus.
+The **desktop dashboard's live Performance slot** shows something narrower and more honest at the
+sample sizes a single learner actually produces: the **observed rights-only accuracy** across their
+timed Exam Mode items, as a **Wilson range with `n`** (`aqt/gre/dashboard_data.py::observed_performance`,
+fed by `load_exam_attempts` from the `gre_exam_results.jsonl` side-file). We deliberately do **not**
+fit the logistic+Platt model on one learner's handful of attempts — that would look confident exactly
+when it knows least. With no attempts the slot is a give-up state, never a fabricated 0; a number
+only ever renders with its range (`CalibrationStrip`). See `docs/codebase/qt.md` (§ Observed
+Performance). The synced `gre_scorecard` (Android panel) still reports Performance `not_available`;
+carrying observed Performance across sync is a follow-up.
+
 ## Give-up rule (context)
 
 Performance has no separate abstention gate, but it is the per-item engine behind Readiness, whose
