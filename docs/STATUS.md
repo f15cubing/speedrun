@@ -4,7 +4,18 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-05 (Sun) — reconciled stale current-pin doc claims to the actual submodule pins (`anki@6d05314`, `Anki-Android@c6d02501`, `Anki-Android-Backend@3dc30c2`); confirmed all three pins are pushed and that `Anki-Android@c6d02501` is the complete fork tip (mastery binding → auto-import → LaTeX → Task-7 panel → interactive-MCQ deck) — no pin regression. Prior: sync default port moved 8080→8452 + `doctor`/`status` foreign-holder diagnostics; sync operator tooling; MCQ deck re-bundle + `GRE_DECK_VERSION`→`2026-07-03b`._
+_Last updated: 2026-07-05 (Sun) — cut **v0.4.0** desktop release: a fresh self-contained macOS `.dmg` (Apple Silicon) rebuilt from the current pin (`anki@4c991c9`, outer `851a299`) — the first updated installer since v0.1.0, now carrying Exam Mode + LaTeX + the redesigned three-score dashboard + the interleaving toggle + the interactive/graded MCQ deck; README gains a prebuilt-download path. Prior: reconciled stale current-pin doc claims to the actual submodule pins (`anki@6d05314`→now `4c991c9` via #57, `Anki-Android@c6d02501`, `Anki-Android-Backend@3dc30c2`); confirmed all three pins are pushed — no pin regression._
+
+- **v0.4.0 desktop release** (fast lane; release + docs) — a fresh self-contained macOS installer
+  (`GRE-Anki-v0.4.0-arm64.dmg`, Apple Silicon, ad-hoc signed, ~236 MB) rebuilt from the pinned wheels
+  (`anki@4c991c9`, Anki **25.09.4**) and published as
+  [`v0.4.0`](https://github.com/f15cubing/speedrun/releases/tag/v0.4.0) alongside the study-deck `.apkg`.
+  **First updated installer since v0.1.0** — bundles the Mastery-Query engine change + the redesigned GRE
+  dashboard + Exam Mode + LaTeX math + the interleaving reviewer toggle + the FSRS-graded interactive MCQ
+  deck (auto-imports on first run). Built by swapping freshly-built `anki`/`aqt` wheels into the bundled
+  Python+Qt runtime; **smoke-tested from the mounted image** (anki 25.09.4, `mastery_query` present,
+  Exam/Method import, Qt + WebEngine load). `README.md` adds a "download the prebuilt app" path. No
+  engine/submodule change (packaging only).
 
 - **Current-pin doc reconciliation** (fast lane; docs only) — `README.md` "Pinned upstream versions" and
   `docs/submission-checklist.md` cited stale pins (`anki@ea3acae`, `Anki-Android@67364a7`/`78989b9e`);
