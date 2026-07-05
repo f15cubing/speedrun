@@ -353,7 +353,11 @@ _Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids 
   preserved, 3 safe fallbacks); ruff clean; 64 aqt GRE tests green (no regression). **Live GUI
   click-through is the one human smoke** (offscreen QtWebEngine won't init headlessly). Different-agent
   review pending; **open PR — do not self-merge (engine lane).** Unblocks a runnable ablation (a human
-  can now do interleaved vs blocked sessions on the same items).
+  can now do interleaved vs blocked sessions on the same items). **Perf proof:** new `make bench-actions`
+  (folded into `make bench`) times the real grade→next-card cycle (`answer_card` + fetch) at **50k
+  cards** — **p50 0.11 ms · p95 0.33 ms · worst 1.86 ms** (target p95<100 ms) — and shows the
+  interleave lookahead (fetch 1→16) + 16-card reorder add **≈0.005 ms**, i.e. negligible. Evidence:
+  `docs/evidence/proofs/bench_actions.json`.
 
 - **"How this differs from FSRS" study-method page** (fast lane; `anki`→`6d05314`) — **MERGED (#55).**
   A read-only desktop explainer (Tools ▸ "How this app differs from FSRS"): we

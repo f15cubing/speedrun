@@ -1,0 +1,30 @@
+{
+  "cards": 50000,
+  "fetch_default": {
+    "mean_ms": 0.003,
+    "p50_ms": 0.003,
+    "p95_ms": 0.003,
+    "worst_ms": 0.005
+  },
+  "fetch_lookahead": {
+    "mean_ms": 0.003,
+    "p50_ms": 0.003,
+    "p95_ms": 0.003,
+    "worst_ms": 0.01
+  },
+  "interleave_reorder": {
+    "mean_ms": 0.005,
+    "p50_ms": 0.004,
+    "p95_ms": 0.005,
+    "worst_ms": 0.028
+  },
+  "iters": 300,
+  "next_card_cycle": {
+    "mean_ms": 0.184,
+    "p50_ms": 0.106,
+    "p95_ms": 0.326,
+    "worst_ms": 1.856
+  },
+  "seed": 42,
+  "seed_seconds": 4.74
+}

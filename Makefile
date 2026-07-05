@@ -13,7 +13,7 @@ FORK_ANKI := $(if $(FORK_ANKI),$(FORK_ANKI),/Users/felipecaicedo/Desktop/alpha/s
 BENCH_CARDS := 50000
 BENCH_ITERS := 300
 
-.PHONY: sync-server sync-smoke sync-up sync-status sync-verify sync-down sync-reset sync-urls sync-doctor sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval interleave-report ai-gate ai-gate-test ai-baseline bench proofs deck-leakage-audit giveup-audit deck-report scorecard-validate ablation-analysis
+.PHONY: sync-server sync-smoke sync-up sync-status sync-verify sync-down sync-reset sync-urls sync-doctor sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval interleave-report ai-gate ai-gate-test ai-baseline bench bench-mastery bench-actions proofs deck-leakage-audit giveup-audit deck-report scorecard-validate ablation-analysis
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -100,9 +100,15 @@ ai-gate-test: ## Run the AI card pipeline test suite (fast; needs pipeline/requi
 ai-baseline: ## Beat-the-baseline (McNemar) + AI-off degradation proofs (deterministic, PRD §9).
 	@AI_PY="$${AI_PY:-python3}"; PYTHONPATH=pipeline:pipeline/aicards "$$AI_PY" pipeline/aicards/run_baseline.py --seed 42
 
-bench: ## Latency bench of the mastery-query RPC at 50k cards (p50/p95/worst) via the built engine.
+bench: bench-mastery bench-actions ## One-command latency bench (mastery RPC + reviewer next-card path) at 50k cards.
+
+bench-mastery: ## Latency bench of the mastery-query RPC at 50k cards (p50/p95/worst) via the built engine.
 	@PYTHONPATH="$(FORK_ANKI)/out/pylib:." "$(FORK_ANKI)/out/pyenv/bin/python" \
 		proofs/bench_mastery.py --cards $(BENCH_CARDS) --iters $(BENCH_ITERS) --seed 42
+
+bench-actions: ## Latency bench of the reviewer next-card path (default + interleave lookahead + reorder overhead) at 50k cards.
+	@PYTHONPATH="$(FORK_ANKI)/out/pylib:." "$(FORK_ANKI)/out/pyenv/bin/python" \
+		proofs/bench_actions.py --cards $(BENCH_CARDS) --iters $(BENCH_ITERS) --seed 42
 
 proofs: ## Memory calibration chart + paraphrase results (needs .venv-proofs: pyyaml+matplotlib).
 	@if [ ! -x .venv-proofs/bin/python ]; then \
