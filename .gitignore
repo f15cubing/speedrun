@@ -60,5 +60,7 @@ pipeline/aicards/out/
 # W4 sync foundation + Block-C 7b proof — local server data + creds (never commit)
 sync/.sync-data*/
 sync/.env
+# Sync operator tool runtime (pid + server log) — never commit
+sync/.run/
 docs/evidence/w4-sync/*.tmp
 scoring/out/

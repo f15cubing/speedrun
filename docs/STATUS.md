@@ -4,7 +4,21 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-03 (Fri) — MCQ deck re-bundled into both apps + `GRE_DECK_VERSION`→`2026-07-03b` (fresh installs get the interactive MCQ), on-device fresh-install smoke passed. Prior: demo-plan-friday MCQ step-by-step; interactive MCQ card template; demo prep + v0.2.0; compressed-Friday push merged._
+_Last updated: 2026-07-04 (Sat) — sync operator tooling: one-command `make sync-up` (background server + preflight + health check + status card) + `status`/`verify`/`down`/`reset`/`urls`/`doctor` (fast lane, no engine change). Prior: MCQ deck re-bundled into both apps + `GRE_DECK_VERSION`→`2026-07-03b`; interactive MCQ card template._
+
+- **Sync operator ergonomics** (fast lane; `sync/`, `Makefile`, docs) — a dependency-free control tool
+  `sync/sync.sh` (Make targets `sync-up`/`sync-status`/`sync-verify`/`sync-down`/`sync-reset`/`sync-urls`/
+  `sync-doctor`) turns the self-hosted sync harness into **one command**: `make sync-up` preflights the
+  build, starts the server **backgrounded** (pid+log under `sync/.run/`, gitignored), health-polls until it
+  truly listens, and prints a status card (desktop/emulator URLs, account, data dir, engine buildhash,
+  first-contact rule); **idempotent**. `make sync-verify` runs the headless round-trip
+  (`roundtrip_smoke.py`, now `SYNC_ENDPOINT`/`SYNC_PORT`-configurable) → `PASS`/`FAIL`; `sync-doctor` is a
+  ✓/✗ preflight that catches the documented landmines (missing build, busy port, unset creds) before a
+  client sees an opaque error. `make sync-server`/`sync-smoke` unchanged. **Verified end-to-end** on a
+  dedicated port/base (doctor→up→status→verify `PASS`→down; idempotent `up` reused the pid). Also
+  **corrected** the stale "client `SYNC_ENDPOINT` override" note in `sync.md`/the W4 spec (the desktop
+  endpoint is profile-driven, `customSyncUrl`). Spec + plan under `docs/superpowers/`. No engine/submodule
+  change. (`f15cubing/speedrun#52`.)
 
 - **MCQ deck re-bundle + version bump** (engine lane; `anki`/`Anki-Android` submodules) — the interactive
   MCQ card template (tappable 5-option webview) is now **bundled into both apps' first-run deck asset**
