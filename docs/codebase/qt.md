@@ -63,12 +63,12 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
 **New files:**
 - `anki/qt/aqt/gre/__init__.py` — package init
 - `anki/qt/aqt/gre/taxonomy.json` — frozen 17-leaf / 3-bucket / 50/25/25 taxonomy
-- `anki/qt/aqt/gre/dashboard_data.py` — pure view-model: taxonomy loader, Wilson interval, `headline()` (50/25/25 rollup with n=0 renorm), coverage/next-best-topic, `build_view_model()`
+- `anki/qt/aqt/gre/dashboard_data.py` — pure view-model: taxonomy loader, Wilson interval, `headline()` (50/25/25 rollup with n=0 renorm), coverage/next-best-topic, `build_view_model()`. Also owns the **observed-Performance** surface: `load_exam_attempts(path)` (flattens the Exam Mode results side-file, best-effort) + `observed_performance(attempts)` (pooled rights-only accuracy as a Wilson **range** with `n`; a give-up `not_available` state when there are no attempts — never a fabricated 0)
 - `anki/qt/aqt/gre_dashboard.py` — `GreDashboard` QDialog + `setup_gre_dashboard_menu()` Tools-menu action; on open, `_write_scorecard(mw)` computes + persists the synced `gre_scorecard` (see "GRE scoring adapter" below)
 - `anki/ts/routes/gre-dashboard/+page.svelte` — SvelteKit page root (fetches `greDashboardData` on mount); 3-zone layout (masthead · Memory · the two other slots · coverage)
 - `anki/ts/routes/gre-dashboard/MemoryPanel.svelte` — memory range headline + per-bucket/per-leaf ranges
 - `anki/ts/routes/gre-dashboard/CoverageMap.svelte` — 17-leaf coverage, each studied leaf as a compact calibration strip; best-next leaf ringed
-- `anki/ts/routes/gre-dashboard/ScoreSlot.svelte` — generic score slot; Readiness shows `insufficient_evidence` gate (amber); Performance shows Thursday placeholder
+- `anki/ts/routes/gre-dashboard/ScoreSlot.svelte` — generic score slot; Readiness shows the `insufficient_evidence` gate (amber); **Performance** renders a `CalibrationStrip` range when `state=="observed"` (a real `point`+`low`+`high` payload) and otherwise a give-up state. The guard is strict: any state other than the two give-up states + `observed`, or an `observed` state missing its range, collapses to `not_available` — a fabricated point can never render.
 
 **Design system (redesign):**
 - `anki/ts/routes/gre-dashboard/tokens.css` — the dashboard's design tokens (6-colour palette + type roles + system tabular-mono for numerals); light/dark via Anki's `.night-mode`. No bundled fonts.
@@ -77,13 +77,15 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
 - Redesign is **pure presentation** — no `dashboard_data.py` / view-model change (that surface belongs to the scoring layer).
 
 **Modified files:**
-- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-dashboard")` registration + read-only `gre_dashboard_data` handler → POST `/_anki/greDashboardData` endpoint (calls `col.mastery_query(20 topics)` on the request thread, same pattern as `graphs`/`congrats_info`; never emits `OpChanges`)
+- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-dashboard")` registration + read-only `gre_dashboard_data` handler → POST `/_anki/greDashboardData` endpoint (calls `col.mastery_query(20 topics)` on the request thread, same pattern as `graphs`/`congrats_info`; never emits `OpChanges`). The handler also **reads** (never writes) the Exam Mode attempts side-file (`pm.profileFolder()/gre_exam_results.jsonl`) via `dd.load_exam_attempts` and passes it to `build_view_model(exam_attempts=…)`; the read is wrapped best-effort so a missing/unreadable file never breaks the dashboard.
 - `anki/qt/aqt/main.py` — Tools-menu hook via `main_window_did_init`
 - `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_DASHBOARD`
 
-**Data flow:** Tools ▸ "GRE readiness dashboard" → `GreDashboard` QDialog → `load_sveltekit_page("gre-dashboard")` → Svelte page POSTs `/_anki/greDashboardData` → handler calls read-only `col.mastery_query(17 leaves + 3 buckets)` → `build_view_model()` JSON → Svelte renders memory range + coverage map + 3 separated score slots. Strictly read-only (no `OpChanges`).
+**Data flow:** Tools ▸ "GRE readiness dashboard" → `GreDashboard` QDialog → `load_sveltekit_page("gre-dashboard")` → Svelte page POSTs `/_anki/greDashboardData` → handler calls read-only `col.mastery_query(17 leaves + 3 buckets)` **and** reads the Exam Mode attempts side-file → `build_view_model()` JSON → Svelte renders the memory range + coverage map + 3 separated score slots (Performance now a live observed range once the learner has taken a timed mock). Strictly read-only (no `OpChanges`).
 
-**Tests:** `anki/qt/tests/test_gre_dashboard_data.py` (11 unit tests covering taxonomy, Wilson, headline renorm, view-model), `anki/qt/tests/test_gre_dashboard_mediasrv.py` (2 tests: route registration + endpoint read-only invariant). Outer drift guard: `tests/test_taxonomy_sync.py`.
+**Observed Performance (how the score goes live).** Exam Mode's `greExamSubmit` appends per-item attempts to a profile side-file (`gre_exam_results.jsonl`; never the collection). The dashboard handler pools every recorded attempt and shows Performance as the **rights-only accuracy with a Wilson range + `n`** — the honest low-`n` surface, deliberately *not* the calibrated logistic+Platt model in `scoring/performance.py` (that needs a multi-student attempt corpus; fitting it on one learner's handful of attempts would look confident exactly when it knows least). The three scores stay **separate**; Performance is never blended into Memory or Readiness. Note this is the desktop **dashboard** surface only — the synced `gre_scorecard` (Android panel) still reports Performance `not_available` (see the scoring-adapter note below); wiring observed Performance into the synced card is a documented follow-up.
+
+**Tests:** `anki/qt/tests/test_gre_dashboard_data.py` (20 unit tests covering taxonomy, Wilson, headline renorm, view-model, **observed Performance** + the side-file loader), `anki/qt/tests/test_gre_dashboard_mediasrv.py` (2 tests: route registration + endpoint read-only invariant). Outer drift guard: `tests/test_taxonomy_sync.py`.
 
 ## Exam Mode — faithful GRE Math Subject Test
 
@@ -210,7 +212,9 @@ readiness{shown,estimate,low,high,reasons,coverage_pct,confidence,best_next_topi
 three scores stay **separate** — never blended.
 
 **Honesty ceilings:** Memory is the FSRS-mastery Wilson range (`None` at n=0); Performance
-is `not_available` (no desktop attempt bank yet — arrives with the MCQ surface);
+in the **synced card** is still `not_available` (the dashboard now surfaces observed exam
+accuracy — see "Observed Performance" above — but wiring that into the synced `gre_scorecard`
+for the Android panel is a documented follow-up);
 **Readiness is gated OFF** (`shown=false`) with reasons + the evidence panel — desktop has
 no P(correct) model without attempts, and we deliberately do **not** derive Readiness from
 Memory (firewall / no-blend). Never a bare number.
@@ -248,4 +252,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@8d57536` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo)
+Last verified against: `f15cubing/anki@6d05314` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard)
