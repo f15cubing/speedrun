@@ -12,14 +12,16 @@ Exits non-zero on any mismatch. LOCAL TEST ONLY (creds are throwaways).
 """
 from __future__ import annotations
 
+import os
 import sys
 import tempfile
 from pathlib import Path
 
 from anki.collection import Collection
 
-ENDPOINT = "http://127.0.0.1:8080/"
-USER, PASSWORD = "greuser", "grepass"
+ENDPOINT = os.environ.get("SYNC_ENDPOINT") or f"http://127.0.0.1:{os.environ.get('SYNC_PORT', '8080')}/"
+USER = os.environ.get("SYNC_USER", "greuser")
+PASSWORD = os.environ.get("SYNC_PASSWORD", "grepass")
 TAG = "topic::calculus::integral_single"
 FRONT = "w4-sync-smoke-front"
 

@@ -64,6 +64,34 @@ Equivalent one-liner the launcher runs:
   `http://10.0.2.2:8080/` (`10.0.2.2` is the emulator's alias for the host loopback — `127.0.0.1`
   from inside the emulator points at the phone, not the host). Then Sync ▸ log in as `greuser`.
 
+## Operating sync (`make sync-up` — the one-command path)
+
+`sync/sync.sh` (fronted by the Makefile `sync-*` targets) wraps the foreground launcher above with a
+**background lifecycle + preflight + health check + status**, so you don't hand-manage a foreground
+server or rediscover the URLs each time. **`make sync-server` (foreground) and `make sync-smoke` still
+work unchanged.**
+
+| Command | What it does |
+|---|---|
+| `make sync-up` | Preflight (`doctor`) → start the server **backgrounded** (pid + log under `sync/.run/`) → poll until it actually listens (≤ ~10 s) → print a **status card** (URLs, account, data dir, engine buildhash, first-contact rule). **Idempotent:** a second `up` reports the running server, never starts a second. |
+| `make sync-status` | Report UP / DOWN / stale from the pid file + a live HTTP probe (pid, port, data dir, engine buildhash). |
+| `make sync-verify` | Ensure up, then run `roundtrip_smoke.py` against the running port → `PASS`/`FAIL`. The re-run path. |
+| `make sync-down` | Stop the backgrounded server via the pid file (`ARGS=--reset` also wipes data). |
+| `make sync-reset` | Wipe `SYNC_BASE` for a clean first-contact (`ARGS=--yes` to skip the confirm; refuses while up). |
+| `make sync-urls` | Print copy-paste desktop + emulator config + the upload-first rule **without starting anything**. `ARGS=--set-desktop`/`--emulator` attempt best-effort auto-config, degrading to printed steps. |
+| `make sync-doctor` | Preflight checklist only: engine build importable, `SYNC_USER1` set, port free-or-ours, engine buildhash; best-effort emulator (adb) note. |
+
+- **Runtime vs. data:** the pid + server log live under **`sync/.run/`** (gitignored), separate from the
+  server DB under `sync/.sync-data/`, so `reset` and the lifecycle don't collide.
+- **One server per data dir.** A second server pointed at a `SYNC_BASE` already open elsewhere fails with
+  `open media db … Locked` — `doctor` catches a *port* clash, but if you changed only the port, stop the
+  other server or use a fresh `SYNC_BASE`. A leftover foreground `make sync-server` is **not** tracked by
+  `make sync-down` (different mechanism) — stop it in its own terminal (`lsof -iTCP:8080 -sTCP:LISTEN`).
+- **Non-default port/base:** `SYNC_PORT=8095 make sync-up` (same on `sync-verify`/`sync-down`), or set
+  `SYNC_PORT`/`SYNC_BASE`/`FORK_ANKI` in `sync/.env` (gitignored).
+- **Verified 2026-07-04** on a dedicated port/base: `doctor` → `up` → `status` → `verify` (`OK … A=1, B=1`
+  + `PASS`) → `down`; idempotent `up` reused the running pid.
+
 ## The two proofs
 
 1. **Automated headless regression** — `make sync-smoke` (server must be running). `sync/roundtrip_smoke.py`
@@ -95,6 +123,12 @@ Equivalent one-liner the launcher runs:
   account non-empty and flips the first-contact direction.
 - **Engine parity:** keep server engine **==** both clients **==** `f15cubing/anki@ea3acae`. A
   patch-version skew can force a full sync or a protocol error.
+- **Desktop client endpoint is profile-driven, not env.** The desktop app reads its sync URL from the
+  profile (`customSyncUrl`, set in Preferences ▸ Syncing), resolved by `mw.pm.sync_endpoint()`
+  (`anki/qt/aqt/profiles.py`). There is **no `SYNC_ENDPOINT` override for the client** — that env var
+  configures the **server** (and the headless `roundtrip_smoke.py`) only. Set the URL in Preferences
+  **before** first login; `make sync-urls` prints the exact value. (Corrects an earlier note that implied
+  a client-side `SYNC_ENDPOINT`.)
 
 ## Conflict rule (honest — PRD §10 / D3)
 
@@ -156,4 +190,6 @@ on its **own** port/data dir (`:8090`, `sync/.sync-data-7b`) so it never collide
 ---
 Last verified against: `f15cubing/anki@ea3acae` (`anki 25.09.4`, buildhash `d52ca669`; server engine
 + both peers; `python -m anki.syncserver`). Foundation `SYNC_PORT=8080`; 7b proof `SYNC_PORT=8090`.
-Block C 7b/7g verified 2026-07-03.
+Block C 7b/7g verified 2026-07-03. Operator tooling `sync/sync.sh` (`make sync-up`/`status`/`verify`/
+`down`/`reset`/`urls`/`doctor`) added + verified 2026-07-04 (full lifecycle on a dedicated port/base;
+engine buildhash `d52ca669`; no engine change).

@@ -31,7 +31,9 @@
   reads `SYNC_USER1..N=user:pass`, `SYNC_HOST`, `SYNC_PORT` (default 8080), `SYNC_BASE` (data dir); it
   **panics if no `SYNC_USER1` is set**.
 - Desktop custom endpoint: Preferences ▸ Syncing ▸ *Self-hosted sync server* (profile key `customSyncUrl`,
-  `anki/qt/aqt/profiles.py`); `SYNC_ENDPOINT` env also overrides.
+  `anki/qt/aqt/profiles.py`, resolved by `mw.pm.sync_endpoint()`). **Correction (2026-07-04):** there is
+  **no client-side `SYNC_ENDPOINT` override** — that env configures the *server* / headless
+  `roundtrip_smoke.py` only, not the desktop client (which is profile-driven). See `docs/codebase/sync.md`.
 - AnkiDroid custom endpoint: Settings ▸ Sync ▸ custom sync server (collection + media URLs).
 
 ## Decisions (locked with owner, 2026-07-01)

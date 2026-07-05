@@ -13,7 +13,7 @@ FORK_ANKI := $(if $(FORK_ANKI),$(FORK_ANKI),/Users/felipecaicedo/Desktop/alpha/s
 BENCH_CARDS := 50000
 BENCH_ITERS := 300
 
-.PHONY: sync-server sync-smoke sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval interleave-report ai-gate ai-gate-test ai-baseline bench proofs deck-leakage-audit giveup-audit deck-report scorecard-validate ablation-analysis
+.PHONY: sync-server sync-smoke sync-up sync-status sync-verify sync-down sync-reset sync-urls sync-doctor sync-server-7b sync-7b crash-7g deck-asset deck-asset-check score-eval interleave-report ai-gate ai-gate-test ai-baseline bench proofs deck-leakage-audit giveup-audit deck-report scorecard-validate ablation-analysis
 
 sync-server: ## Start the self-hosted Anki sync server on our engine (foreground; Ctrl-C to stop).
 	@sync/run-sync-server.sh
@@ -22,6 +22,27 @@ sync-smoke: ## Headless desktop-collection sync round-trip (server must already 
 	@FORK_ANKI="$${FORK_ANKI:-/Users/felipecaicedo/Desktop/alpha/speedrun/anki}"; \
 	FORK_PY="$${FORK_PY:-$$FORK_ANKI/out/pyenv/bin/python}"; \
 	PYTHONPATH="$$FORK_ANKI/out/pylib$${PYTHONPATH:+:$$PYTHONPATH}" "$$FORK_PY" sync/roundtrip_smoke.py
+
+sync-up: ## One command: preflight + start the sync server in the background + health-check + status card.
+	@sync/sync.sh up
+
+sync-status: ## Report sync server state (pid/port/health/data dir/engine buildhash).
+	@sync/sync.sh status
+
+sync-verify: ## Ensure the server is up, then run the headless round-trip proof (PASS/FAIL).
+	@sync/sync.sh verify
+
+sync-down: ## Stop the background sync server (ARGS=--reset also wipes the data dir).
+	@sync/sync.sh down $(ARGS)
+
+sync-reset: ## Wipe the local server data dir for a clean first-contact (ARGS=--yes to skip confirm).
+	@sync/sync.sh reset $(ARGS)
+
+sync-urls: ## Print copy-paste desktop + emulator client config (ARGS=--set-desktop/--emulator).
+	@sync/sync.sh urls $(ARGS)
+
+sync-doctor: ## Preflight checklist only (build/creds/port/emulator) — no start.
+	@sync/sync.sh doctor
 
 sync-server-7b: ## Start a self-hosted sync server on :8090 with a fresh 7b-only data dir (foreground; Ctrl-C to stop).
 	@rm -rf "$(CURDIR)/sync/.sync-data-7b"; \
