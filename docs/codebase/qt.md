@@ -146,6 +146,45 @@ keys) → timed session → `greExamSubmit` (server re-assembles deterministical
 scores rights-only, persists attempts, returns the revealed result). No `OpChanges`; attempts go to a
 profile side-file, never the collection.
 
+## "How this differs from FSRS" page — the study-method explainer
+
+A read-only desktop page (Tools ▸ **"How this app differs from FSRS"**) that makes the study method
+legible: we build **on** FSRS (never replacing the scheduler) and add interleaving, a timed exam
+mode, three separated scores, and the give-up rule. Same SvelteKit-dialog pattern as the
+dashboard/exam. The interleaving section is **interactive** and runs the **real** vendored
+interleaving algorithm (a verbatim copy of `pipeline/interleave.py`) on a fixed example queue.
+
+**New files:**
+- `anki/qt/aqt/gre/interleave.py` — vendored verbatim from `pipeline/interleave.py` (the app can't
+  import the outer `pipeline/` at runtime), drift-guarded by the outer `tests/test_interleave_sync.py`.
+- `anki/qt/aqt/gre/method_data.py` — pure, read-only view-model: a deterministic example due queue
+  (authentic `topic::*` leaves) + `build_interleave_demo(k, w)` running the vendored algorithm
+  (blocked vs interleaved orders + adjacency-dispersion / FSRS-displacement metrics; k/w clamped).
+- `anki/qt/aqt/gre_method.py` — `GreMethod` QDialog + `setup_gre_method_menu()` Tools-menu action.
+- `anki/ts/routes/gre-method/+page.svelte` — page shell (five sections: build-on-FSRS · interleaving
+  · timed mode · three separated scores · give-up rule), reusing the dashboard's `tokens.css` +
+  `CalibrationStrip`.
+- `anki/ts/routes/gre-method/Interleave.svelte` — the interactive viz (colour-by-type chips, live
+  metrics, K/W sliders that re-run the real algorithm; `animate:flip` reorder, reduced-motion aware).
+- `anki/ts/routes/gre-method/lib.ts` + `lib.test.ts` — pure chip-colour + metric formatting (vitest).
+
+**Modified files:**
+- `anki/qt/aqt/mediasrv.py` — `is_sveltekit_page("gre-method")` + read-only `gre_method_interleave`
+  handler → POST `/_anki/greMethodInterleave` (runs the vendored algorithm on the example queue;
+  **never touches `col`**, no `OpChanges`).
+- `anki/qt/aqt/webview.py` — `AnkiWebViewKind.GRE_METHOD` + `_profileForPage` api-access allowlist.
+- `anki/qt/aqt/main.py` — Tools-menu hook via `main_window_did_init`.
+
+**Data flow (read-only):** Tools ▸ "How this app differs from FSRS" → `GreMethod` QDialog →
+`load_sveltekit_page("gre-method")` → `Interleave.svelte` POSTs `greMethodInterleave {k,w}` → handler
+→ `method_data.build_interleave_demo` runs the vendored `interleave.py` on the example queue → JSON
+(blocked/interleaved orders + metrics). Pure — no collection access, no `OpChanges`.
+
+**Tests:** `anki/qt/tests/test_gre_method.py` (multiset/permutation invariant, dispersion ≥ blocked,
+`displacement_max ≤ w`, k/w clamps, endpoint read-only + registration) + `anki/ts/routes/gre-method/
+lib.test.ts` (colour mapping + formatters). Outer drift guard: `tests/test_interleave_sync.py`.
+Design spec: `docs/superpowers/specs/2026-07-05-algorithm-explainer-page-design.md`.
+
 ## GRE scoring adapter — synced 3-score card (Task 6 — implemented)
 
 Desktop-authoritative scoring: on dashboard open, compute the three-score
@@ -209,4 +248,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@d11b424` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening)
+Last verified against: `f15cubing/anki@8d57536` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo)

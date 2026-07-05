@@ -339,6 +339,20 @@ _Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids 
 
 ## In flight
 
+- **"How this differs from FSRS" study-method page** (fast lane; `anki`→`8d57536`) — **open PR (do
+  not auto-merge).** A read-only desktop explainer (Tools ▸ "How this app differs from FSRS"): we
+  build **on** FSRS rather than replacing it — interleaving, timed exam mode, three separated scores,
+  the give-up rule. The interleaving section is **interactive**, running the **real** vendored
+  `interleave.py` on an example queue (blocked vs interleaved cluster-coloured chips + live
+  adjacency-dispersion / FSRS-displacement metrics + K/W sliders; `animate:flip` reorder). New
+  `gre-method` SvelteKit route (reuses the dashboard `tokens.css` + `CalibrationStrip`) + read-only
+  `greMethodInterleave` endpoint + `GreMethod` QDialog + Tools-menu hook + vendored `interleave.py`
+  (AST-drift-guarded by `tests/test_interleave_sync.py`). No engine/proto/scheduler; the endpoint
+  never touches `col` and returns no `OpChanges`. Green: `check:svelte`, vitest 6/6,
+  `test_gre_method.py` 5/5, AST drift guard; ruff/eslint/prettier clean on the new files. The GUI
+  click-through is the one human step (headless QtWebEngine won't init in this environment). Spec:
+  `docs/superpowers/specs/2026-07-05-algorithm-explainer-page-design.md`.
+
 - **Exam Mode API-error fix** (fast lane; `anki`→`d9684c4`) — **open PR (overnight; do not
   auto-merge).** Fixes the 403 that broke *every* Exam Mode mock (exam page posted
   `Content-Type: application/json`, which `mediasrv` 403s before auth; switched to
