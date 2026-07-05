@@ -17,14 +17,14 @@ import taxonomy
 X = generate_deck.x
 
 
-def _cards_for(leaf, seed=42):
+def _cards_for(flashcards, leaf):
     tag = taxonomy.TAG_BY_LEAF[leaf]
-    return [c for c in generate_deck.generate_cards(seed=seed) if c["leaf_tag"] == tag]
+    return [c for c in flashcards if c["leaf_tag"] == tag]
 
 
-def test_differential_single_backs_are_correct():
+def test_differential_single_backs_are_correct(flashcards):
     checked = 0
-    for card in _cards_for("differential_single"):
+    for card in _cards_for(flashcards, "differential_single"):
         meta = card["_expr"]
         f = meta["f"]
         claimed = meta["answer"]
@@ -33,9 +33,9 @@ def test_differential_single_backs_are_correct():
     assert checked >= 2
 
 
-def test_integral_single_backs_are_correct():
+def test_integral_single_backs_are_correct(flashcards):
     checked = 0
-    for card in _cards_for("integral_single"):
+    for card in _cards_for(flashcards, "integral_single"):
         meta = card["_expr"]
         integrand = meta["integrand"]
         antiderivative = meta["antiderivative"]

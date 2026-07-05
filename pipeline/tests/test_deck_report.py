@@ -78,9 +78,10 @@ def test_summary_is_deterministic():
 # --- the real deck must pass the gate ---
 
 
-def test_real_deck_passes_quality_gate():
-    cards = build_deck.load_all_cards(seed=42)
-    summary = deck_report.assert_deck_quality(cards)  # raises if any card is malformed
+def test_real_deck_passes_quality_gate(all_cards):
+    summary = deck_report.assert_deck_quality(all_cards)  # raises if any card is malformed
     assert summary["mcq_integrity_ok"] is True
     assert summary["mcq_total"] > 0
     assert summary["num_failures"] == 0
+    # MCQ integrity now spans all 11 computational leaves.
+    assert summary["leaves_with_mcq"] >= 11

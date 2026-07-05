@@ -45,7 +45,9 @@ coverage map, readiness gate, and interleaving all build on.
   the canonical `sympy.sstr` string (presentation-independent integrity).
 - `generate_mcq.py` — `generate_mcq_cards(seed=42)` → ordered list of MCQ card
   dicts `{leaf_tag, format:"mcq", question, options[5], correct_index, explanation}`;
-  `MCQ_COUNTS` maps leaf → count. Reuses `generate_deck` helpers; SymPy computes
+  `MCQ_COUNTS` maps leaf → count — MCQ now spans **all 11 computational leaves**
+  (mirroring the flashcard generator's coverage), raising MCQ to ~1/3 of the merged
+  deck. Reuses `generate_deck` helpers; SymPy computes
   both key and distractors. Each builder now pairs every intentional distractor with the
   **named common error** it embodies (e.g. "integrating instead of differentiating",
   "computing the LCM instead of the GCD"); `error_labels(correct, wrongs_labeled)` keeps
@@ -121,7 +123,7 @@ coverage map, readiness gate, and interleaving all build on.
   `assert_deck_quality` (raises on any violation), `format_report`. Whole-deck version of the
   per-generator integrity unit tests (PRD §12/§12a "distractors provably ≠ key"). Stem/option
   lengths are reported, not gated. `run_deck_report.py` CLI + `make deck-report` (a `--strict`
-  GATE). Seed 42: **5,407 cards (526 MCQ), integrity OK, 0 violations**.
+  GATE). Seed 42: **7,332 cards (2,451 MCQ), integrity OK, 0 violations**.
 - `conceptual_cards.yaml` — hand-authored cards (`cards:` list) for the conceptual
   leaves; the committed source of truth. Every entry carries the verification block
   `status: verified` + `verified_by` / `verified_on` / `source` (required). Entries
@@ -168,7 +170,7 @@ coverage map, readiness gate, and interleaving all build on.
   `tests/test_stable_guids.py`.
 - **Scale & capacity.** The generator is template-based: per-leaf counts are
   controlled by `GENERATED_COUNTS` (flashcards) and `MCQ_COUNTS` (MCQ). At the
-  current scale (~5,400 cards, seed 42) all problems are unique within each leaf
+  current scale (~7,300 cards, seed 42) all problems are unique within each leaf
   (enforced by `tests/test_template_capacity.py`). If a leaf's count approaches
   the combinatorial limit of its SymPy template, the capacity test will catch it
   before any duplicates ship.

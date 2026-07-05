@@ -107,16 +107,16 @@ def test_report_is_deterministic():
 # --- real corpora: the published residual rate must be zero (read-only) ---
 
 
-def test_real_deck_has_zero_residual_leakage():
-    # loads the actual study deck + frozen eval bank (read-only) and asserts no leak.
+def test_real_deck_has_zero_residual_leakage(all_cards):
+    # uses the actual study deck (shared fixture) + frozen eval bank (read-only)
+    # and asserts no exact (question, answer) leakage even now that MCQ spans all
+    # 11 computational leaves.
     sys.path.insert(
         0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "eval", "bank"))
     )
-    import build_deck
     from loader import load_eval_items
 
-    study = build_deck.load_all_cards(seed=42)
     eval_items = load_eval_items()
-    r = la.scan_leakage(study, eval_items)
+    r = la.scan_leakage(all_cards, eval_items)
     assert r.residual_leakage_rate == 0.0, r.as_dict()
     la.assert_no_leakage(r)

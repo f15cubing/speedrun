@@ -12,19 +12,18 @@ import genanki
 import build_deck
 
 
-def test_every_card_has_a_uid():
-    for card in build_deck.load_all_cards(seed=42):
+def test_every_card_has_a_uid(all_cards):
+    for card in all_cards:
         assert card.get("uid"), card
 
 
-def test_uids_are_unique_across_the_deck():
-    cards = build_deck.load_all_cards(seed=42)
-    uids = [c["uid"] for c in cards]
+def test_uids_are_unique_across_the_deck(all_cards):
+    uids = [c["uid"] for c in all_cards]
     assert len(uids) == len(set(uids)), "duplicate uid(s) in the deck"
 
 
-def test_note_guid_is_derived_from_uid():
-    for card in build_deck.load_all_cards(seed=42)[:50]:
+def test_note_guid_is_derived_from_uid(all_cards):
+    for card in all_cards[:50]:
         note = build_deck.note_for(card)
         assert note.guid == genanki.guid_for(card["uid"]), card["uid"]
 
