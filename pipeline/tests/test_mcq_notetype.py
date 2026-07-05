@@ -133,10 +133,22 @@ def test_mcq_does_not_auto_advance_on_selection():
     # must explicitly rate / continue, so there is time to read the explanation.
     qfmt = _mcq_qfmt()
     assert "answer(parseInt(btn.getAttribute('data-i'),10))" in qfmt
-    # the tap handler reveals the explanation but does not itself grade
+    # the tap handler reveals the explanation but does not itself grade/advance:
+    # it may emit the correctness *hint* (gremcq:) but never ans/ease.
     answer_body = qfmt.split("function answer(i){", 1)[1].split("for(var k=0", 1)[0]
     assert "exp.style.display='block'" in answer_body
-    assert "pycmd(" not in answer_body  # no grade/advance on mere selection
+    assert "pycmd('ans')" not in answer_body  # no show-answer on mere selection
+    assert "pycmd('ease" not in answer_body  # no grade on mere selection
+
+
+def test_mcq_selection_signals_verdict_to_reviewer():
+    # On desktop (pycmd present) tapping an option reports right/wrong to the reviewer
+    # so it can lock a wrong answer to Again only, even via the built-in Show Answer
+    # bar (see aqt.gre.mcq_lockdown). Guarded so AnkiDroid (no pycmd) is unaffected.
+    qfmt = _mcq_qfmt()
+    answer_body = qfmt.split("function answer(i){", 1)[1].split("for(var k=0", 1)[0]
+    assert "pycmd(right?'gremcq:right':'gremcq:wrong')" in answer_body
+    assert "typeof pycmd==='function'" in answer_body  # guarded, AnkiDroid-safe
 
 
 def test_mcq_grading_degrades_gracefully_without_pycmd():

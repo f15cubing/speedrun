@@ -227,6 +227,55 @@ dispersion of a blocked queue, **multiset invariant**, `NEW`/`LEARNING` position
 three safe fallbacks. Live GUI click-through (flip the toggle mid-review, confirm the order changes)
 is the one human smoke step — offscreen QtWebEngine won't init headlessly here.
 
+## Graded MCQ — wrong answer grades Again only (implemented)
+
+The bundled "GRE Math MCQ" card template is interactive + graded: tapping an option reveals
+correctness + the explanation, then binds the grade to the FSRS ease enum. A **wrong** answer is a
+lapse — it must only ever grade **Again(1)**, never Hard/Good/Easy. The template's in-card flow
+already enforces this (a wrong tap offers a single Continue); this closes the remaining desktop path
+— Anki's built-in bottom answer bar (and its keyboard shortcuts), which the card webview cannot
+touch (it lives in a separate `bottom.web`).
+
+**How it works:** the template reports the tapped option's correctness to the reviewer the moment the
+learner taps, via a bridge command `pycmd("gremcq:right")` / `pycmd("gremcq:wrong")` (guarded by
+`typeof pycmd==='function'`, so it's a no-op on AnkiDroid, which has no `pycmd` and falls back to the
+built-in ease buttons). This is a **state hint only** — selecting an option never answers or advances
+the card. The reviewer stores the verdict for the current card and enforces the rule at two seams.
+
+**New file:**
+- `anki/qt/aqt/gre/mcq_lockdown.py` — pure, dependency-free helpers: `parse_verdict(url)`
+  (`gremcq:` → `"right"`/`"wrong"`/`None`), `clamp_ease(verdict, ease)` (→ `1` only when wrong),
+  `restrict_answer_buttons(verdict, buttons)` (keep only Again when wrong; defensively never blanks
+  the bar). Only a **wrong** verdict restricts; a correct MCQ keeps Hard/Good/Easy (FSRS still needs
+  the difficulty rating) and non-MCQ cards (no verdict → `None`) are untouched.
+
+**Modified files:**
+- `anki/qt/aqt/reviewer.py` — four thin seams: `__init__` inits `self._gre_mcq_verdict`; `nextCard`
+  resets it per card; `_linkHandler` captures the `gremcq:` hint; `_answerCard` clamps a wrong MCQ's
+  ease to Again (covers button, keyboard, and auto-advance — all funnel here); `_answerButtonList`
+  collapses the bottom bar to Again after a wrong MCQ (last word, after the add-on hook).
+- `pipeline/build_deck.py` (outer repo) — the MCQ template's `answer(i)` emits the guarded `gremcq:`
+  hint; re-bundled into both app assets via `make deck-asset` (byte-identical).
+
+**Invariant (engine ceilings):** the reviewer only reads its own in-memory verdict flag and reorders
+which answer buttons are shown / clamps an ease value — **no `col` write, no `OpChanges`, no
+scheduling-field or Rust/proto change**; undo and the collection are untouched. Grading still flows
+through the normal FSRS `answer_card` path (a wrong answer is a real Again lapse the scheduler
+re-queues).
+
+**Existing-install template refresh:** the graded template reaches installs that imported an earlier
+bundle via `deck_autoimport._refresh_bundled_notetype_templates` (see the deck-auto doc) — a
+text-only note-type update, gated by a `gre_deck_template_revision` `col.conf` key, that needs no deck
+re-import.
+
+**Tests:** `anki/qt/tests/test_gre_mcq_lockdown.py` (13): the pure helpers (parse/clamp/restrict incl.
+correct + non-MCQ pass-through and the never-blank guard) and the importer refresh (in-place update,
+no-op-when-current, absent-notetype, unreadable-apkg degrade, revision gate, refresh-without-reimport).
+`pipeline/tests/test_mcq_notetype.py` asserts the template emits the guarded verdict hint and still
+does not grade/advance on selection. The live GUI click-through — a wrong MCQ shows only Again on the
+bottom bar, and keyboard 2/3/4 no longer grade it — is the one human smoke step (offscreen QtWebEngine
+won't init headlessly here).
+
 ## GRE scoring adapter — synced 3-score card (Task 6 — implemented)
 
 Desktop-authoritative scoring: on dashboard open, compute the three-score
@@ -292,4 +341,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@4c991c9` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle)
+Last verified against: `f15cubing/anki@15bab43a9` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle + graded-MCQ wrong-answer lockdown)
