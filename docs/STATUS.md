@@ -340,7 +340,7 @@ _Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids 
 ## In flight
 
 - **Live-reviewer interleaving toggle** (engine lane; `anki` fork `agent/gre-interleave-reviewer` →
-  `001d4a1`, outer pin bumped) — **wires the pre-registered interleaving feature into the actual
+  `4c991c9`, outer pin bumped) — **wires the pre-registered interleaving feature into the actual
   review loop** (previously only an algorithm + explainer demo), so interleaved↔blocked is a real,
   toggleable study mode = the ablation's two in-app arms. Pure presentation-layer reorder of the v3
   `QueuedCards` batch in `reviewer._get_next_v3_card`: **off by default**
@@ -351,8 +351,12 @@ _Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids 
   `qt/aqt/gre/interleave_review.py` + `qt/aqt/gre_interleave.py`; modified `reviewer.py`/`main.py`.
   **9 unit tests green** (flag gate, fetch-limit switch, dispersion, multiset invariant, new/learning
   preserved, 3 safe fallbacks); ruff clean; 64 aqt GRE tests green (no regression). **Live GUI
-  click-through is the one human smoke** (offscreen QtWebEngine won't init headlessly). Different-agent
-  review pending; **open PR — do not self-merge (engine lane).** Unblocks a runnable ablation (a human
+  click-through is the one human smoke** (offscreen QtWebEngine won't init headlessly). **Different-agent
+  review: CORRECT** (all engine ceilings intact) — its two non-blocking recommendations applied
+  (`4c991c9`): the reorder is now a pure computation wrapped in a fallback (an error can't empty the
+  queue/interrupt review), and a new test asserts each `QueuedCard`'s `states`/`context` travel with
+  its card (the load-bearing self-contained-unit invariant); now **10 tests**. **Open PR — do not
+  self-merge (engine lane).** Unblocks a runnable ablation (a human
   can now do interleaved vs blocked sessions on the same items). **Perf proof:** new `make bench-actions`
   (folded into `make bench`) times the real grade→next-card cycle (`answer_card` + fetch) at **50k
   cards** — **p50 0.11 ms · p95 0.33 ms · worst 1.86 ms** (target p95<100 ms) — and shows the
