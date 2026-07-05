@@ -231,7 +231,7 @@ installing.) Full backend/build details: `docs/codebase/rsdroid.md`.
 To sync the two apps against a self-hosted server on our engine:
 
 ```bash
-make sync-server     # foreground; Ctrl-C to stop. Point both apps at http://<host>:8080/
+make sync-server     # foreground; Ctrl-C to stop. Point both apps at http://<host>:8452/
 ```
 
 More per-app build/test commands live in the `building-and-testing` skill

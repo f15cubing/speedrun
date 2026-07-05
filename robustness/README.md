@@ -89,7 +89,7 @@ emulator-5554 shell am force-stop com.ichi2.anki.debug` mid-session, relaunch, t
 - **Run with the primary build's python** (`FORK_ANKI/out/pylib`), never a feature worktree's
   partial `anki/out` — same rule as `sync-smoke` (see `docs/codebase/sync.md`).
 - **7b needs its own server on :8090** with a distinct data dir (`sync/.sync-data-7b`, gitignored) so
-  it never collides with the shared `:8080` sync server or the emulator.
+  it never collides with the shared foundation sync server (default `:8452`) or the emulator.
 - **These add no engine code.** 7b proves the stock conflict rule; it must not change it.
 
 ---

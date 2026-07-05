@@ -42,7 +42,7 @@ two devices, then be explicit about what is and isn't validated (AI-off; simulat
       the phone panel has data to render.
 - [ ] Android emulator (`anki_test`, arm64-v8a) booted with our AnkiDroid debug APK on our rebuilt
       `librsdroid.so`; the GRE deck present; **DeckPicker overflow → "GRE readiness"** opens the panel.
-- [ ] Sync server ready: `make sync-server` (port 8080), account `greuser`.
+- [ ] Sync server ready: `make sync-server` (port 8452), account `greuser`.
 - [ ] Terminal panes sized for readable text, ready to run: the mastery read-only-invariant test,
       `make ai-gate` / `make ai-baseline`, `make bench`, `make crash-7g`, `make sync-7b`.
 - [ ] Have the B-roll ready: `docs/evidence/proofs/calibration.png`, `docs/evidence/robustness/`,
@@ -199,7 +199,7 @@ Non-negotiable, and it *is* the pitch — don't hide the gaps, sell them:
       Readiness give-up state).
 - [ ] Android emulator (`anki_test`, arm64-v8a) booted with our AnkiDroid debug APK on our rebuilt
       `librsdroid.so`; the GRE deck present.
-- [ ] Sync server ready to start: `make sync-server` (port 8080), account `greuser`.
+- [ ] Sync server ready to start: `make sync-server` (port 8452), account `greuser`.
 - [ ] A terminal pane sized for readable text, ready to run the mastery tests.
 - [ ] Screen recorder set to capture desktop + a second source for the emulator (or use the
       `docs/evidence/w3-android/` + `docs/evidence/w4-sync/` screenshots as B-roll if a live emulator

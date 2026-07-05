@@ -4,7 +4,15 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-04 (Sat) — sync operator tooling: one-command `make sync-up` (background server + preflight + health check + status card) + `status`/`verify`/`down`/`reset`/`urls`/`doctor` (fast lane, no engine change). Prior: MCQ deck re-bundled into both apps + `GRE_DECK_VERSION`→`2026-07-03b`; interactive MCQ card template._
+_Last updated: 2026-07-05 (Sun) — sync default port moved 8080→8452 (avoids Anki's dev WebEngine debugger on 8080) + `doctor`/`status` now identify a foreign port holder & suggest a free port. Prior: sync operator tooling (`make sync-up` + status/verify/down/reset/urls/doctor); MCQ deck re-bundle + `GRE_DECK_VERSION`→`2026-07-03b`._
+
+- **Sync default port 8080→8452 + foreign-holder diagnostics** (fast lane; `sync/`, docs) — the sync
+  server now defaults to `SYNC_PORT=8452` instead of 8080, which collided with Anki's dev WebEngine
+  remote-debugger (`anki/run` binds 8080) every time the desktop fork ran from source — so `make sync-up`
+  now "just works" alongside a running dev app. When a chosen port *is* held, `doctor`/`status` **identify
+  the holder** (Anki dev app `tools/run.py` vs. a leftover `-m anki.syncserver`) and print a concrete
+  free-port command (or `QTWEBENGINE_REMOTE_DEBUGGING=9222 ./run` to free 8080). Verified live: `doctor`
+  all-green on 8452 with the dev app still on 8080. No engine/submodule change. (`f15cubing/speedrun#TBD`.)
 
 - **Sync operator ergonomics** (fast lane; `sync/`, `Makefile`, docs) — a dependency-free control tool
   `sync/sync.sh` (Make targets `sync-up`/`sync-status`/`sync-verify`/`sync-down`/`sync-reset`/`sync-urls`/

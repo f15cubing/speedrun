@@ -11,7 +11,9 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 if [[ -f "$REPO_ROOT/sync/.env" ]]; then set -a; source "$REPO_ROOT/sync/.env"; set +a; fi
 
 : "${SYNC_USER1:=greuser:grepass}"
-: "${SYNC_PORT:=8080}"
+# Default 8452 (not 8080): the desktop fork's dev launcher `anki/run` opens Qt WebEngine's
+# Chromium remote-debugger on 8080, so an 8080 sync default collides with a running dev app.
+: "${SYNC_PORT:=8452}"
 : "${SYNC_BASE:=$REPO_ROOT/sync/.sync-data}"
 : "${FORK_ANKI:=/Users/felipecaicedo/Desktop/alpha/speedrun/anki}"
 FORK_PY="${FORK_PY:-$FORK_ANKI/out/pyenv/bin/python}"
@@ -34,6 +36,20 @@ warn() { printf '  %s!%s %s\n' "$C_Y" "$C_0" "$*"; }
 bad()  { printf '  %s✗%s %s\n' "$C_R" "$C_0" "$*" >&2; }
 
 port_pid() { lsof -tiTCP:"$SYNC_PORT" -sTCP:LISTEN 2>/dev/null | head -n1; }
+
+port_cmd() {  # best-effort short command line for a pid (empty if ps is unavailable)
+  [[ -n "${1:-}" ]] || return 0
+  ps -p "$1" -o command= 2>/dev/null | tr -s '[:space:]' ' ' | sed 's/^ *//;s/ *$//' | cut -c1-100 || true
+}
+
+free_port() {  # first free TCP port at/after SYNC_PORT+1 -- a friendly nearby suggestion
+  local p=$(( SYNC_PORT + 1 )) n
+  for ((n = 0; n < 64; n++)); do
+    [[ -z "$(lsof -tiTCP:"$p" -sTCP:LISTEN 2>/dev/null)" ]] && { printf '%s' "$p"; return 0; }
+    p=$(( p + 1 ))
+  done
+  printf '%s' "$(( SYNC_PORT + 1 ))"
+}
 
 running_pid() {
   [[ -f "$PID_FILE" ]] || return 1
@@ -95,7 +111,25 @@ cmd_doctor() {
   local lp ours; lp="$(port_pid || true)"; ours="$(running_pid || true)"
   if [[ -z "$lp" ]]; then ok "port $SYNC_PORT free"
   elif [[ -n "$ours" && "$lp" == "$ours" ]]; then ok "port $SYNC_PORT held by our server (pid $lp)"
-  else bad "port $SYNC_PORT in use by a foreign process (pid $lp) -- stop it or set SYNC_PORT"; fail=1; fi
+  else
+    local pcmd alt; pcmd="$(port_cmd "$lp" || true)"; alt="$(free_port || true)"
+    bad "port $SYNC_PORT in use by a foreign process (pid $lp${pcmd:+: $pcmd})"
+    case "$pcmd" in
+      *anki.syncserver*)
+        say "      that's another/leftover sync server (e.g. a foreground 'make sync-server')."
+        say "      stop it (Ctrl-C in its terminal, or 'kill $lp'), or run on a free port:"
+        say "        SYNC_PORT=${alt:-8081} make sync-up" ;;
+      *run.py*|*aqt*)
+        say "      that's Anki's own dev app -- its WebEngine remote-debugger binds $SYNC_PORT (set by 'anki/run')."
+        say "      keep Anki open and run sync on a free port:"
+        say "        SYNC_PORT=${alt:-8081} make sync-up"
+        say "      or free $SYNC_PORT by relaunching Anki with:  QTWEBENGINE_REMOTE_DEBUGGING=9222 ./run" ;;
+      *)
+        say "      stop that process, or run sync on a free port:"
+        say "        SYNC_PORT=${alt:-8081} make sync-up" ;;
+    esac
+    fail=1
+  fi
   if command -v adb >/dev/null 2>&1 && [[ -n "$(adb devices 2>/dev/null | awk 'NR>1 && $2=="device"{print $1; exit}')" ]]; then
     ok "adb device present -- emulator syncs to $EMULATOR_URL"
   else
@@ -136,7 +170,12 @@ cmd_status() {
     warn "pid $pid alive but not serving on $SYNC_PORT (starting up or wedged); see $LOG_FILE"; return 1
   fi
   local lp; lp="$(port_pid || true)"
-  if [[ -n "$lp" ]]; then warn "no tracked server, but port $SYNC_PORT held by pid $lp (foreign)"; return 1; fi
+  if [[ -n "$lp" ]]; then
+    local pcmd; pcmd="$(port_cmd "$lp" || true)"
+    warn "no tracked server, but port $SYNC_PORT held by pid $lp (foreign${pcmd:+: $pcmd})"
+    warn "run 'make sync-doctor' to identify it and get a free-port command"
+    return 1
+  fi
   say "sync server DOWN (no tracked pid; port $SYNC_PORT free)"; return 1
 }
 
