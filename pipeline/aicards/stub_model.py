@@ -67,11 +67,36 @@ _COMP_LEAVES = (
     + [("differential_equations", "diffeq")] * 5
 )  # == 32
 
+# Each op's retrieval query foregrounds that operation's OWN discriminating terms
+# and avoids the generic "power rule"/"x raised to the power n" phrasing shared by
+# the derivative passage (svc-03-power-rule) and the integral passage
+# (svc-10-integral-of-a-power). Without this, `diff` and `antideriv` both anchored on
+# "power rule ..." and the TF-IDF retriever cross-ranked opposing passages (an
+# "integral confused with a differential"). Queries stay deterministic and grounded
+# in phrasing that actually appears in the corpus so retrieval still finds the right
+# passage. `diffeq` is antidifferentiation (its check op is "antideriv"), so it
+# anchors on the antiderivative/indefinite-integral passage while foregrounding its
+# own intent ("differential equation", "general solution").
 OP_QUERY = {
-    "diff": "differentiate derivative power rule x raised to the power n",
-    "antideriv": "indefinite integral antiderivative power rule constant of integration",
+    "diff": "differentiate the derivative of x raised to the power n",
+    "antideriv": "indefinite integral antiderivative constant of integration",
     "deriv_at": "slope of the tangent line derivative evaluated at a point",
-    "diffeq": "antiderivative indefinite integral constant of integration solve",
+    "diffeq": "differential equation general solution by antiderivative indefinite integral",
+}
+
+# Operation-discriminating tokens (lower-cased, as produced by ``retriever.tokenize``)
+# that actually occur in the corpus. ``pick_sentence`` uses these to GUARD grounding:
+# a card's quote must share its operation's own vocabulary, so a passage that mentions
+# a generic "power rule ... x raised to the power n" can no longer ground a derivative
+# card on an integration sentence (or vice-versa). Derivative-family ops foreground
+# derivative/slope/tangent; antidifferentiation ops (antideriv, diffeq) foreground
+# integral/antiderivative terms. Ops absent from this map (e.g. conceptual "concept")
+# get no guard — pick_sentence falls back to plain query overlap.
+OP_DISCRIMINATORS = {
+    "diff": ("derivative", "derivatives", "differentiate", "differentiating", "differentiable"),
+    "deriv_at": ("slope", "tangent", "derivative", "derivatives", "differentiable"),
+    "antideriv": ("antiderivative", "antiderivatives", "indefinite", "integral", "integration"),
+    "diffeq": ("antiderivative", "antiderivatives", "indefinite", "integral", "integration"),
 }
 
 Request = namedtuple("Request", ["idx", "leaf_tag", "kind", "op", "variant", "query", "payload"])
@@ -150,19 +175,46 @@ def _sentences(passage_text):
     return _SENT_SPLIT.split(corpus.normalize_ws(passage_text))
 
 
-def pick_sentence(passage, query):
-    """Return the passage sentence most lexically relevant to ``query`` (verbatim)."""
+def pick_sentence(passage, query, op=None):
+    """Return the passage sentence most relevant to ``query`` (verbatim).
+
+    When ``op`` is given, an operation-aware guard is applied: only sentences that
+    carry at least one of the operation's discriminating tokens
+    (:data:`OP_DISCRIMINATORS`) are eligible, so a derivative card can never be
+    grounded on an integration sentence that merely shares the generic "power rule
+    ... x raised to the power n" phrasing (the "integral confused with a
+    differential" bug), and vice-versa. Ties in query overlap break toward the
+    sentence carrying MORE operation-discriminating tokens, not shared generic ones.
+
+    Backward-compatible: ``op=None`` (or an op with no mapping, e.g. conceptual
+    cards) reproduces the original pure query-overlap behavior, and if no sentence
+    carries a discriminating token the guard falls back to that behavior rather than
+    failing.
+    """
     q = set(_retriever.tokenize(query))
-    best, best_score = None, -1
+    disc = set(OP_DISCRIMINATORS.get(op, ()))
+    scored = []
     for sent in _sentences(passage.text):
-        score = sum(1 for t in _retriever.tokenize(sent) if t in q)
-        if score > best_score:
-            best, best_score = sent, score
+        toks = _retriever.tokenize(sent)
+        overlap = sum(1 for t in toks if t in q)
+        disc_hits = sum(1 for t in toks if t in disc)
+        scored.append((sent, overlap, disc_hits))
+
+    # Guard: prefer sentences that carry the operation's own vocabulary. Fall back
+    # to every sentence when none qualify (or when no op was supplied).
+    guarded = [s for s in scored if s[2] > 0]
+    pool = guarded if guarded else scored
+
+    best, best_key = None, None
+    for sent, overlap, disc_hits in pool:
+        key = (overlap, disc_hits)  # overlap primary; discriminators break ties
+        if best is None or key > best_key:
+            best, best_key = sent, key
     return best
 
 
 # --- conceptual claim construction ------------------------------------------ #
-def _entailed_claim(passage, query, n_tokens=8):
+def _entailed_claim(passage, query, n_tokens=8, op=None):
     """A short claim clearly entailed by the picked sentence.
 
     The claim is built purely from the quote's own content tokens, so every claim
@@ -170,20 +222,20 @@ def _entailed_claim(passage, query, n_tokens=8):
     thresholds). It reads as a faithful extraction, which is exactly what a
     grounded conceptual card should be.
     """
-    sent = pick_sentence(passage, query)
+    sent = pick_sentence(passage, query, op=op)
     toks = _retriever.tokenize(sent)[:n_tokens]
     claim = " ".join(toks)
     return sent, claim[:1].upper() + claim[1:] + "."
 
 
-def borderline_claim(passage, query, n_keep=12, n_novel=6):
+def borderline_claim(passage, query, n_keep=12, n_novel=6, op=None):
     """A claim with entailment fraction n_keep/(n_keep+n_novel) ~ 0.67.
 
     Built FROM the tokenizer's output so the fraction is robust to tokenization:
     n_keep tokens are copied from the quote (guaranteed hits) and n_novel fresh
     tokens are appended (guaranteed misses).
     """
-    sent = pick_sentence(passage, query)
+    sent = pick_sentence(passage, query, op=op)
     uniq = []
     seen = set()
     for t in _retriever.tokenize(sent):
@@ -235,7 +287,8 @@ class StubBackend:
             ("topic::additional::real_analysis", "harmonic series diverges reciprocals positive integers"),
             ("topic::additional::real_analysis", "cauchy sequence real numbers converges prescribed distance"),
             ("topic::additional::real_analysis", "geometric series common ratio converges absolute value less than one"),
-            ("topic::calculus::differential_single", "differentiable at a point is also continuous"),
+            ("topic::calculus::differential_single",
+             "every function differentiable at a point is also continuous but need not be differentiable"),
             ("topic::additional::real_analysis", "sequence converges limit terms arbitrarily close"),
         ]
         for leaf, query in concept_specs:
@@ -247,7 +300,11 @@ class StubBackend:
         add("topic::additional::real_analysis", CONCEPTUAL, "concept", "unentailed",
             "cosine sine derivative elementary functions",
             payload={"claim": "Matrix multiplication is generally not commutative for square matrices."})
-        add("topic::additional::real_analysis", CONCEPTUAL, "concept", "unentailed",
+        # The Fundamental Theorem / definite integral is integral CALCULUS, so this
+        # fixture is tagged integral_single (its grounding, svc-12-the-definite-integral,
+        # matches the tag). It stays an unentailed card — its claim is unsupported by
+        # the quote — so the entailment gate still drops it.
+        add("topic::calculus::integral_single", CONCEPTUAL, "concept", "unentailed",
             "definite integral fundamental theorem antiderivative",
             payload={"claim": "The set of prime numbers is infinite by Euclid's classic argument."})
         return reqs
@@ -282,7 +339,7 @@ class StubBackend:
         if request.variant == "ungrounded":
             prov = Provenance(quote=_FABRICATED_QUOTE, anchor=top_passage.id if top_passage else "svc-03-power-rule")
         else:
-            quote = pick_sentence(top_passage, request.query)
+            quote = pick_sentence(top_passage, request.query, op=request.op)
             prov = Provenance(quote=quote, anchor=top_passage.id)
 
         return GeneratedCard(
@@ -293,13 +350,13 @@ class StubBackend:
 
     def _build_conceptual(self, request, top_passage):
         if request.variant == "good":
-            quote, claim = _entailed_claim(top_passage, request.query)
+            quote, claim = _entailed_claim(top_passage, request.query, op=request.op)
             front = "State the fact this source supports."
         elif request.variant == "borderline":
-            quote, claim = borderline_claim(top_passage, request.query)
+            quote, claim = borderline_claim(top_passage, request.query, op=request.op)
             front = "State the related fact."
         else:  # unentailed
-            quote = pick_sentence(top_passage, request.query)
+            quote = pick_sentence(top_passage, request.query, op=request.op)
             claim = request.payload["claim"]
             front = "State a fact about this topic."
 

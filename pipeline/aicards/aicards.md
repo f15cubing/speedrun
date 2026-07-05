@@ -44,7 +44,12 @@ one-file change (`orchestrator.LlmBackend`); nothing downstream changes.
 - `stub_model.py` — `StubBackend` (deterministic stand-in LLM: `plan()` + `build()`);
   transparent `COMPOSITION`. RAG-grounded (lifts quotes from retrieved passages) and
   adversarial on purpose (emits wrong / hallucinated-quote / answer-leaking /
-  un-entailed cards so the gates have something to catch).
+  un-entailed cards so the gates have something to catch). `OP_QUERY` foregrounds each
+  operation's own discriminating terms (no shared "power rule" collision), and
+  `pick_sentence(passage, query, op=None)` applies an **operation guard**
+  (`OP_DISCRIMINATORS`): a card's quote must share its operation's vocabulary, so a
+  derivative card can't be grounded on an integration sentence (or vice-versa). The
+  `op` arg is optional/backward-compatible (falls back to plain query overlap).
 - `orchestrator.py` — `run_pipeline(backend)` → ordered `Outcome`s with a `Decision`
   (`PUBLISH_VERIFIED` / `DRAFT_HUMAN_REVIEW` / `ABSTAIN_*`); `classify(card)`;
   `decision_counts`, `published`, `human_review_drafts`, `abstained`; the live-model
@@ -103,6 +108,16 @@ one-file change (`orchestrator.LlmBackend`); nothing downstream changes.
   GUID (not the gitignored data): corpus + generation inputs + outputs are canary- and
   ETS-free; every card anchors to a `svc-*` corpus passage (never a `gNNN` gold id);
   the generation modules never reference the held-out store paths.
+- **Operation-aware grounding.** Retrieval + `pick_sentence` must never cross
+  differentiation and integration. The derivative passage (`svc-03-power-rule`) and
+  the integral passage (`svc-10-integral-of-a-power`) share "power rule … x raised to
+  the power n"; `OP_QUERY` disambiguates on each op's own terms and `pick_sentence`'s
+  `op` guard restricts to sentences carrying the operation's discriminating tokens
+  (ties break toward MORE such tokens). Conceptual fixtures must be grounded
+  consistently with their leaf tag (e.g. an FTC/definite-integral quote is
+  `integral_single`, not `real_analysis`; the "differentiable ⇒ continuous" fact
+  grounds in `svc-01`, not the Mean Value Theorem). Locked by
+  `tests/test_pick_sentence.py` + `tests/test_retriever.py`.
 - **Determinism.** Fixed seed ⇒ identical run (stub RNG, retriever, numeric-probe
   sample points all seeded). One command: `make ai-gate`.
 - **AI-off honesty.** The gate PASSES on the deterministic stub; those numbers
@@ -163,7 +178,12 @@ turns generation off without touching review or scoring.
 - `tests/test_corpus.py` — passage anchoring; verbatim quote match across line-wrapping.
 - `tests/test_provenance.py` — non-nullable + verbatim enforcement (missing/blank/
   ungrounded/wrong-anchor all rejected).
-- `tests/test_retriever.py` — TF-IDF retrieval, determinism, top-k ordering.
+- `tests/test_retriever.py` — TF-IDF retrieval, determinism, top-k ordering; the
+  `diff` query never ranks the integral-of-a-power passage ahead of the derivative
+  passage, and the `antideriv` query never tops out on the derivative power-rule passage.
+- `tests/test_pick_sentence.py` — the operation guard: for each op, grounding on the
+  confusable derivative/integral power-rule passages returns the operation-correct
+  sentence; backward-compatible with no `op`; full-plan cards never cross operations.
 - `tests/test_verify.py` — CAS (diff/antideriv/defint/gcd), numeric probe, NLI-proxy,
   human-review routing.
 - `tests/test_pipeline.py` — decision counts; only grounded + CAS-verified cards
@@ -191,3 +211,6 @@ turns generation off without touching review or scoring.
 
 ---
 Last verified against: `main` (merged as `f15cubing/speedrun#34`, commit `3f68a46`)
++ uncommitted working-tree fix: operation-aware grounding (`OP_QUERY`/`OP_DISCRIMINATORS`
+disambiguation, `pick_sentence` `op` guard, two conceptual-fixture regroundings; gate
+numbers unchanged — 35 published / 5 drafts / 10 abstained, precision 1.0, yield 0.64).
