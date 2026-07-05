@@ -150,6 +150,58 @@ available".
 study-next enters a topic review, exam lock < 70% / unlock ≥ 70%) is the one human smoke step
 (offscreen QtWebEngine won't init headlessly).
 
+## GRE cross-surface navigation — the shared "← Home" link (implemented)
+
+A consistent **"← Home"** affordance so a learner can always return to GRE Home from the other
+GRE surfaces (dashboard / exam / method). Pure UI wiring over one new one-word webview bridge
+command — **no** engine, collection, or `OpChanges` involvement.
+
+**The `gre:home` bridge command.** Clicking "← Home" fires `bridgeCommand("gre:home")` (`pycmd`).
+Each of the three dialogs registers a bridge handler (they previously set none — note the exam's
+`gremcq:*` commands live in `reviewer.py`, a *different* webview, not this dialog) that recognises
+`gre:home` and routes it to `aqt.gre_home.handle_gre_home(mw, dialog)`, returning `None` (the value
+the QWebChannel bridge JSON-encodes back to the page).
+
+**New files:**
+- `anki/ts/routes/gre-dashboard/GreHomeLink.svelte` — a small, unobtrusive ghost "← Home" button
+  (Readout tokens: mono eyebrow type, muted → `signal` on hover). Rendered only once the webview
+  bridge is actually connected (`bridgeCommandsAvailable()` from `@tslib/bridgecommand`, **polled
+  briefly in `onMount`** because the QWebChannel bridge is injected at DocumentReady and assigns
+  `window.bridgeCommand` asynchronously), so it never shows as a dead control in a plain-browser /
+  HMR preview.
+- `anki/qt/aqt/gre/nav.py` — `install_gre_home_bridge(web, mw, dialog)`: registers the tiny
+  `set_bridge_command` handler above. Factored out so the three dialogs share one line of wiring;
+  imports `aqt.gre_home` lazily (inside the handler) to avoid an import cycle.
+
+**Modified files:**
+- `anki/qt/aqt/gre_home.py` — new `handle_gre_home(mw, caller=None)`: focuses/opens the Home
+  singleton via `show_gre_home` and, if `caller` is a dialog other than the live Home, closes it —
+  **deferred** with `QTimer.singleShot(0, caller.close)` because the call arrives *inside the caller
+  webview's own bridge callback*, so closing it synchronously (→ `reject()` → `web.cleanup()`) would
+  tear that webview down mid-call.
+- `anki/qt/aqt/gre_dashboard.py`, `anki/qt/aqt/gre_exam.py`, `anki/qt/aqt/gre_method.py` — each calls
+  `install_gre_home_bridge(self.web, mw, self)` right after building its `AnkiWebView`.
+- `anki/ts/routes/gre-dashboard/+page.svelte` (masthead `.titles`),
+  `anki/ts/routes/gre-method/+page.svelte` (masthead), and
+  `anki/ts/routes/gre-exam/+page.svelte` (setup/locked masthead **and** the results view) render
+  `<GreHomeLink />`. Home itself doesn't link to itself.
+
+**No `webview.py` / `mediasrv.py` change needed.** The QWebChannel `pycmd` bridge is wired for
+*every* webview by `webview.py` (`_setupBridge`); the `gre-*` kinds are already on the api-access
+allowlist and registered via `is_sveltekit_page`. `set_bridge_command` only registers a handler for
+messages the bridge already delivers — the HTTP `/_anki/*` allowlist is unrelated.
+
+**Exam active-phase decision.** During the **active exam and review phases** the bare "← Home" link
+is **deliberately omitted**. Those phases hold in-progress, discardable answers, and the faithful
+exam chrome already has a dedicated danger-styled **Exit** control routed through `confirmExit()` (a
+native confirm). A second, quieter Home link there would both duplicate that control and dilute the
+locked-down test feel, so the link appears only on the "safe" phases (setup/locked + results);
+abandoning progress still requires the explicit Exit confirmation.
+
+**Data flow:** any GRE surface → user clicks "← Home" → `pycmd("gre:home")` → the dialog's
+`install_gre_home_bridge` handler → `handle_gre_home(mw, dialog)` → `show_gre_home` focuses/opens
+Home + the caller closes (deferred). No engine call, no `OpChanges`.
+
 ## Exam Mode — faithful GRE Math Subject Test
 
 An opt-in "full mock" surface faithful to the computer-delivered GRE Math Subject Test (Tools ▸ GRE
@@ -430,4 +482,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@36a28c4` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle + graded-MCQ wrong-answer lockdown + Readout dashboard identity: bundled JetBrains Mono/Inter + math-notation calibration strip + Readout cascade: exam mode imports the bundled fonts + a big mono countdown; deck browser home restyled to the mono identity (`qt/aqt/data/web/css/deckbrowser.scss` + `deckbrowser.py`) + one-tap graded-MCQ grade reveal (reveal synchronously on `ans` so a tapped MCQ grades in one click) + GRE Home landing (three scores + study stats + study-next filtered deck; auto-opens on startup) + 70% studied-coverage Exam-Mode lock)
+Last verified against: `f15cubing/anki@1f42b3d` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle + graded-MCQ wrong-answer lockdown + Readout dashboard identity: bundled JetBrains Mono/Inter + math-notation calibration strip + Readout cascade: exam mode imports the bundled fonts + a big mono countdown; deck browser home restyled to the mono identity (`qt/aqt/data/web/css/deckbrowser.scss` + `deckbrowser.py`) + one-tap graded-MCQ grade reveal (reveal synchronously on `ans` so a tapped MCQ grades in one click) + GRE Home landing (three scores + study stats + study-next filtered deck; auto-opens on startup) + 70% studied-coverage Exam-Mode lock + GRE cross-surface "← Home" navigation (shared `GreHomeLink.svelte` + `gre:home` bridge → `handle_gre_home` / `gre/nav.py` on dashboard/exam/method; omitted during the active exam phase))
