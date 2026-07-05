@@ -154,7 +154,24 @@ git submodule update --init --recursive   # populates anki/, Anki-Android/, Anki
 
 ## Run the desktop app (Anki / Qt)
 
-The desktop app builds and runs in place from the `anki/` submodule.
+The desktop app builds and runs in place from the `anki/` submodule. If you just want to **try it on
+an Apple-Silicon Mac without building**, download the prebuilt installer instead.
+
+### Download the prebuilt app (macOS, Apple Silicon — no build)
+
+Grab the latest self-contained installer from the
+[**Releases**](https://github.com/f15cubing/speedrun/releases/latest) page —
+`GRE-Anki-v<version>-arm64.dmg` bundles Python + Qt + our engine (it does **not** download stock Anki)
+and installs **alongside** any normal Anki:
+
+1. Open the `.dmg` and drag **GRE Anki** to **Applications**.
+2. It's ad-hoc signed (not notarized), so the first launch needs **right-click ▸ Open ▸ Open** once
+   (or run `xattr -dr com.apple.quarantine "/Applications/GRE Anki.app"`).
+3. Launch it — the GRE study deck **auto-imports on first run**; open **Tools ▸ GRE dashboard**.
+
+Intel Mac / Linux / Windows / Android: build from source (below).
+
+### Build from source
 
 **One-time setup (macOS):**
 
