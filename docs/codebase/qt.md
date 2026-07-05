@@ -71,8 +71,19 @@ Implemented following the **graphs / deck-options** SvelteKit dialog precedent.
 - `anki/ts/routes/gre-dashboard/ScoreSlot.svelte` — generic score slot; Readiness shows the `insufficient_evidence` gate (amber); **Performance** renders a `CalibrationStrip` range when `state=="observed"` (a real `point`+`low`+`high` payload) and otherwise a give-up state. The guard is strict: any state other than the two give-up states + `observed`, or an `observed` state missing its range, collapses to `not_available` — a fabricated point can never render.
 
 **Design system (redesign):**
-- `anki/ts/routes/gre-dashboard/tokens.css` — the dashboard's design tokens (6-colour palette + type roles + system tabular-mono for numerals); light/dark via Anki's `.night-mode`. No bundled fonts.
-- `anki/ts/routes/gre-dashboard/CalibrationStrip.svelte` — **signature component**: renders `{point, low, high, n}` as a shaded 95% band + point tick on a 0..max axis (used at exam / bucket / leaf scale); `point==null` → explicit dotted "not yet" rail. This is the shared primitive the Thursday scoring layer renders Performance/Readiness ranges through.
+- `anki/ts/routes/gre-dashboard/tokens.css` — the **"Readout" identity** tokens (design spec
+  `docs/superpowers/specs/2026-07-05-readout-identity-design.md`): a calibrated CAS/terminal look
+  where the **monospaced data face is the hero**. 6-colour palette (ink/muted/faint · teal `signal` ·
+  amber `abstain`) + type roles; light/dark via Anki's `.night-mode`.
+- `anki/ts/routes/gre-dashboard/fonts.css` + `fonts/` — **JetBrains Mono + Inter bundled locally**
+  (SIL OFL, only used weights as `woff2`) so the identity works fully **offline** (no CDN); the
+  sveltekit/vite build emits + fingerprints them (verified). `--gre-mono`/`--gre-sans` fall back to
+  system faces if absent.
+- `anki/ts/routes/gre-dashboard/CalibrationStrip.svelte` — **signature component**: renders
+  `{point, low, high, n}` as a shaded 95% band + point tick on a 0..max axis, with the readout in
+  math notation (`0.60 ∈ [0.54, 0.66]  n=238`) + an optional faint `method` tag (e.g. `Wilson`) so it
+  "shows its work"; used at exam / bucket / leaf scale; `point==null` → explicit dotted "not yet"
+  rail. The shared primitive the Thursday scoring layer renders Performance/Readiness ranges through.
 - `anki/ts/routes/gre-dashboard/lib.ts` + `lib.test.ts` — pure strip geometry (`stripGeometry`, `formatValue`) + 8 vitest cases; the geometry guarantees a null point never yields a fabricated position.
 - Redesign is **pure presentation** — no `dashboard_data.py` / view-model change (that surface belongs to the scoring layer).
 
@@ -341,4 +352,4 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
   `qwebengine_csp_smoke.py`. No broad `AnkiQt`/`CollectionOp`/SvelteKit integration tests here.
 
 ---
-Last verified against: `f15cubing/anki@15bab43a9` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle + graded-MCQ wrong-answer lockdown)
+Last verified against: `f15cubing/anki@6bb63534` (25.09.4 `d52ca66` + Mastery Query + W2 dashboard + dashboard redesign + exam mode + Exam-Mode LaTeX + desktop scoring adapter + Exam Mode API-error fix: Content-Type/body-parse/preset-capacity + submit-guard hardening + "How this differs from FSRS" study-method page: interactive interleaving demo + observed Performance on the dashboard + live-reviewer interleaving toggle + graded-MCQ wrong-answer lockdown + Readout dashboard identity: bundled JetBrains Mono/Inter + math-notation calibration strip)

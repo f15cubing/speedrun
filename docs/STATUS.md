@@ -4,7 +4,21 @@
 > here in the same merge** (rule in the `shipping-changes` skill). `docs/execution-plan.md` stays
 > the day-by-day plan; this file is the authoritative progress snapshot.
 
-_Last updated: 2026-07-05 (Sun) — merged the **graded-MCQ wrong-answer lockdown** (engine lane, #60): a wrong multiple-choice answer now grades **Again only** (in-card + built-in bottom bar + keyboard + auto-advance; correct keeps Hard/Good/Easy), plus an in-place note-type template refresh so existing installs get the graded template (`anki@15bab43a`, `Anki-Android@86b9e0b`). Different-agent review APPROVED; live GUI smoke owner-waived at merge. Prior: refreshed the **Sunday-cut demo plan** (`docs/demo-plan.md`, #58, fast lane, docs only) into a comprehensive superset: the ⭐-marked spec-required 3–5 min core plus optional showcase (interactive/graded MCQ, timed Exam Mode, live interleaving toggle + FSRS-differences explainer, observed Performance), stale bits corrected (engine SHA `ea3acae → 4c991c9`), Milestone-1 appendix preserved verbatim. Prior: cut **v0.4.0** desktop release — a fresh self-contained macOS `.dmg` (Apple Silicon) rebuilt from the current pin (`anki@4c991c9`, outer `851a299`), the first updated installer since v0.1.0, carrying Exam Mode + LaTeX + the redesigned three-score dashboard + the interleaving toggle + the interactive/graded MCQ deck._
+_Last updated: 2026-07-05 (Sun) — merged the **Readout dashboard identity** (fast lane, #61): the first sub-project of the UI redesign — a calibrated CAS/terminal "printout" identity where the monospaced data face is the hero and every metric is a range in math notation with a method tag; JetBrains Mono + Inter bundled locally (offline); pure presentation, honesty rules intact (`anki@6bb63534`). Cascade to exam / MCQ card / deck browser in flight. Prior: merged the **graded-MCQ wrong-answer lockdown** (engine lane, #60): a wrong multiple-choice answer now grades **Again only** (in-card + built-in bottom bar + keyboard + auto-advance; correct keeps Hard/Good/Easy), plus an in-place note-type template refresh so existing installs get the graded template (`anki@15bab43a`, `Anki-Android@86b9e0b`). Different-agent review APPROVED; live GUI smoke owner-waived at merge. Prior: refreshed the **Sunday-cut demo plan** (`docs/demo-plan.md`, #58, fast lane, docs only) into a comprehensive superset: the ⭐-marked spec-required 3–5 min core plus optional showcase (interactive/graded MCQ, timed Exam Mode, live interleaving toggle + FSRS-differences explainer, observed Performance), stale bits corrected (engine SHA `ea3acae → 4c991c9`), Milestone-1 appendix preserved verbatim. Prior: cut **v0.4.0** desktop release — a fresh self-contained macOS `.dmg` (Apple Silicon) rebuilt from the current pin (`anki@4c991c9`, outer `851a299`), the first updated installer since v0.1.0, carrying Exam Mode + LaTeX + the redesigned three-score dashboard + the interleaving toggle + the interactive/graded MCQ deck._
+
+- **Readout dashboard identity** (fast lane; Qt-UI-only; `anki`→`6bb63534`, outer pin bumped) —
+  **MERGED (#61).** First sub-project of the UI redesign (`docs/ui-redesign-brief.md`): the shared
+  identity foundation applied to the **hero dashboard**, chosen from 3 mocked directions + approved
+  against a full dashboard mock (`docs/design/`). The **"Readout"** identity — a calibrated CAS/terminal
+  printout where the **monospaced data face is the hero**; every metric is a range in math notation
+  (`0.60 ∈ [0.54, 0.66]`) with a faint method tag (`Wilson`) that "shows its work". **JetBrains Mono +
+  Inter bundled locally** (SIL OFL woff2 — fully **offline**, no CDN; verified emitted into the
+  sveltekit build). New `tokens.css` (Readout palette, light/dark) + `fonts.css`/`fonts/`;
+  `CalibrationStrip` gains the math-notation interval + method tag; masthead/labels go mono. **Pure
+  presentation — no `dashboard_data.py`/view-model change; no-fabrication + three-separate-scores +
+  amber-abstain intact.** Green: `check:svelte`/`eslint`/`vitest`/prettier on changed files. Live GUI
+  smoke owner-waived at merge. Cascade (exam mode / MCQ card / deck browser) in flight.
+  (`f15cubing/speedrun#61`.)
 
 - **Graded-MCQ wrong-answer lockdown** (engine lane; `anki`→`15bab43a`, `Anki-Android`→`86b9e0b`, outer
   pins bumped) — **MERGED (#60).** A wrong multiple-choice answer is a lapse: it now grades **Again only**,
