@@ -132,7 +132,7 @@ speedrun/
 ```
 
 **Pinned upstream versions** (the actual submodule pins — what a fresh `--recurse-submodules` clone
-checks out): `anki` fork `f15cubing/anki@bc995b88` (25.09.4 `d52ca66` + our Mastery-Query engine
+checks out): `anki` fork `f15cubing/anki@e4efa0f6` (25.09.4 `d52ca66` + our Mastery-Query engine
 change, dashboard, Exam Mode + full-length demo items, LaTeX, scoring adapter, method page), `Anki-Android` fork
 `f15cubing/Anki-Android@c6d02501` (of `v2.24.0` `ebcf8e0`; + mastery-query binding, deck auto-import,
 read-only 3-score panel (Task 7), interactive-MCQ deck), `Anki-Android-Backend` (rsdroid) fork

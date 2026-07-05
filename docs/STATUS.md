@@ -441,7 +441,8 @@ _Last updated: 2026-07-05 (Sun) — merged **GRE Home + 70% exam-mode coverage l
 
 ## In flight
 
-- **Exam-Mode full-length demo items** (engine lane; `anki` fork `agent/exam-demo-items` → `bc995b88`,
+- **Exam-Mode full-length demo items** (engine lane; `anki` fork `agent/exam-demo-items` → `e4efa0f6`
+  (rebased on #66's pin so the one-click MCQ fix + 70% coverage lock are preserved),
   outer pin bumped) — **open PR (do not self-merge).** Enlarges the firewalled held-out `p0` bank with
   **47 generated, correct-by-construction MCQ items** (`eval-p0-gen-*`, `gen: generated`, `demo: true`)
   so Exam Mode can build the **official full-length 66-item mock** (and half/third) — previously only the
