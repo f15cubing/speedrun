@@ -348,6 +348,30 @@ _Last updated: 2026-07-05 (Sun) — reconciled stale current-pin doc claims to t
 
 ## In flight
 
+- **Live-reviewer interleaving toggle** (engine lane; `anki` fork `agent/gre-interleave-reviewer` →
+  `4c991c9`, outer pin bumped) — **wires the pre-registered interleaving feature into the actual
+  review loop** (previously only an algorithm + explainer demo), so interleaved↔blocked is a real,
+  toggleable study mode = the ablation's two in-app arms. Pure presentation-layer reorder of the v3
+  `QueuedCards` batch in `reviewer._get_next_v3_card`: **off by default**
+  (`col.conf["gre_interleave"]`) → byte-identical to upstream; when on, reorders **only `REVIEW`**
+  cards for confusable-type dispersion via the tested `aqt.gre.interleave` (K/W bound), leaving
+  `NEW`/`LEARNING` in place and each `QueuedCard` self-contained. **No `col` write, no `OpChanges`,
+  undo untouched, no Rust/proto/scheduler change.** A checkable Tools-menu toggle flips the flag. New:
+  `qt/aqt/gre/interleave_review.py` + `qt/aqt/gre_interleave.py`; modified `reviewer.py`/`main.py`.
+  **9 unit tests green** (flag gate, fetch-limit switch, dispersion, multiset invariant, new/learning
+  preserved, 3 safe fallbacks); ruff clean; 64 aqt GRE tests green (no regression). **Live GUI
+  click-through is the one human smoke** (offscreen QtWebEngine won't init headlessly). **Different-agent
+  review: CORRECT** (all engine ceilings intact) — its two non-blocking recommendations applied
+  (`4c991c9`): the reorder is now a pure computation wrapped in a fallback (an error can't empty the
+  queue/interrupt review), and a new test asserts each `QueuedCard`'s `states`/`context` travel with
+  its card (the load-bearing self-contained-unit invariant); now **10 tests**. **Open PR — do not
+  self-merge (engine lane).** Unblocks a runnable ablation (a human
+  can now do interleaved vs blocked sessions on the same items). **Perf proof:** new `make bench-actions`
+  (folded into `make bench`) times the real grade→next-card cycle (`answer_card` + fetch) at **50k
+  cards** — **p50 0.11 ms · p95 0.33 ms · worst 1.86 ms** (target p95<100 ms) — and shows the
+  interleave lookahead (fetch 1→16) + 16-card reorder add **≈0.005 ms**, i.e. negligible. Evidence:
+  `docs/evidence/proofs/bench_actions.json`.
+
 - **"How this differs from FSRS" study-method page** (fast lane; `anki`→`6d05314`) — **MERGED (#55).**
   A read-only desktop explainer (Tools ▸ "How this app differs from FSRS"): we
   build **on** FSRS rather than replacing it — interleaving, timed exam mode, three separated scores,
