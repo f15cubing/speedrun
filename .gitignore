@@ -64,3 +64,14 @@ sync/.env
 sync/.run/
 docs/evidence/w4-sync/*.tmp
 scoring/out/
+
+# --- Agent tooling installs + session scratch (machine/runtime-local) ---
+# Generic installed skills live under .agents/ with a skills-lock.json lockfile
+# (the repo's OWN project skills live in .cursor/skills/ and ARE committed).
+# .superpowers/ is per-session agent scratch. Overnight run logs/summaries are
+# transient working notes, not durable docs (those belong under docs/).
+.agents/
+.superpowers/
+skills-lock.json
+OVERNIGHT_LOG.md
+OVERNIGHT_SUMMARY.md
