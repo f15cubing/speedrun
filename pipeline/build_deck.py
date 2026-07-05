@@ -113,11 +113,11 @@ MCQ_MODEL = genanki.Model(
             "qfmt": (
                 '<div class="mcq-q">{{Question}}</div>'
                 '<div class="mcq-opts">'
-                '<button class="mcq-opt" data-i="0">A. {{OptionA}}</button>'
-                '<button class="mcq-opt" data-i="1">B. {{OptionB}}</button>'
-                '<button class="mcq-opt" data-i="2">C. {{OptionC}}</button>'
-                '<button class="mcq-opt" data-i="3">D. {{OptionD}}</button>'
-                '<button class="mcq-opt" data-i="4">E. {{OptionE}}</button>'
+                '<button class="mcq-opt" data-i="0"><span class="mcq-let">A</span>{{OptionA}}</button>'
+                '<button class="mcq-opt" data-i="1"><span class="mcq-let">B</span>{{OptionB}}</button>'
+                '<button class="mcq-opt" data-i="2"><span class="mcq-let">C</span>{{OptionC}}</button>'
+                '<button class="mcq-opt" data-i="3"><span class="mcq-let">D</span>{{OptionD}}</button>'
+                '<button class="mcq-opt" data-i="4"><span class="mcq-let">E</span>{{OptionE}}</button>'
                 "</div>"
                 '<span id="mcq-correct" style="display:none">{{CorrectOption}}</span>'
                 '<div id="mcq-explain" class="mcq-explain" style="display:none">{{Explanation}}</div>'
@@ -191,39 +191,62 @@ MCQ_MODEL = genanki.Model(
         }
     ],
     css=(
+        # "Readout" identity (matches the GRE dashboard): calibrated instrument palette,
+        # the A-E option letters + key/verdict in the monospaced data face; prose stays a
+        # readable sans. Correct/wrong keep semantic green/red. A card webview can't share
+        # the dashboard's bundled font, so the mono stack falls back to a system mono.
         ".card{font-family:-apple-system,Segoe UI,Roboto,sans-serif;"
-        "font-size:18px;line-height:1.5;color:#111;background:#fff;"
+        "font-size:18px;line-height:1.5;color:#191a1a;background:#fbfbfa;"
         "text-align:left;padding:16px;white-space:pre-wrap;}"
         ".mcq-q{margin-bottom:14px;}"
+        ".mcq-let{font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,"
+        "monospace;font-variant-numeric:tabular-nums;font-weight:600;color:#6a6a68;"
+        "margin-right:0.6em;}"
         ".mcq-opts{display:flex;flex-direction:column;gap:8px;}"
         ".mcq-opt{display:block;width:100%;text-align:left;"
         "min-height:44px;padding:10px 14px;font-size:17px;line-height:1.4;"
-        "border:1px solid #cbd5e0;border-radius:8px;background:#f7fafc;color:#111;"
+        "border:1px solid #dededb;border-radius:8px;background:#fff;color:#191a1a;"
         "cursor:pointer;white-space:pre-wrap;}"
-        ".mcq-opt:hover:not(:disabled){background:#edf2f7;}"
+        ".mcq-opt:hover:not(:disabled){background:#f0f0ee;}"
         ".mcq-opt:disabled{cursor:default;}"
-        ".mcq-opt.correct{background:#c6f6d5;border-color:#38a169;font-weight:600;}"
-        ".mcq-opt.wrong{background:#fed7d7;border-color:#e53e3e;}"
+        ".mcq-opt.correct{background:#e6f4ec;border-color:#2f855a;font-weight:600;}"
+        ".mcq-opt.correct .mcq-let{color:#2f855a;}"
+        ".mcq-opt.wrong{background:#fbe9e9;border-color:#c53030;}"
+        ".mcq-opt.wrong .mcq-let{color:#c53030;}"
         ".mcq-explain{margin-top:14px;}"
-        ".mcq-key{margin-top:4px;font-weight:600;}"
-        ".mcq-leaf{margin-top:14px;color:#888;font-size:0.8em;}"
+        ".mcq-key{margin-top:4px;font-weight:600;color:#0a7d78;"
+        "font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;}"
+        ".mcq-leaf{margin-top:14px;color:#9a9a97;font-size:0.78em;"
+        "font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;"
+        "letter-spacing:0.04em;}"
         ".mcq-actions{display:none;flex-wrap:wrap;gap:8px;align-items:center;"
         "margin-top:16px;}"
-        ".mcq-verdict{flex-basis:100%;font-weight:600;margin-bottom:2px;}"
-        ".mcq-rate{min-height:40px;padding:8px 18px;font-size:16px;border-radius:8px;"
-        "border:1px solid #cbd5e0;background:#edf2f7;color:#111;cursor:pointer;}"
-        ".mcq-rate:hover{background:#e2e8f0;}"
-        ".mcq-rate.easy{border-color:#38a169;}"
-        ".mcq-rate.good{border-color:#3182ce;}"
-        ".mcq-rate.hard{border-color:#dd6b20;}"
-        ".mcq-rate.again{border-color:#e53e3e;}"
-        ".night-mode .card{color:#e2e8f0;background:#1a202c;}"
-        ".night-mode .mcq-opt{background:#2d3748;border-color:#4a5568;color:#e2e8f0;}"
-        ".night-mode .mcq-opt:hover:not(:disabled){background:#374151;}"
-        ".night-mode .mcq-opt.correct{background:#22543d;border-color:#38a169;}"
-        ".night-mode .mcq-opt.wrong{background:#742a2a;border-color:#e53e3e;}"
-        ".night-mode .mcq-rate{background:#2d3748;border-color:#4a5568;color:#e2e8f0;}"
-        ".night-mode .mcq-rate:hover{background:#374151;}"
+        ".mcq-verdict{flex-basis:100%;font-weight:600;margin-bottom:2px;font-size:0.9em;"
+        "letter-spacing:0.02em;"
+        "font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;}"
+        ".mcq-rate{min-height:40px;padding:8px 18px;font-size:15px;border-radius:8px;"
+        "border:1px solid #dededb;background:#fff;color:#191a1a;cursor:pointer;"
+        "font-family:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;}"
+        ".mcq-rate:hover{background:#f0f0ee;}"
+        ".mcq-rate.easy{border-color:#0a7d78;color:#0a7d78;}"
+        ".mcq-rate.good{border-color:#0a7d78;color:#0a7d78;}"
+        ".mcq-rate.hard{border-color:#9c6200;color:#9c6200;}"
+        ".mcq-rate.again{border-color:#c53030;color:#c53030;}"
+        ".night-mode .card{color:#e6e7e9;background:#14161a;}"
+        ".night-mode .mcq-let{color:#8b8f96;}"
+        ".night-mode .mcq-opt{background:#1b1e23;border-color:#2a2e35;color:#e6e7e9;}"
+        ".night-mode .mcq-opt:hover:not(:disabled){background:#22262c;}"
+        ".night-mode .mcq-opt.correct{background:#173a2a;border-color:#38a169;}"
+        ".night-mode .mcq-opt.correct .mcq-let{color:#5fbb87;}"
+        ".night-mode .mcq-opt.wrong{background:#3a1d1d;border-color:#e05252;}"
+        ".night-mode .mcq-opt.wrong .mcq-let{color:#e57373;}"
+        ".night-mode .mcq-key{color:#34c0b8;}"
+        ".night-mode .mcq-rate{background:#1b1e23;border-color:#2a2e35;color:#e6e7e9;}"
+        ".night-mode .mcq-rate:hover{background:#22262c;}"
+        ".night-mode .mcq-rate.easy{border-color:#34c0b8;color:#34c0b8;}"
+        ".night-mode .mcq-rate.good{border-color:#34c0b8;color:#34c0b8;}"
+        ".night-mode .mcq-rate.hard{border-color:#d59a3c;color:#d59a3c;}"
+        ".night-mode .mcq-rate.again{border-color:#e05252;color:#e05252;}"
     ),
 )
 

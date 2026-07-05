@@ -68,7 +68,11 @@ coverage map, readiness gate, and interleaving all build on.
   built-in bottom answer bar** (see `docs/codebase/qt.md` § Graded MCQ; `aqt.gre.mcq_lockdown`). Where
   `pycmd` is absent (e.g. AnkiDroid) both the hint and the custom rating row are no-ops and the
   built-in Again/Hard/Good/Easy buttons remain the grader (feedback still shows). Renders in the
-  reviewer webview on both desktop + Android.
+  reviewer webview on both desktop + Android. The card is **Readout-styled**
+  (`docs/superpowers/specs/2026-07-05-readout-identity-design.md`): mono A–E option letters +
+  key/verdict on the calibrated instrument palette (teal signal, amber, hairlines), correct/wrong
+  keep semantic green/red, light + dark — a system mono stack since a card webview can't share the
+  dashboard's bundled font.
   Spec: `docs/superpowers/specs/2026-07-03-interactive-mcq-webview-design.md`),
   `build(seed=42, out_path=..., verbose=True)` → `(cards, summary)`; CLI
   `python pipeline/build_deck.py --seed 42` writes `pipeline/dist/gre-study-deck.apkg`.
