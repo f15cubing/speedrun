@@ -9,7 +9,7 @@
 > **proofs** (bench @ 50k: mastery + next-card · memory calibration · crash 20/20 · two-way sync +
 > conflict). Format: **live screen capture** of the running desktop app + Android emulator, with
 > `docs/evidence/` charts/screenshots as B-roll where a live capture is fiddly.
-> State as of 2026-07-05, engine `f15cubing/anki@4c991c9`; **everything below is merged on `main`.**
+> State as of 2026-07-05, engine `f15cubing/anki@1f42b3d`; **everything below is merged on `main`.**
 >
 > **Length:** the **spec-required 3–5 min cut** is the ⭐-marked scenes (review session · Rust change ·
 > phone→desktop sync · three scores with ranges · AI · test results). The un-starred scenes
@@ -35,7 +35,7 @@ two devices, then be explicit about what is and isn't validated (AI-off; simulat
 | 2 | **Interactive MCQ study surface** — a new note type with **tappable 5-option** cards: tap → instant green/red + correct-option highlight + explanation, graded on the **FSRS** ease path (correct→Hard/Good/Easy, wrong→Again). Renders in **both** apps' reviewer webview | Basic front/back cards only | Performance surface (20%) + UX (8%) |
 | 3 | **Interleaving — the learning-science feature** — a **live reviewer toggle** (Tools ▸ "GRE: Interleave reviews") that reorders the review queue so consecutive cards come from **different confusable topics** (pure presentation; FSRS untouched), plus an **interactive explainer** ("How this differs from FSRS") running the real algorithm | Blocked, FSRS-priority order only; no interleaving | Study feature (15%) |
 | 4 | **Desktop GRE dashboard, live 3 scores** — Memory as a **range**, 17-leaf **coverage map**, three **separated** slots: Memory (range), **Performance (observed accuracy range** from in-app exam answers, honest — *not* the calibrated model), Readiness (**gated** with the full evidence panel + give-up rule) | Stats heatmaps; no exam readiness, ranges, coverage, or abstention | Scores (20%) + UX (8%) |
-| 5 | **Timed Exam Mode** — a faithful GRE Math Subject Test shell: one global countdown, item counter, Mark, Review grid, **no calculator / no pause / auto-submit**, **rights-only** scoring, per-leaf breakdown + range; honest **capacity gating** (only presets the firewalled held-out bank can fill are enabled) | No timed/exam simulator | Performance + UX; speededness construct |
+| 5 | **Timed Exam Mode** — a faithful GRE Math Subject Test shell: one global countdown, item counter, Mark, Review grid, **no calculator / no pause / auto-submit**, **rights-only** scoring, per-leaf breakdown + range. **Mastery-gated** (unlocks at ≥70% studied topic coverage) + honest **capacity gating** (firewalled held-out bank; now fills the **full 66-item** mock) | No timed/exam simulator | Performance + UX; speededness construct |
 | 6 | **Same engine on Android + a read-only 3-score panel** — rsdroid rebuilt bundling *our* `rslib`; the phone reviews the same deck **and** shows the same three ranges the desktop computed, read-only | Stock rsdroid backend; no readiness panel | Phone-on-one-engine ceiling (10%) |
 | 7 | **Sync on our own engine** — self-hosted; phone review lands on desktop; documented conflict rule (**revlog union + scheduling LWW**), no corruption | AnkiWeb only | Sync ceiling (10%) |
 | 8 | **AI card pipeline + gold-set gate (AI-off)** — RAG + non-nullable provenance + in-pipeline abstention + **SymPy CAS** verify + gate scored by 2 raters (κ), and it **beats a non-RAG baseline** (McNemar) | No card generation, no provenance/verify gate | AI checking + safety (15%) |
@@ -50,9 +50,18 @@ two devices, then be explicit about what is and isn't validated (AI-off; simulat
       to show and the give-up proxies are in the state you want on camera — ideally **some Memory data
       + a still-gated Readiness** so the evidence panel and abstention are both visible. (Readiness
       stays gated off honestly at n≈1.)
-- [ ] Run **one Exam Mode form** (Tools ▸ **GRE exam mode** → **Mini**, the only preset the firewalled
-      held-out bank fills) and submit it, so the dashboard's **Performance** slot has attempts to render
-      an **observed accuracy range** (and a per-leaf breakdown), instead of the n=0 "not available".
+- [ ] **Unlock Exam Mode first — it is mastery-gated to ≥70% studied coverage.** Exam Mode stays locked
+      behind a calm **amber panel** until you've done **≥1 graded review in ≥12 of the 17 ETS topics**
+      (`exam.MIN_STUDIED_COVERAGE = 0.70`; "studied coverage" = leaves with ≥1 graded review). Before the
+      exam scene, review at least one card in **12+ different topics** — GRE Home ▸ **Study next** walks
+      you topic-by-topic, and the locked panel itself reads "you're at X% — study N more topics". (If you
+      *want* the lock on camera as the honesty beat, shoot the amber panel first, then cross 70% and
+      re-open.)
+- [ ] Run **one Exam Mode form** (Tools ▸ **GRE exam mode**) and submit it, so the dashboard's
+      **Performance** slot has attempts to render an **observed accuracy range** (and a per-leaf
+      breakdown) instead of the n=0 "not available". **All four presets now fill** from the firewalled
+      held-out bank (71 items — 35 calculus / 18 algebra / 18 additional), so you can run the **full
+      official-length 66-item mock** or a shorter **Half / Third / Mini** to save recording time.
 - [ ] Know where the study-feature surfaces live: Tools ▸ **"GRE: Interleave reviews (ablation)"**
       (the toggle) and Tools ▸ **"How this app differs from FSRS"** (the interactive interleaving demo).
 - [ ] Open the **GRE dashboard** once so the Task 6 adapter writes the synced `gre_scorecard`; sync so
@@ -129,17 +138,22 @@ observed, not a model we can't back up yet; and Readiness here is *gated off*: a
 number on one week of data is an automatic fail, so the app abstains and shows the evidence panel and
 the single best next topic instead. Abstaining honestly is the correct output."
 
-### Exam Mode — the timed GRE shell (~40s)
-**On screen:** Tools ▸ **GRE exam mode** → pick **Mini** (the enabled preset). Show the shell: one
-**global countdown**, item counter, five A–E options, **Mark**, the **Review** grid; note **no
-calculator, no pause**. Answer a few items, jump via the grid, then submit (or let it auto-submit) →
-the **Results** screen: rights-only score with a **range** + per-leaf breakdown (reusing the
-`CalibrationStrip`). Point at the greyed-out Full/Half/Third presets.
-**Narration:** "Exam Mode mirrors the real computer-delivered test: one clock, no calculator, no pause,
-auto-submit, rights-only scoring. These answers are what feed the observed Performance range you just
-saw. And notice only **Mini** is offered — the others are greyed out because our **held-out** item bank
-is firewalled from training and only has enough items for the short form. We'd rather offer an honest
-short form than pad the exam with leaked questions."
+### Exam Mode — the timed GRE shell (~45s)
+**On screen:** Tools ▸ **GRE exam mode**. **The mastery gate is the opening beat:** if you're below
+70% studied coverage you get the calm **amber locked panel** — *"Exam Mode unlocks once you've studied
+70% of the 17 exam topics — you're at X% (studied N/17)"*. Since you crossed 70% in pre-flight, it's
+**unlocked**: pick a preset — the **full 66-item official-length mock** (or **Mini** to keep the take
+short). Show the shell: one **global countdown**, item counter, five A–E options, **Mark**, the
+**Review** grid; note **no calculator, no pause**. Answer a few items, jump via the grid, then submit
+(or let it auto-submit) → the **Results** screen: rights-only score with a **range** + per-leaf
+breakdown (reusing the `CalibrationStrip`).
+**Narration:** "Exam Mode mirrors the real computer-delivered test — one clock, no calculator, no
+pause, auto-submit, rights-only scoring — and it's **mastery-gated**: it stays locked behind that amber
+panel until you've studied 70% of the exam's topics, because a timed mock only helps a prepared
+learner. That gate is the honesty rule again, applied to the exam. These answers feed the observed
+Performance range you just saw. Every item is **held-out** — firewalled from the study deck — and the
+full-length form is filled with **generated, correct-by-construction** items, marked so they never
+inflate a real score. An honest full mock on held-out questions, not padded with leaked ones."
 
 ### ⭐ The Rust change under the hood (~50s)
 **On screen:** split view — `anki/rslib/src/stats/mastery.rs` and the `anki/proto/anki/stats.proto`
@@ -224,8 +238,11 @@ Non-negotiable, and it *is* the pitch — don't hide the gaps, sell them:
 - **Scoring proofs are simulated machinery-checks at n≈1** (calibration/paraphrase); real predictive
   validity is unestablished. The bench and crash/sync proofs are real on our engine.
 - **A real read-only Rust engine change exists** and provably never mutates the collection.
-- **Exam Mode offers only presets the firewalled held-out bank can fill** (Mini) — no leaked/padded
-  items, honest capacity gating.
+- **Exam Mode is mastery-gated to ≥70% studied coverage** (locked behind an honest amber panel until
+  you've reviewed ≥12 of the 17 topics) and offers only presets the **firewalled held-out** bank can
+  fill — now the **full 66-item** official-length mock (71 held-out items; the full-length fill uses
+  generated, correct-by-construction items marked so they never inflate a real score). No leaked or
+  padded questions.
 - **No ETS items** are reused in training or evaluation.
 
 ---
