@@ -473,6 +473,11 @@ out/pyenv/bin/pytest -p no:cacheprovider qt/tests` — note `PYTHONPATH=out/pyli
 - **All engine access is via `mw.col`** (don't reach into `_backend` from UI; wrap in pylib).
 - **Reads use `QueryOp`, mutations use `CollectionOp`** so undo + UI refresh behave correctly. A read
   that fabricates `OpChanges` would wrongly trigger refresh/undo churn.
+- **Register `gui_hooks` callbacks from `main.py` inside a function, not at module scope.** `aqt.main`
+  and the generated `_aqt.hooks` form an import cycle, so a *module-scope*
+  `gui_hooks.<hook>.append(...)` in `main.py` trips a mypy `has-type` ("Cannot determine type of …")
+  false positive (function bodies are checked after all module-level types resolve, so the same call
+  is fine there). The GRE surfaces register theirs in `_install_gre_hooks()`, called once at import.
 - **New SvelteKit pages need three edits** (route + `is_sveltekit_page()` + Python loader); missing
   any one yields a blank webview.
 - **Dev HMR:** `load_sveltekit_page` points to port 5173 when `anki.utils.hmr_mode` is set.
